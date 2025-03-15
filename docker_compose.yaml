@@ -1,0 +1,6 @@
+services:
+
+  frontend:
+    build: ./FE
+    ports:
+      - "3000:3000"
