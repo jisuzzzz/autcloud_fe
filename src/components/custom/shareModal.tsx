@@ -11,10 +11,10 @@ interface ShareModalProps {
 }
 
 interface InviteUser {
-  name: string;
-  role: string;
-  isOwner: boolean;
-  accepted: boolean;
+  name: string
+  role: string
+  isOwner: boolean
+  accepted: boolean
 }
 
 export default function ShareModal({ onClose }: ShareModalProps) {
@@ -23,6 +23,10 @@ export default function ShareModal({ onClose }: ShareModalProps) {
   const [emailList, setEmailList] = useState<string[]>([])
   const [error, setError] = useState('')
   const [isMiniModalOpen, setIsMiniModalOpen] = useState(false)
+  const [users, setUsers] = useState<InviteUser[]>([
+    { name: "jisu", isOwner: true, role: "Owner", accepted: true },
+    { name: "user2", isOwner: false, role: "Editor", accepted: false },
+  ]);
 
   const handleMiniModalOpen = () => setIsMiniModalOpen(true)
   const handleMiniModalClose = () => setIsMiniModalOpen(false)
@@ -57,10 +61,10 @@ export default function ShareModal({ onClose }: ShareModalProps) {
     }
   }
 
-  const users: InviteUser[] = [
-    { name: "jisu", isOwner:true, role:"Owner", accepted: true },
-    { name: "user2", isOwner:false, role:"Editor", accepted: false },
-  ]
+  // const users: InviteUser[] = [
+  //   { name: "jisu", isOwner:true, role:"Owner", accepted: true },
+  //   { name: "user2", isOwner:false, role:"Editor", accepted: false },
+  // ]
   return (
     <Modal
       onClose={handleClose}
@@ -149,7 +153,8 @@ export default function ShareModal({ onClose }: ShareModalProps) {
                         </div>
                       </button>
                       {isMiniModalOpen && (
-                        <RoleModal 
+                        <RoleModal
+                          role={user.role}
                           onMiniClose={handleMiniModalClose}
                         />
                       )}

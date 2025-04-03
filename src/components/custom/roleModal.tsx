@@ -1,11 +1,13 @@
 'use client'
 import { useEffect, useRef } from 'react'
+import { Check } from 'lucide-react'
 
 interface RoleModalProps {
   onMiniClose(): void
+  role: string
 }
 
-export default function RoleModal({ onMiniClose }: RoleModalProps) {
+export default function RoleModal({ onMiniClose, role }: RoleModalProps) {
   const modalRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -25,15 +27,17 @@ export default function RoleModal({ onMiniClose }: RoleModalProps) {
   return (
     <div 
       ref={modalRef}
-      className="fixed -bottom-8 -right-8 mt-1 bg-white border rounded-md shadow-lg w-[200px] z-50"
+      className="fixed -bottom-8 -right-8 mt-1 bg-white border rounded-md shadow-lg w-[150px] z-50"
       onClick={(e) => e.stopPropagation()}
     >
-      <div className="px-2 py-2">
-        <button className="w-full px-4 py-2 text-sm text-left hover:bg-gray-100 rounded-md">
-          Can edit
+      <div className="px-2 py-2 text-sm text-left">
+        <button className="flex relative items-center w-full h-7 px-4 py-2 hover:bg-gray-100 rounded-md">
+          {role.toLowerCase() === 'viewer' && <Check size={12}/>}
+          <p className='fixed right-[12.5px]'>can view</p>
         </button>
-        <button className="w-full px-4 py-2 text-sm text-left hover:bg-gray-100 rounded-md">
-          Can view
+        <button className="flex relative items-center w-full h-7 px-4 py-2 hover:bg-gray-100 rounded-md">
+          {role.toLowerCase() === 'editor' && <Check size={12}/>}
+          <p className='fixed right-[17px]'>can edit</p>
         </button>
       </div>
     </div>
