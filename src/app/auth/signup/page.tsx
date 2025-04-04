@@ -288,7 +288,7 @@ export default function SignupPage() {
               className={`w-[300px] text-white py-2 rounded ${
                 isFilled
                   ? 'bg-black hover:bg-gray-900'
-                  : 'bg-gray-300 cursor-not-allowed'
+                  : 'bg-gray-400 cursor-not-allowed'
               }`}
               disabled={!isFilled}
             >
