@@ -61,7 +61,7 @@ export default function SigninPage() {
       <div className="w-full flex justify-end items-center px-8 py-3 text-sm space-x-4">
         <span className="text-gray-400 leading-none">회원이 아니신가요?</span>
         <button
-          onClick={() => router.push('/signup')}
+          onClick={() => router.push('/auth/signup')}
           className="border border-gray-300 px-3 py-1 rounded text-sm"
         >
           회원가입

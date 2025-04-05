@@ -70,7 +70,7 @@ export default function VerificationPage() {
       <div className="w-full flex justify-end items-center px-8 py-3 text-sm space-x-4">
         <span className="text-gray-400 leading-none">로그인 안내 문구</span>
         <button
-          onClick={() => router.push('/login')}
+          onClick={() => router.push('/auth/signin')}
           className="border border-gray-300 px-3 py-1.5 rounded text-sm"
         >
           로그인

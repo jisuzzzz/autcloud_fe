@@ -75,11 +75,11 @@ export default function SignupPage() {
 
       if (result.success) {
         sessionStorage.setItem('signup_email', form.email);
-        router.push('/verification');
+        router.push('/auth/verification');
       } else if (result.userExists) {
         alert('이미 가입된 이메일입니다. 로그인 페이지로 이동합니다.');
         sessionStorage.setItem('signup_email', form.email);
-        router.push('/login');
+        router.push('/auth/signup');
       } else {
         alert(`오류: ${result.error}`);
       }
@@ -101,7 +101,7 @@ export default function SignupPage() {
       <div className="w-full flex justify-end items-center px-8 py-3 text-sm space-x-4">
         <span className="text-gray-400 leading-none">로그인 안내 문구</span>
         <button
-          onClick={() => router.push('/login')}
+          onClick={() => router.push('/auth/signin')}
           className="border border-gray-300 px-3 py-1 rounded text-sm"
         >
           로그인

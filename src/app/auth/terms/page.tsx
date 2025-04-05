@@ -12,7 +12,7 @@ export default function TermsPage() {
       <div className="w-full flex justify-between items-center px-6 py-4">
         <div
           className="flex items-center cursor-pointer"
-          onClick={() => router.push('/signup')}
+          onClick={() => router.push('/auth/signup')}
         >
           <ArrowLeft className="w-5 h-5 mr-2" />
           <span className="text-sm text-gray-700">
@@ -22,7 +22,7 @@ export default function TermsPage() {
         <div className="flex items-center space-x-2 text-sm">
           <span className="text-gray-400 leading-none">로그인 안내 문구</span>
           <button
-            onClick={() => router.push('/login')}
+            onClick={() => router.push('/auth/signin')}
             className="border border-gray-300 px-3 py-1 rounded text-sm"
           >
             로그인
