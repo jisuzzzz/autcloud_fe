@@ -222,7 +222,7 @@ export default function SignupPage() {
                 <div>
                   <p>
                     (필수){' '}
-                    <Link href="/terms" className="underline text-black">
+                    <Link href="/auth/terms" className="underline text-black">
                       이용약관
                     </Link>{' '}
                     에 동의합니다.

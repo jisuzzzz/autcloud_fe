@@ -1,0 +1,46 @@
+{
+  "version": "1.0",
+  "environment": "production",
+  "resources": {
+    "vultr_instance": [
+      {
+        "plan": "vc2-1c-1gb",
+        "region": "icn",
+        "os_id": 1743,
+        "label": "my-web-server",
+        "ssh_key_ids": ["ssh-key-id"],
+        "tags": ["web", "my-project"]
+      }
+    ],
+    "vultr_object_storage": [
+      {
+        "cluster_id": 9,
+        "label": "my-storage"
+      }
+    ],
+    "vultr_database": [
+      {
+        "database_engine": "pg",
+        "database_engine_version": "15",
+        "region": "icn",
+        "plan": "vultr-dbaas-startup",
+        "label": "my-database",
+        "trusted_ips": ["0.0.0.0/0"]
+      }
+    ]
+  },
+  "connections": [
+    {
+      "from": "my-web-server",
+      "to": "my-database",
+      "type": "postgresql",
+      "direction": "bidirectional"
+    },
+    {
+      "from": "my-web-server",
+      "to": "my-storage",
+      "type": "object-storage",
+      "direction": "unidirectional"
+    }
+  ]
+}
