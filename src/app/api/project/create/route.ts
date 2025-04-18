@@ -1,29 +1,24 @@
 import { NextResponse } from 'next/server'
+import { ProjectService } from '@/services/project'
 
 export async function POST(request: Request) {
   try {
-    const data = await request.json()
-    
-    const response = await fetch('http://64.176.217.21:80/command_server/api/v1/external/auth/test', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
-    })
+    const { name, description } = await request.json()
 
-    if (!response.ok) {
-      throw new Error(`External API error: ${response.status}`)
+    if(!name || !description) {
+      return NextResponse.json({
+        success:false,
+        error: 'Required fields are missing'
+      }, { status: 400 })
     }
 
-    const result = await response.json()
-    return NextResponse.json(result)
+    await ProjectService.createProject({name, description})
+    return NextResponse.json({ success: true }, {status:200})
 
   } catch (error) {
     console.error('API error:', error)
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ 
+      error: 'Internal Server Error' 
+    }, { status: 500 })
   }
 }

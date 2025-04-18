@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { AuthService } from "./services/auth";
 
 export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith('/auth')) {
@@ -20,31 +21,11 @@ export async function middleware(request: NextRequest) {
   }
 
   try {
-    const isTokenExpired = (token: string): boolean => {
-      // atob() : base64 디코딩하는 함수
-      const payload = JSON.parse(atob(token.split('.')[1]))
-      return payload.exp*1000 < Date.now()
-    }
-
-    if(!isTokenExpired(accessToken)) {
+    if(!AuthService.isTokenExpired(accessToken)) {
       return NextResponse.next()
     }
 
-    const response = await fetch('http://64.176.217.21:80/command_server/api/v1/external/auth/refresh', {
-      method:'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify({ refresh_token: refreshToken }),
-    })
-
-    if (!response.ok) {
-      return NextResponse.redirect(new URL('/auth/signin', request.url))
-    }
-
-    const data = await response.json()
-
+    const data = await AuthService.refreshToken(refreshToken);
     const nextResponse = NextResponse.next()
 
     nextResponse.cookies.set({

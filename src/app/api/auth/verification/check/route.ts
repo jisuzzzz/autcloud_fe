@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from "next/server"
+import { AuthService } from "@/services/auth"
 
 export async function POST(request: Request) {
   try {
@@ -11,30 +12,9 @@ export async function POST(request: Request) {
       }, {status:400})
     }
 
-    const checkVerificationData = {
-      email,
-      verification_code
-    }
-
-    const response = await fetch('http://64.176.217.21:80/command_server/api/v1/external/auth/verification/check', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify(checkVerificationData)
-    })
-
-    if (!response.ok) {
-      return NextResponse.json({
-        success: false,
-        error: "External API error"
-      }, { status: response.status })
-    }
-
-    return NextResponse.json({
-      success: true,
-    })
+    
+    await AuthService.verifyCode({ email, verification_code })
+    return NextResponse.json({ success: true }, { status:200 })
 
   } catch (error) {
     console.log('SignIn error:', error)
