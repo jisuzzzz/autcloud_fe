@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     })
 
   } catch (error) {
-    console.error('SignIn error:', error)
+    console.log('SignIn error:', error)
     return NextResponse.json({
       success: false,
       error: "Internal API Error"

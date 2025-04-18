@@ -1,5 +1,10 @@
 'use client';
-
+// todo:
+// 코드 복사 붙여 넣기 가능하게 하기
+// 코드 유효 시간 기능 넣기 (5분)
+// 비밀번호 작성할 때 눈 열기, 가리기 이미지로 비밀번호 볼 수 있게
+// loading(빙글뱅글 도는거) 기능 구현하기
+// 코드 입력 페이지에서 뒤로 돌아 갔을 때 (정보 입력 페이지) 정보 저장해두기 세션스토리지에
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';

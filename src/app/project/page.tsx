@@ -30,7 +30,7 @@ function FileCard({ title, metadata, thumbnail }: { title: string; metadata: str
 }
 
 
-export default function FileManager() {
+export default function ProjectPage() {
   return (
     <div className="flex min-h-screen bg-white">
       <SideBar />

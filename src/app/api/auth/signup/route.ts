@@ -17,7 +17,7 @@ export async function POST(request: Request) {
       phone_num
     }
 
-    const response = await fetch('http://64.176.217.21:80/command_server/api/v1/external/auth', {
+    const response = await fetch('http://64.176.217.21:80/command_server/api/v1/external/auth/account', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

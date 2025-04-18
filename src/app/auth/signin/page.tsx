@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 
 export default function SigninPage() {
   const router = useRouter();
@@ -10,8 +9,12 @@ export default function SigninPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
+  
   // 회원가입 후 저장된 이메일 자동 채워넣기
+  // -> 이거 굳이 기능 아니야?? 세션 스토리지에 저장하는게 무슨 의미가 있지 새로고침 하면 날라가는데
+  // 로컬 스토리지는 직접 삭제 안하면 안사라져 근데 세션 스토리지는 새로고침하면 바로 날라가
+  // 로컬 스토리지로 착각한 듯 수정하면 될 듯
+  // phone number 받는 부분 빠졌어 추가
   useEffect(() => {
     const savedEmail = sessionStorage.getItem('signup_email');
     if (savedEmail) {
@@ -39,13 +42,12 @@ export default function SigninPage() {
         body: JSON.stringify({ email, password }),
       });
 
-      const result = await res.json();
-
-      if (result.success) {
+      if (res.ok) {
         alert('로그인 성공!');
-        router.push('/');
+        router.push('/project');
       } else {
-        alert(`로그인 실패: ${result.error}`);
+        const data = await res.json();
+        alert(`로그인 실패: ${data.error}`);
       }
     } catch (error) {
       console.error('Login error:', error);
