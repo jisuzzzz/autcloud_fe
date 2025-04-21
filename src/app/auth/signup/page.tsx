@@ -1,19 +1,17 @@
 'use client';
-// todo:
-// 코드 복사 붙여 넣기 가능하게 하기
-// 코드 유효 시간 기능 넣기 (5분)
-// 비밀번호 작성할 때 눈 열기, 가리기 이미지로 비밀번호 볼 수 있게
-// loading(빙글뱅글 도는거) 기능 구현하기
-// 코드 입력 페이지에서 뒤로 돌아 갔을 때 (정보 입력 페이지) 정보 저장해두기 세션스토리지에
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
 export default function SignupPage() {
   const router = useRouter();
+
   const [form, setForm] = useState({
     name: '',
     email: '',
+    phone: '',
     password: '',
     confirmPassword: '',
     agreeAll: false,
@@ -25,22 +23,57 @@ export default function SignupPage() {
     },
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const inputStyle =
+    'w-[300px] border border-gray-300 rounded px-4 py-2 placeholder-gray-400';
+
+  // 세션 스토리지에서 값 복원
+  useEffect(() => {
+    const saved = sessionStorage.getItem('signup_form');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      setForm((prev) => ({
+        ...prev,
+        ...parsed,
+      }));
+    }
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
+
+    let updatedForm = {};
     if (name.startsWith('agreement.')) {
       const key = name.split('.')[1];
-      setForm((prev) => ({
-        ...prev,
+      updatedForm = {
         agreement: {
-          ...prev.agreement,
+          ...form.agreement,
           [key]: value,
         },
-      }));
+      };
     } else {
-      setForm((prev) => ({
-        ...prev,
+      updatedForm = {
         [name]: type === 'checkbox' ? checked : value,
-      }));
+      };
+    }
+
+    const newForm = {
+      ...form,
+      ...updatedForm,
+    };
+
+    setForm(newForm);
+
+    // 형식 맞는 값만 저장
+    const { name: n, email, phone, password, confirmPassword } = newForm;
+    if (n && email && phone && password && confirmPassword) {
+      sessionStorage.setItem(
+        'signup_form',
+        JSON.stringify({ name: n, email, phone })
+      );
     }
   };
 
@@ -64,6 +97,8 @@ export default function SignupPage() {
       return;
     }
 
+    setIsLoading(true);
+
     try {
       const res = await fetch('/api/auth/signup', {
         method: 'POST',
@@ -72,7 +107,7 @@ export default function SignupPage() {
           name: form.name,
           email: form.email,
           password: form.password,
-          phone_num: '01000000000',
+          phone_num: form.phone,
         }),
       });
 
@@ -80,23 +115,28 @@ export default function SignupPage() {
 
       if (result.success) {
         sessionStorage.setItem('signup_email', form.email);
+        sessionStorage.setItem('signup_name', form.name);
+        sessionStorage.removeItem('signup_form');
         router.push('/auth/verification');
       } else if (result.userExists) {
         alert('이미 가입된 이메일입니다. 로그인 페이지로 이동합니다.');
         sessionStorage.setItem('signup_email', form.email);
-        router.push('/auth/signup');
+        router.push('/auth/signin');
       } else {
         alert(`오류: ${result.error}`);
       }
     } catch (err) {
       console.error(err);
       alert('서버 오류');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const isFilled =
     form.name &&
     form.email &&
+    form.phone &&
     form.password &&
     form.confirmPassword &&
     form.password === form.confirmPassword;
@@ -104,7 +144,9 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <div className="w-full flex justify-end items-center px-8 py-3 text-sm space-x-4">
-        <span className="text-gray-400 leading-none">로그인 안내 문구</span>
+        <span className="text-gray-400 leading-none">
+          이미 계정이 있으신가요?
+        </span>
         <button
           onClick={() => router.push('/auth/signin')}
           className="border border-gray-300 px-3 py-1 rounded text-sm"
@@ -133,36 +175,68 @@ export default function SignupPage() {
               placeholder="Name"
               value={form.name}
               onChange={handleChange}
-              className="w-[300px] border border-gray-300 rounded px-4 py-2 placeholder-gray-400"
+              className={inputStyle}
               required
             />
             <input
               type="email"
               name="email"
               placeholder="Email"
+              autoComplete="email"
               value={form.email}
               onChange={handleChange}
-              className="w-[300px] border border-gray-300 rounded px-4 py-2 placeholder-gray-400"
+              className={inputStyle}
               required
             />
             <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={form.password}
+              type="tel"
+              name="phone"
+              placeholder="Phone Number"
+              value={form.phone}
               onChange={handleChange}
-              className="w-[300px] border border-gray-300 rounded px-4 py-2 placeholder-gray-400"
+              className={inputStyle}
               required
             />
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm Password"
-              value={form.confirmPassword}
-              onChange={handleChange}
-              className="w-[300px] border border-gray-300 rounded px-4 py-2 placeholder-gray-400"
-              required
-            />
+
+            <div className="relative w-[300px]">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                placeholder="Password"
+                autoComplete="new-password"
+                value={form.password}
+                onChange={handleChange}
+                className={`${inputStyle} pr-10`}
+                required
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+
+            <div className="relative w-[300px]">
+              <input
+                type={showConfirmPassword ? 'text' : 'password'}
+                name="confirmPassword"
+                placeholder="Confirm Password"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                className={`${inputStyle} pr-10`}
+                required
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+
             {form.password &&
               form.confirmPassword &&
               form.password !== form.confirmPassword && (
@@ -194,110 +268,74 @@ export default function SignupPage() {
 
             {form.termsOpen && (
               <div className="space-y-3 text-sm text-gray-700">
-                <div>
-                  <p>
-                    (필수) <u>개인정보 수집 및 이용</u>에 동의합니다.
-                  </p>
-                  <div className="flex gap-4 mt-1">
-                    <label>
-                      <input
-                        type="radio"
-                        name="agreement.privacy"
-                        value="yes"
-                        checked={form.agreement.privacy === 'yes'}
-                        onChange={handleChange}
-                        className="accent-black mr-1"
-                      />
-                      네
-                    </label>
-                    <label>
-                      <input
-                        type="radio"
-                        name="agreement.privacy"
-                        value="no"
-                        checked={form.agreement.privacy === 'no'}
-                        onChange={handleChange}
-                        className="accent-black mr-1"
-                      />
-                      아니오
-                    </label>
+                {[
+                  {
+                    label: '(필수) 개인정보 수집 및 이용에 동의합니다.',
+                    name: 'privacy',
+                  },
+                  {
+                    label: (
+                      <>
+                        (필수){' '}
+                        <Link
+                          href="/auth/terms"
+                          className="underline text-black"
+                        >
+                          이용약관
+                        </Link>{' '}
+                        에 동의합니다.
+                      </>
+                    ),
+                    name: 'terms',
+                  },
+                  {
+                    label: '(선택) 마케팅 정보 수신에 동의합니다.',
+                    name: 'marketing',
+                  },
+                ].map(({ label, name }) => (
+                  <div key={name}>
+                    <p>{label}</p>
+                    <div className="flex gap-4 mt-1">
+                      {['yes', 'no'].map((val) => (
+                        <label key={val}>
+                          <input
+                            type="radio"
+                            name={`agreement.${name}`}
+                            value={val}
+                            checked={
+                              form.agreement[
+                                name as keyof typeof form.agreement
+                              ] === val
+                            }
+                            onChange={handleChange}
+                            className="accent-black mr-1"
+                          />
+                          {val === 'yes' ? '네' : '아니오'}
+                        </label>
+                      ))}
+                    </div>
                   </div>
-                </div>
-
-                <div>
-                  <p>
-                    (필수){' '}
-                    <Link href="/auth/terms" className="underline text-black">
-                      이용약관
-                    </Link>{' '}
-                    에 동의합니다.
-                  </p>
-                  <div className="flex gap-4 mt-1">
-                    <label>
-                      <input
-                        type="radio"
-                        name="agreement.terms"
-                        value="yes"
-                        checked={form.agreement.terms === 'yes'}
-                        onChange={handleChange}
-                        className="accent-black mr-1"
-                      />
-                      네
-                    </label>
-                    <label>
-                      <input
-                        type="radio"
-                        name="agreement.terms"
-                        value="no"
-                        checked={form.agreement.terms === 'no'}
-                        onChange={handleChange}
-                        className="accent-black mr-1"
-                      />
-                      아니오
-                    </label>
-                  </div>
-                </div>
-
-                <div>
-                  <p>(선택) 마케팅 정보 수신에 동의합니다.</p>
-                  <div className="flex gap-4 mt-1">
-                    <label>
-                      <input
-                        type="radio"
-                        name="agreement.marketing"
-                        value="yes"
-                        checked={form.agreement.marketing === 'yes'}
-                        onChange={handleChange}
-                        className="accent-black mr-1"
-                      />
-                      네
-                    </label>
-                    <label>
-                      <input
-                        type="radio"
-                        name="agreement.marketing"
-                        value="no"
-                        checked={form.agreement.marketing === 'no'}
-                        onChange={handleChange}
-                        className="accent-black mr-1"
-                      />
-                      아니오
-                    </label>
-                  </div>
-                </div>
+                ))}
               </div>
             )}
 
             <button
               type="submit"
-              className={`w-[300px] text-white py-2 rounded ${
-                isFilled
+              disabled={!isFilled || isLoading}
+              className={`w-[300px] flex items-center justify-center gap-2 text-white py-2 rounded ${
+                isFilled && !isLoading
                   ? 'bg-black hover:bg-gray-900'
                   : 'bg-gray-400 cursor-not-allowed'
               }`}
-              disabled={!isFilled}
             >
-              Sign up
+              {isLoading ? (
+                <>
+                  <Loader2 className="animate-spin w-4 h-4" />
+                  Signing up...
+                </>
+              ) : (
+                'Sign up'
+              )}
             </button>
           </form>
         </div>
