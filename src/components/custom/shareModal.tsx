@@ -8,28 +8,47 @@ import RoleModal from "./roleModal"
 
 interface ShareModalProps {
   onClose(): void
+  projectId: string
 }
 
 interface InviteUser {
+  email:string
   name: string
-  role: string
+  role: 'admin' | 'editor' | 'viewer'
   isOwner: boolean
   accepted: boolean
 }
 
-export default function ShareModal({ onClose }: ShareModalProps) {
+export default function ShareModal({ onClose, projectId }: ShareModalProps) {
 
   const [email, setEmail] = useState('')
   const [emailList, setEmailList] = useState<string[]>([])
   const [error, setError] = useState('')
   const [isMiniModalOpen, setIsMiniModalOpen] = useState(false)
+  const [selectedUserIndex, setSelectedUserIndex] = useState<number | null>(null)
   const [users, setUsers] = useState<InviteUser[]>([
-    { name: "jisu", isOwner: true, role: "Owner", accepted: true },
-    { name: "user2", isOwner: false, role: "Editor", accepted: false },
+    { email:"wltn7722@gmail.com", name: "김지수", isOwner: true, role: "admin", accepted: true },
+    { email:"meked@naver.com", name: "jisu", isOwner: false, role: "editor", accepted: false },
   ]);
 
-  const handleMiniModalOpen = () => setIsMiniModalOpen(true)
-  const handleMiniModalClose = () => setIsMiniModalOpen(false)
+  const handleMiniModalOpen = (index: number) => {
+    setSelectedUserIndex(index)
+    setIsMiniModalOpen(true)
+  }
+
+  const handleMiniModalClose = () => {
+    setSelectedUserIndex(null)
+    setIsMiniModalOpen(false)
+  }
+
+  const handleRoleChange = (newRole: 'editor' | 'viewer') => {
+    if (selectedUserIndex !== null) {
+      setUsers(prev => prev.map((user, index) => 
+        index === selectedUserIndex ? { ...user, role: newRole } : user
+      ))
+    }
+    handleMiniModalClose()
+  }
 
   const handleClose = () => {
 
@@ -61,10 +80,34 @@ export default function ShareModal({ onClose }: ShareModalProps) {
     }
   }
 
-  // const users: InviteUser[] = [
-  //   { name: "jisu", isOwner:true, role:"Owner", accepted: true },
-  //   { name: "user2", isOwner:false, role:"Editor", accepted: false },
-  // ]
+  const handleInvite = async () => {
+    try {
+      for (const inviteEmail of emailList) {
+        const response = await fetch('/api/projects/invite', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            invitee_email: inviteEmail,
+            project_id: projectId,
+            role: 'viwer' // 기본 role
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to invite user');
+        }
+      }
+      
+      setEmailList([]);
+      // 성공 메시지 표시 또는 다른 처리
+    } catch (error) {
+      console.error('Invitation error:', error);
+      setError('Failed to send invitation');
+    }
+  }
+
   return (
     <Modal
       onClose={handleClose}
@@ -116,7 +159,7 @@ export default function ShareModal({ onClose }: ShareModalProps) {
               </div>
               {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
             </div>
-            <Button>
+            <Button onClick={handleInvite}>
               <Send size={16}/>
               Invite
             </Button>
@@ -144,7 +187,7 @@ export default function ShareModal({ onClose }: ShareModalProps) {
                   ) : (
                     <>
                       <button 
-                        onClick={handleMiniModalOpen}
+                        onClick={() => handleMiniModalOpen(index)}
                         className="text-sm text-gray-700 hover:bg-gray-100 rounded-sm -mr-2.5"
                       >
                         <div className="px-2 py-1 flex items-center gap-1">
@@ -152,10 +195,13 @@ export default function ShareModal({ onClose }: ShareModalProps) {
                           <ChevronDown size={16} />
                         </div>
                       </button>
-                      {isMiniModalOpen && (
+                      {isMiniModalOpen && selectedUserIndex === index && (
                         <RoleModal
-                          role={user.role}
-                          onMiniClose={handleMiniModalClose}
+                        email={users[selectedUserIndex].email}
+                        projectId={projectId}
+                        role={user.role}
+                        onMiniClose={handleMiniModalClose}
+                        onRoleChange={handleRoleChange}
                         />
                       )}
                     </>

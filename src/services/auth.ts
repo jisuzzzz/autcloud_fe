@@ -29,13 +29,13 @@ export class AuthService {
     })
 
     if (!response.ok) {
-      throw new Error('External API error');
+      throw new Error('External API error')
     }
     return response.json()
   }
   
   static async signIn(data: SignInData){
-    const response = await fetch(`${this.API_URL}/account`, {
+    const response = await fetch(`${this.API_URL}/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -43,9 +43,9 @@ export class AuthService {
       },
       body: JSON.stringify(data)
     })
-
+    
     if (!response.ok) {
-      throw new Error('External API error');
+      throw new Error('External API error')
     }
     return response.json()
   }
@@ -63,7 +63,7 @@ export class AuthService {
     if (!response.ok) {
       throw new Error('External API error')
     }
-    return response.json();
+    return response
   }
 
   static isTokenExpired(token: string): boolean {
@@ -71,6 +71,7 @@ export class AuthService {
       // atob(): base64 디코딩 함수
       const payload = JSON.parse(atob(token.split('.')[1]))
       return payload.exp * 1000 < Date.now()
+      // return true
     } catch (error) {
       console.error('Token parsing error:', error)
       return true

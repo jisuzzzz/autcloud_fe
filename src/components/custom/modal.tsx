@@ -25,12 +25,11 @@ export default function Modal({ onClose, children, className = "" }: ModalProps)
       document.removeEventListener('mousedown', handleOutsideClick);
     };
   }, [onClose]);
-  return createPortal(
+  return (
     <div
       ref={modalRef}
       className={`${className}`}>
       {children}
-    </div>,
-    document.body
+    </div>
   )
 }

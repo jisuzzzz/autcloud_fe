@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 import { useState } from "react"
 import ShareModal from "./shareModal"
 
-export default function Header() {
+export default function Header({projectId}:{projectId:string}) {
   const [isModalOpen, setIsModalOepn] = useState(false)
 
   const handleOpenModal = () => setIsModalOepn(true)
@@ -28,7 +28,8 @@ export default function Header() {
           Share
         </Button>
         {isModalOpen && (
-          <ShareModal 
+          <ShareModal
+            projectId={projectId}
             onClose={handleCloseModal}
           />
         )}

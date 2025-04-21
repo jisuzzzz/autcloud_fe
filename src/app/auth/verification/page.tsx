@@ -45,7 +45,7 @@ export default function VerificationPage() {
     setError('');
 
     try {
-      const res = await fetch('/api/auth/verification/check', {
+      const res = await fetch('/api/auth/verification', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, verification_code: joinedCode }),

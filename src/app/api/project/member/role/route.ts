@@ -1,23 +1,19 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { ProjectService } from '@/services/project'
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const data = await request.json()
-    
-    const response = await fetch('http://64.176.217.21:80/command_server/api/v1/external/auth/test', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
-    })
-
-    if (!response.ok) {
-      throw new Error(`External API error: ${response.status}`)
+    const { invitee_email, project_id, role } = await request.json()
+    const accessToken = request.cookies.get('access_token')?.value
+    // console.log(invitee_email, project_id, role)
+    if(!invitee_email || !project_id || !role  || !accessToken) {
+      return NextResponse.json({
+        success:false,
+        error: 'Required fields are missing'
+      }, { status: 400 })
     }
-
-    const result = await response.json()
-    return NextResponse.json(result)
+    await ProjectService.assignRole({invitee_email, project_id, role, accessToken})
+    return NextResponse.json({ success: true }, {status:200})
 
   } catch (error) {
     console.error('API error:', error)

@@ -1,38 +1,23 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from "next/server"
+import { AuthService } from "@/services/auth"
 
 export async function POST(request: Request) {
   try {
-    const { email }  = await request.json()
+    const { email, verification_code }  = await request.json()
 
-    if(!email) {
+    if(!email || !verification_code) {
       return NextResponse.json({
         success: false,
-        error: 'Required field is missing'
+        error: 'Required fields are missing'
       }, {status:400})
     }
 
-    const response = await fetch('http://64.176.217.21:80/command_server/api/v1/external/auth/verification', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify(email)
-    })
-
-    if (!response.ok) {
-      return NextResponse.json({
-        success: false,
-        error: "External API error"
-      }, { status: response.status })
-    }
-
-    return NextResponse.json({
-      success: true,
-    })
+    
+    await AuthService.verifyCode({ email, verification_code })
+    return NextResponse.json({ success: true }, { status:200 })
 
   } catch (error) {
-    console.error('SignIn error:', error)
+    console.log('SignIn error:', error)
     return NextResponse.json({
       success: false,
       error: "Internal API Error"
