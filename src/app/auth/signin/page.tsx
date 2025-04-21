@@ -9,17 +9,13 @@ export default function SigninPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
-  // 회원가입 후 저장된 이메일 자동 채워넣기
-  // -> 이거 굳이 기능 아니야?? 세션 스토리지에 저장하는게 무슨 의미가 있지 새로고침 하면 날라가는데
-  // 로컬 스토리지는 직접 삭제 안하면 안사라져 근데 세션 스토리지는 새로고침하면 바로 날라가
-  // 로컬 스토리지로 착각한 듯 수정하면 될 듯
-  // phone number 받는 부분 빠졌어 추가
+
+  // 회원가입 후 저장된 이메일 자동 입력
   useEffect(() => {
-    const savedEmail = sessionStorage.getItem('signup_email');
+    const savedEmail = localStorage.getItem('signup_email');
     if (savedEmail) {
       setEmail(savedEmail);
-      sessionStorage.removeItem('signup_email');
+      localStorage.removeItem('signup_email');
     }
   }, []);
 
@@ -61,7 +57,7 @@ export default function SigninPage() {
     <div className="min-h-screen bg-white flex flex-col">
       {/* 상단 회원가입 안내 */}
       <div className="w-full flex justify-end items-center px-8 py-3 text-sm space-x-4">
-        <span className="text-gray-400 leading-none">회원이 아니신가요?</span>
+        <span className="text-gray-400">회원이 아니신가요?</span>
         <button
           onClick={() => router.push('/auth/signup')}
           className="border border-gray-300 px-3 py-1 rounded text-sm"
@@ -103,12 +99,10 @@ export default function SigninPage() {
               required
             />
 
-            {/* 비밀번호 재설정 링크 */}
             <div className="w-[300px] text-left text-sm text-gray-600 underline cursor-pointer">
               비밀번호 재설정
             </div>
 
-            {/* 로그인 버튼 */}
             <button
               type="submit"
               className={`w-[300px] text-white py-2 rounded transition-colors duration-200 ${
