@@ -1,14 +1,14 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { AuthService } from "./services/auth";
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { AuthService } from './services/auth';
 
 export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith('/auth')) {
-    return NextResponse.next()
+    return NextResponse.next();
   }
   // todo: refreshToken 만료시 login page redirect
-  const accessToken = request.cookies.get('access_token')?.value
-  const refreshToken = request.cookies.get('refresh_token')?.value
+  const accessToken = request.cookies.get('access_token')?.value;
+  const refreshToken = request.cookies.get('refresh_token')?.value;
 
   // console.log('Middleware - Access Token exists:', !!accessToken);
   // console.log('Middleware - Refresh Token exists:', !!refreshToken);
@@ -17,16 +17,16 @@ export async function middleware(request: NextRequest) {
   // console.log('Middleware - All cookies:', request.cookies.getAll());
 
   if (!accessToken || !refreshToken) {
-    return NextResponse.redirect(new URL('/auth/signin', request.url))
+    return NextResponse.redirect(new URL('/auth/signin', request.url));
   }
 
   try {
-    if(!AuthService.isTokenExpired(accessToken)) {
-      return NextResponse.next()
+    if (!AuthService.isTokenExpired(accessToken)) {
+      return NextResponse.next();
     }
 
     const data = await AuthService.refreshToken(refreshToken);
-    const nextResponse = NextResponse.next()
+    const nextResponse = NextResponse.next();
 
     nextResponse.cookies.set({
       name: 'access_token',
@@ -34,8 +34,8 @@ export async function middleware(request: NextRequest) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      path: '/'
-    })
+      path: '/',
+    });
 
     if (data.refresh_token) {
       nextResponse.cookies.set({
@@ -44,20 +44,19 @@ export async function middleware(request: NextRequest) {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        path: '/'
-      })
+        path: '/',
+      });
     }
 
-    return nextResponse
-
+    return nextResponse;
   } catch (error) {
-    console.error('Token verification failed:', error)
-    return NextResponse.redirect(new URL('/auth/signin', request.url))
+    console.error('Token verification failed:', error);
+    return NextResponse.redirect(new URL('/auth/signin', request.url));
   }
 }
 
 export const config = {
   matcher: [
-    '/project/:path*',
+    // '/project/:path*',
   ],
-}
+};
