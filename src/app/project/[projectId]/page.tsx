@@ -1,6 +1,7 @@
 import SideBar from "@/components/custom/sidebar"
 import Header from "@/components/custom/header"
-import CloudFlow from "@/components/gui/canvas";
+import FlowMap from "@/components/gui/flowMap"
+import ToolBar from "@/components/gui/toolbar"
 
 export default async function ProjectIdPage({
   params
@@ -10,10 +11,11 @@ export default async function ProjectIdPage({
   const param = await params;
   return (
     <div className="flex min-h-screen bg-white">
-      <SideBar />
+      {/* <SideBar /> */}
+      <ToolBar />
       <div className="flex-1">
         <Header projectId={param.projectId} />
-        <CloudFlow />
+        <FlowMap />
       </div>
     </div>
   )
