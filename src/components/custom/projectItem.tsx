@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { MenuButton } from './actionButtons';
 import { MoreHorizontal } from 'lucide-react';
+import Modal from './modal';
 
 interface Spec {
   name: string;
@@ -101,14 +102,17 @@ export default function ProjectItem({
             </button>
 
             {menuOpen && (
-              <div className="absolute right-0 top-full mt-1 w-32 bg-white border shadow rounded-md z-10 text-sm">
+              <Modal
+                onClose={() => setMenuOpen(false)}
+                className="absolute right-0 top-full mt-1 w-32 bg-white border shadow rounded-md z-10 text-sm"
+              >
                 <button className="w-full text-left px-4 py-2 hover:bg-gray-100">
                   Edit
                 </button>
                 <button className="w-full text-left px-4 py-2 hover:bg-gray-100">
                   Delete
                 </button>
-              </div>
+              </Modal>
             )}
           </div>
         </div>

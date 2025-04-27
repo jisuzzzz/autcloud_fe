@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import Modal from './modal';
 
 export default function SortDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,7 +18,10 @@ export default function SortDropdown() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-40 rounded-lg border border-gray-200 bg-white shadow-lg z-10">
+        <Modal
+          onClose={() => setIsOpen(false)}
+          className="absolute right-0 mt-2 w-40 rounded-lg border border-gray-200 bg-white shadow-lg z-10"
+        >
           <ul className="py-2 text-sm text-gray-900">
             {['Option A', 'Option B', 'Option C', 'Option D'].map((opt) => (
               <li
@@ -28,7 +32,7 @@ export default function SortDropdown() {
               </li>
             ))}
           </ul>
-        </div>
+        </Modal>
       )}
     </div>
   );
