@@ -5,13 +5,18 @@ import { getRandomUser } from "@/lib/db";
 // Authenticating your Liveblocks application
 // https://liveblocks.io/docs/authentication
 
+type User = {
+  id: string
+  info:any
+}
+
 const liveblocks = new Liveblocks({
   secret: process.env.LIVEBLOCKS_SECRET_KEY as string,
 });
 
 export async function POST(request: NextRequest) {
   // Get the current user's unique id and info from your database
-  const user = getRandomUser();
+  const user = getRandomUser() as User;
 
   // Create a session for the current user
   // userInfo is made available in Liveblocks presence hooks, e.g. useOthers
