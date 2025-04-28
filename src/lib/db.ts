@@ -1,4 +1,4 @@
-const USER_INFO: Liveblocks["UserMeta"][] = [
+const USER_INFO: { id: string; info: any }[] = [
   {
     id: "charlie.layne@example.com",
     info: {
