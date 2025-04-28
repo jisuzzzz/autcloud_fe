@@ -157,6 +157,8 @@ export default function FlowMap() {
   useEffect(() => {
     if(yDoc && !webRtcProviderRef.current) {
       const webrtcProvider = new WebrtcProvider('cloud-diagram', yDoc, {
+        // signaling: [], // Liveblocks가 자체 시그널링을 제공하므로 빈 배열로 설정
+        // password: '1234'
         signaling: [
           'wss://signaling.yjs.dev',
           'wss://y-webrtc-signaling-eu.herokuapp.com',
@@ -229,8 +231,8 @@ export default function FlowMap() {
         connectionMode={ConnectionMode.Strict}
         proOptions={{ hideAttribution: true }}
       >
-        <Controls />
-        <MiniMap />
+        {/* <Controls />
+        <MiniMap /> */}
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
       </ReactFlow>
     </div>

@@ -21,7 +21,7 @@ export default function ResourceNode({ data, selected }: NodeProps) {
   return (
     <div className={`
       w-20 h-20 bg-white rounded-lg p-2
-      ${selected ? 'ring-2 ring-blue-500' : 'ring-1 ring-gray-200'}
+      ${selected ? 'ring-2 ring-yellow-300' : 'ring-1 ring-gray-200'}
       hover:shadow-xl transition-shadow duration-200
       flex flex-col items-center justify-center
     `}>
