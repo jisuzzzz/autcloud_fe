@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Upload, Folder, Search, List, LayoutGrid } from 'lucide-react';
+import { Plus, Upload, Folder, Search, List, LayoutGrid } from 'lucide-react';
 import SideBar from '@/components/custom/sidebar';
 import { CreateButton } from '@/components/custom/actionButtons';
 import ProjectItem from '@/components/custom/projectItem';
@@ -25,6 +26,11 @@ const PROJECT_TEMPLATES = [
 
 export default function ProjectPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const router = useRouter();
+
+  const handleCreateClick = () => {
+    router.push('/project/create');
+  };
 
   return (
     <div className="flex min-h-screen bg-white">
@@ -46,7 +52,13 @@ export default function ProjectPage() {
         <div className="p-6">
           <div className="mb-6 flex items-center justify-between">
             <div className="flex gap-4">
-              <CreateButton />
+              <Button
+                onClick={handleCreateClick}
+                className="h-9 px-4 bg-black text-white hover:bg-gray-900"
+              >
+                <Plus size={16} />
+                Create project
+              </Button>
               <Button variant="outline">
                 <Upload size={16} />
                 Upload

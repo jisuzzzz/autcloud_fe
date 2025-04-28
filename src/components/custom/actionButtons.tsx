@@ -1,45 +1,39 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Button } from "../ui/button"
-import CreateProjectModal from './createProjectModal'
-import { Plus, Ellipsis } from 'lucide-react'
-import MenuModal from './menuModal'
+import { useState } from 'react';
+import { Button } from '../ui/button';
+import { ActionButton } from './actionButton';
+import { Plus, Ellipsis } from 'lucide-react';
+import CreateProjectModal from './createProjectModal';
+import MenuModal from './menuModal';
 
 export function CreateButton() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <>
-      <Button 
+      <ActionButton
+        icon={<Plus size={20} />}
+        label="Create"
         onClick={() => setIsModalOpen(true)}
-        className="flex items-center gap-2"
-      >
-        <Plus size={20} />
-        Create
-      </Button>
-
+        variant="default"
+      />
       {isModalOpen && (
-        <CreateProjectModal 
-          onClose={() => setIsModalOpen(false)} 
-        />
+        <CreateProjectModal onClose={() => setIsModalOpen(false)} />
       )}
     </>
-  )
+  );
 }
 
 export function MenuButton({ projectId }: { projectId: string }) {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <div className='relative'>
-      <button
-        className="hover:bg-gray-100 p-1 rounded-md"
+    <div className="relative">
+      <ActionButton
+        icon={<Ellipsis size={20} />}
         onClick={() => setIsModalOpen(true)}
-      >
-        <Ellipsis className="text-gray-500" size={20}/>
-      </button>
-
+      />
       {isModalOpen && (
         <MenuModal
           projectId={projectId}
@@ -47,5 +41,5 @@ export function MenuButton({ projectId }: { projectId: string }) {
         />
       )}
     </div>
-  )
+  );
 }
