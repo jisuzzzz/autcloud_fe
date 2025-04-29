@@ -17,7 +17,7 @@ interface NodeProps {
   selected: boolean
 }
 
-export default function ResourceNode({ data, selected }: NodeProps) {
+export default function ResourceNode({ data, selected=false }: NodeProps) {
   return (
     <div className={`
       w-20 h-20 bg-white rounded-lg p-2

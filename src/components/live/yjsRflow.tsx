@@ -15,12 +15,6 @@ import { useLiveFlowStore } from '@/store/liveFlowStore'
 import * as Y from 'yjs'
 import { useMyPresence, useOthersMapped, useSelf } from '@liveblocks/react'
 
-interface User {
-  id: string
-  name: string
-  color: string
-}
-
 const nodeTypes = { resource: ResourceNode }
 const edgeTypes = { edge: ArrowEdge }
 
@@ -47,18 +41,26 @@ const initialNodes: Node[] = [
 
 export function YjsReactFlow() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
-  const { updateNodePosition, initNodes, initUserStacks, pushToUndoStack, undo } = useLiveFlowStore()
+  const { updateNodePosition, initNodes, 
+    pushToUndoStack, undo, initUserStacks, 
+    addNode, removeNode
+  } = useLiveFlowStore()
+  // const { pushAction, undo } = useActionStore()
   const { yDoc }  = useYjsStore()
   
   const [myPresence, setMyPresence] = useMyPresence()
   const othersSelection = useOthersMapped((other) => other.presence.selectedNodes)
+  const [clipboard, setClipboard] = useState<{nodes: Node[]} | null>(null)
+  const [occupiedNode, setoccupiedNode] = useState<Node[]>([])
+  // console.log(myPresence)
+  const user = useSelf()
   
   useEffect(() => {
-    if (!yDoc) return
+    if (!yDoc || !user?.id) return
     initNodes(initialNodes, [], yDoc)
+    initUserStacks(user.id, yDoc)
     
     const yNodes = yDoc.getArray<Node>('nodes')
-    
   
     const observer = (event: Y.YArrayEvent<Node>, tr: Y.Transaction) => {
       if (event.transaction.local) return
@@ -70,32 +72,54 @@ export function YjsReactFlow() {
     return () => {
       yNodes.unobserve(observer)
     }
-  }, [yDoc])
+  }, [yDoc, user])
 
-  // React Flow -> YJS 동기화
   const handleNodesChange = useCallback((changes: NodeChange[]) => {
     // 기본 React Flow 상태 업데이트
     // console.log(changes)
     onNodesChange(changes)
     
     // 위치 변경만 처리
+    // console.log(changes)
     const positionChange = changes.find(change => 
       change.type === 'position' && 'position' in change
     )
     
     if (positionChange && 'position' in positionChange && positionChange.position) {
+      // const isOccupied = othersSelection.some(([_, selection]) => 
+      //   (selection as string[])?.includes(positionChange.id)
+      // )
+
+      // if(isOccupied) return
+      // onNodesChange(changes)
       updateNodePosition(
         positionChange.id,
         positionChange.position,
         yDoc
       )
     }
-  }, [onNodesChange, updateNodePosition])
+  }, [onNodesChange, updateNodePosition, othersSelection])
 
   // 노드 선택 처리
   const handleSelectionChange = useCallback(({ nodes: selectedNodes }: { nodes: Node[] }) => {
-    const nodeIds = selectedNodes.map(node => node.id);
+    const nodeIds = selectedNodes.map(node => node.id)
+    setoccupiedNode(selectedNodes)
     setMyPresence({ selectedNodes: nodeIds })
+    // const isOccupied = (nodeId: string) => {
+    //   return othersSelection.some(([_, selection]) => 
+    //     (selection as string [])?.includes(nodeId)
+    //   )
+    // }
+    // const ableNodes = selectedNodes.filter(node => !isOccupied(node.id))
+
+    // if(ableNodes.length > 0) {
+    //   const nodeIds = ableNodes.map(node => node.id)
+    //   setoccupiedNode(ableNodes)
+    //   setMyPresence({ selectedNodes: nodeIds })
+    // } else {
+    //    setoccupiedNode([])
+    // setMyPresence({ selectedNodes: [] })
+    // }
   }, [setMyPresence])
 
   // 노드 선택시 스타일
@@ -109,6 +133,8 @@ export function YjsReactFlow() {
             return {
               border: `3px solid oklch(60.6% 0.25 292.717)`,
               borderRadius: '12px',
+              opacity: 0.5,
+              pointerEvents: 'none' as const,
             };
           }
           return {}
@@ -119,18 +145,95 @@ export function YjsReactFlow() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if(!yDoc) return
-      const currUser = useSelf()
-      if(!currUser) return
-
+      if(!yDoc || !user?.id) return
+      
       if (event.metaKey || event.ctrlKey) {
         switch(event.key) {
           case 'c':
-            // if(sel)
+            if(myPresence === null) return
+            setClipboard({ nodes: occupiedNode,})
+            break
+          
+          // case 'v':
+          //   if(!clipboard) return
+          //   const toPaste = clipboard.nodes[0]
+          //   const newNode = {
+          //     ...toPaste,
+          //     id: `${toPaste.id}-${Date.now()}`,
+          //     position: {
+          //       x: toPaste.position.x + 50,
+          //       y: toPaste.position.y + 50,
+          //     },
+          //     selected: false
+          //   }
+          //   setNodes(prev => [...prev, newNode])
+          //   setNewNodes([...nodes, newNode])
+          //   pushToUndoStack(user.id, {
+          //     type: 'add',
+          //     nodes: [newNode],
+          //     timestamp: Date.now()
+          //   }, yDoc)
+          //   break
+          
+          case 'v':
+            if(!clipboard) return
+            const toPaste = clipboard.nodes[0]
+            const newNode = {
+              ...toPaste,
+              id: `${toPaste.id}-${Date.now()}`,
+              position: {
+                x: toPaste.position.x + 50,
+                y: toPaste.position.y + 50,
+              },
+              selected: false
+            }
+            setNodes(prev => [...prev, newNode])
+            addNode(newNode, yDoc)
+            pushToUndoStack(user.id, {
+              type: 'add',
+              nodes: [newNode],
+              timestamp: Date.now()
+            }, yDoc)
+            
+            break
+          
+          // case 'x':
+          //   if(!occupiedNode) return
+          //   setNodes(nodes.filter(n => !occupiedNode.find(sn => sn.id === n.id)))
+          //   setNewNodes(nodes.filter(n => !occupiedNode.find(sn => sn.id === n.id)))
+          //   pushToUndoStack(user.id, {
+          //     type: 'remove',
+          //     nodes: occupiedNode,
+          //     timestamp: Date.now()
+          //   }, yDoc)
+          //   break
+          case 'x':
+            if(!occupiedNode) return
+            setNodes(nodes.filter(n => !occupiedNode.find(sn => sn.id === n.id)))
+            occupiedNode.forEach(node => {
+              removeNode(node.id, yDoc)
+            })
+            pushToUndoStack(user.id, {
+              type: 'remove',
+              nodes: occupiedNode,
+              timestamp: Date.now()
+            }, yDoc)
+            break
+          
+          case 'z':
+            undo(user.id, yDoc)
+            // console.log(useLiveFlowStore.getState().nodes)
+            if(useLiveFlowStore.getState().nodes.length === 0) return
+            setNodes(useLiveFlowStore.getState().nodes)
+            break
         }
       }
     }
-  })
+    window.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [occupiedNode, clipboard, nodes, yDoc, user?.id])
 
 
 
