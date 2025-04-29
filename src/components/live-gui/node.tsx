@@ -56,7 +56,7 @@ export default function ResourceNode({ data, selected=false }: NodeProps) {
       <div className="relative w-10 h-10">
         <Image
           fill
-          className="object-contain"
+          className="object-contain rounded-xs"
           alt='aws-icons'
           src={resourceIcons[data.type as keyof typeof resourceIcons]}
         />

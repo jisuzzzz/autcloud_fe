@@ -8,9 +8,9 @@ import ReactFlow, {
   EdgeChange, NodeChange, MarkerType,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
-import ResourceNode from '../gui/node'
-import ArrowEdge from '../gui/edge'
-import { useYjsStore } from './useYjsStore'
+import ResourceNode from './node'
+import ArrowEdge from './edge'
+import { useYjsStore } from '@/store/useYjsStore'
 import { useLiveFlowStore } from '@/store/liveFlowStore'
 import * as Y from 'yjs'
 import { useMyPresence, useOthersMapped, useSelf } from '@liveblocks/react'
@@ -265,8 +265,8 @@ export function YjsReactFlow() {
       connectionMode={ConnectionMode.Strict}
       proOptions={{ hideAttribution: true }}
     >
-      <Controls />
-      <MiniMap />
+      {/* <Controls />
+      <MiniMap /> */}
     </ReactFlow>
   </div>
   );

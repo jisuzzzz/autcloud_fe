@@ -1,7 +1,8 @@
-import SideBar from "@/components/custom/sidebar"
-import Header from "@/components/custom/header"
-import FlowMap from "@/components/gui/flowMap"
-import ToolBar from "@/components/gui/toolbar"
+import { Room } from "@/components/live-gui/room";
+import { YjsReactFlow } from "@/components/live-gui/yjsRflow";
+import ToolBar from "@/components/live-gui/toolBar";
+import SpecBar from "@/components/live-gui/specBar";
+import Header from "@/components/live-gui/header";
 
 export default async function ProjectIdPage({
   params
@@ -10,13 +11,11 @@ export default async function ProjectIdPage({
 }) {
   const param = await params;
   return (
-    <div className="flex min-h-screen bg-white">
-      {/* <SideBar /> */}
-      <ToolBar />
-      <div className="flex-1">
-        <Header projectId={param.projectId} />
-        <FlowMap />
-      </div>
-    </div>
+    <Room>
+      <Header projectId={param.projectId}/>
+      <ToolBar/>
+      <SpecBar />
+      <YjsReactFlow />
+    </Room>
   )
 }
