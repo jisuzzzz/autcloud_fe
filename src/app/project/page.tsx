@@ -6,8 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Plus, Upload, Folder, Search, List, LayoutGrid } from 'lucide-react';
-import SideBar from '@/components/custom/sidebar';
-import { CreateButton } from '@/components/custom/actionButtons';
+import Header from '@/components/custom/header';
 import ProjectItem from '@/components/custom/projectItem';
 import SortDropdown from '@/components/custom/sortDropdown';
 
@@ -22,6 +21,16 @@ const PROJECT_TEMPLATES = [
     name: 'project-example-2-api-test',
     description: 'project-example-2-api-test',
   },
+  {
+    id: 'aabbccdd-1234-5678-9999-example03',
+    name: 'project-example-3',
+    description: 'project-example-3-description',
+  },
+  {
+    id: 'eeffeeff-5678-4321-8888-example04',
+    name: 'project-example-4',
+    description: 'project-example-4-description',
+  },
 ];
 
 export default function ProjectPage() {
@@ -34,20 +43,8 @@ export default function ProjectPage() {
 
   return (
     <div className="flex min-h-screen bg-white">
-      <SideBar />
       <div className="flex-1">
-        <header className="flex items-center justify-between border-b px-6 py-4">
-          <div className="w-96">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-              <Input
-                type="search"
-                placeholder="Search files..."
-                className="pl-9"
-              />
-            </div>
-          </div>
-        </header>
+        <Header />
 
         <div className="p-6">
           <div className="mb-6 flex items-center justify-between">
@@ -93,21 +90,29 @@ export default function ProjectPage() {
             </div>
           </div>
 
-          <div className="mb-6">
-            <Tabs defaultValue="recent">
-              <TabsList>
-                <TabsTrigger value="recent">Recent</TabsTrigger>
-                <TabsTrigger value="starred">Starred</TabsTrigger>
-                <TabsTrigger value="shared">Shared</TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </div>
+          {viewMode === 'list' && (
+            <div
+              className="grid grid-cols-[minmax(320px,auto)_1px_repeat(5,96px)_96px_48px_48px] 
+              items-center gap-x-6 px-6 pb-2 text-sm font-medium text-gray-400"
+            >
+              <div className="pl-1">Label</div>
+              <div></div>
+              <div className="text-center">Label</div>
+              <div className="text-center">Label</div>
+              <div className="text-center">Label</div>
+              <div className="text-center">Label</div>
+              <div className="text-center">Label</div>
+              <div className="text-center">Created</div>
+              <div className="text-center">Created</div>
+              <div className="text-center">label</div>
+            </div>
+          )}
 
           <div
             className={
               viewMode === 'grid'
-                ? 'grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'
-                : 'flex flex-col gap-4'
+                ? 'grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
+                : 'flex flex-col'
             }
           >
             {PROJECT_TEMPLATES.map((project) => (
@@ -125,8 +130,6 @@ export default function ProjectPage() {
                   { name: 'Spec 4', value: 101 },
                   { name: 'Spec 5', value: 202 },
                   { name: 'Spec 6', value: 303 },
-                  { name: 'Spec 7', value: 404 },
-                  { name: 'Spec 8', value: 505 },
                 ]}
               />
             ))}
