@@ -17,11 +17,17 @@ export default function SpecBar() {
     <div className="fixed top-[60px] right-0 bg-white border-l w-[256px] h-screen z-50">
       
       <div className="flex gap-3 items-center px-4 py-3 border-b">
-        <Box size={20} />
+        <Image
+          alt="compute instance"
+          src={"/aut-block-storage.svg"}
+          width={25}
+          height={25}
+          className="rounded-xs"
+        ></Image>
         <h3 className="text-sm font-medium">Instance</h3>
       </div>
 
-      <div className="flex justify-between items-center px-4 py-3 border-b">
+      <div className="flex justify-between items-center px-4 py-2.5 border-b">
         <h3 className="text-xs text-gray-500">Stauts</h3>
         <Button
             className={cn("px-3 h-7 rounded-sm bg-yellow-500")}
@@ -39,8 +45,7 @@ export default function SpecBar() {
               src={"/flag-for-south-korea.svg"}
               width={25}
               height={25}
-            >
-            </Image>
+            ></Image>
             <p className="text-sm">icn1, Seoul</p>
           </div>
         </div>

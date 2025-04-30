@@ -14,6 +14,9 @@ import { useYjsStore } from '@/store/useYjsStore'
 import { useLiveFlowStore } from '@/store/liveFlowStore'
 import * as Y from 'yjs'
 import { useMyPresence, useOthersMapped, useSelf } from '@liveblocks/react'
+import ToolBar from './toolBar'
+import SpecBar from './specBar'
+import Header from './header'
 
 const nodeTypes = { resource: ResourceNode }
 const edgeTypes = { edge: ArrowEdge }
@@ -23,24 +26,25 @@ const initialNodes: Node[] = [
     id: '1',                         
     type: 'resource',  
     position: { x: 500, y: 300 },
-    data: { type: 'EC2' },
+    data: { type: 'Compute', isNew: false },
   },
   {
     id: '2',
     type: 'resource',
     position: { x: 400, y: 400 },
-    data: { type: 'S3' },
+    data: { type: 'ObjectStorage', isNew: false },
   },
   {
     id: '3',
     type: 'resource',
     position: { x: 600, y: 400 },
-    data: { type: 'RDS' },
+    data: { type: 'Database', isNew: false },
   },
 ]
 
 export function YjsReactFlow() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
+  // const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
+  const [nodes, setNodes, onNodesChange] = useNodesState([])
   const { updateNodePosition, initNodes, 
     pushToUndoStack, undo, initUserStacks, 
     addNode, removeNode
@@ -57,10 +61,11 @@ export function YjsReactFlow() {
   
   useEffect(() => {
     if (!yDoc || !user?.id) return
-    initNodes(initialNodes, [], yDoc)
+    const yNodes = yDoc.getArray<Node>('nodes')
+    // yNodes.delete(0, yNodes.length)
+    initNodes([], [], yDoc)
     initUserStacks(user.id, yDoc)
     
-    const yNodes = yDoc.getArray<Node>('nodes')
   
     const observer = (event: Y.YArrayEvent<Node>, tr: Y.Transaction) => {
       if (event.transaction.local) return
@@ -75,23 +80,13 @@ export function YjsReactFlow() {
   }, [yDoc, user])
 
   const handleNodesChange = useCallback((changes: NodeChange[]) => {
-    // 기본 React Flow 상태 업데이트
-    // console.log(changes)
+
     onNodesChange(changes)
-    
-    // 위치 변경만 처리
-    // console.log(changes)
     const positionChange = changes.find(change => 
       change.type === 'position' && 'position' in change
     )
     
     if (positionChange && 'position' in positionChange && positionChange.position) {
-      // const isOccupied = othersSelection.some(([_, selection]) => 
-      //   (selection as string[])?.includes(positionChange.id)
-      // )
-
-      // if(isOccupied) return
-      // onNodesChange(changes)
       updateNodePosition(
         positionChange.id,
         positionChange.position,
@@ -105,20 +100,6 @@ export function YjsReactFlow() {
     const nodeIds = selectedNodes.map(node => node.id)
     setoccupiedNode(selectedNodes)
     setMyPresence({ selectedNodes: nodeIds })
-    // const isOccupied = (nodeId: string) => {
-    //   return othersSelection.some(([_, selection]) => 
-    //     (selection as string [])?.includes(nodeId)
-    //   )
-    // }
-    // const ableNodes = selectedNodes.filter(node => !isOccupied(node.id))
-
-    // if(ableNodes.length > 0) {
-    //   const nodeIds = ableNodes.map(node => node.id)
-    //   setoccupiedNode(ableNodes)
-    //   setMyPresence({ selectedNodes: nodeIds })
-    // } else {
-    //    setoccupiedNode([])
-    // setMyPresence({ selectedNodes: [] })
     // }
   }, [setMyPresence])
 
@@ -154,27 +135,6 @@ export function YjsReactFlow() {
             setClipboard({ nodes: occupiedNode,})
             break
           
-          // case 'v':
-          //   if(!clipboard) return
-          //   const toPaste = clipboard.nodes[0]
-          //   const newNode = {
-          //     ...toPaste,
-          //     id: `${toPaste.id}-${Date.now()}`,
-          //     position: {
-          //       x: toPaste.position.x + 50,
-          //       y: toPaste.position.y + 50,
-          //     },
-          //     selected: false
-          //   }
-          //   setNodes(prev => [...prev, newNode])
-          //   setNewNodes([...nodes, newNode])
-          //   pushToUndoStack(user.id, {
-          //     type: 'add',
-          //     nodes: [newNode],
-          //     timestamp: Date.now()
-          //   }, yDoc)
-          //   break
-          
           case 'v':
             if(!clipboard) return
             const toPaste = clipboard.nodes[0]
@@ -185,6 +145,10 @@ export function YjsReactFlow() {
                 x: toPaste.position.x + 50,
                 y: toPaste.position.y + 50,
               },
+              data: { 
+                type: toPaste.data.type,
+                isNew: true
+              },
               selected: false
             }
             setNodes(prev => [...prev, newNode])
@@ -194,19 +158,8 @@ export function YjsReactFlow() {
               nodes: [newNode],
               timestamp: Date.now()
             }, yDoc)
-            
             break
-          
-          // case 'x':
-          //   if(!occupiedNode) return
-          //   setNodes(nodes.filter(n => !occupiedNode.find(sn => sn.id === n.id)))
-          //   setNewNodes(nodes.filter(n => !occupiedNode.find(sn => sn.id === n.id)))
-          //   pushToUndoStack(user.id, {
-          //     type: 'remove',
-          //     nodes: occupiedNode,
-          //     timestamp: Date.now()
-          //   }, yDoc)
-          //   break
+
           case 'x':
             if(!occupiedNode) return
             setNodes(nodes.filter(n => !occupiedNode.find(sn => sn.id === n.id)))
@@ -239,7 +192,7 @@ export function YjsReactFlow() {
 
 
   return (
-    <div className="h-[calc(100vh-64px)] w-full">
+    <div className="h-[calc(100vh)] w-full">
       <div className="absolute top-22 right-4 z-10">
       {/* <div className="flex gap-2">
         {connectedUsers.map((user) => (
@@ -253,9 +206,10 @@ export function YjsReactFlow() {
         ))}
       </div> */}
     </div>
-
+    <Header projectId={"9cd47912-c94a-451f-a1a2-ec5b2097c461"} setNodes={setNodes}/>
+    <ToolBar userId={user?.id} setNodes={setNodes}/>
+    <SpecBar />
     <ReactFlow
-      // nodes={nodes}
       nodes={nodesWithStyles}
       onSelectionChange={handleSelectionChange}
       onNodesChange={handleNodesChange}
@@ -265,8 +219,6 @@ export function YjsReactFlow() {
       connectionMode={ConnectionMode.Strict}
       proOptions={{ hideAttribution: true }}
     >
-      {/* <Controls />
-      <MiniMap /> */}
     </ReactFlow>
   </div>
   );

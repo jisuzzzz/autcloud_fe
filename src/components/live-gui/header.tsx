@@ -4,12 +4,30 @@ import { cn } from "@/lib/utils"
 import { useState } from "react"
 import ShareModal from "../custom/shareModal"
 import Image from "next/image"
+import { Node } from "reactflow"
 
-export default function Header({projectId}:{projectId:string}) {
+interface HeaderProps {
+  projectId: string
+  setNodes: (updater: (prev: Node[]) => Node[]) => void
+}
+
+export default function Header({ projectId, setNodes }: HeaderProps) {
   const [isModalOpen, setIsModalOepn] = useState(false)
 
   const handleOpenModal = () => setIsModalOepn(true)
   const handleCloseModal = () => setIsModalOepn(false)
+
+  const handleClickPuhblish = () => {
+    setNodes((prev: Node[]) => 
+      prev.map(node => ({
+        ...node,
+        data: {
+          ...node.data,
+          isNew: false
+        }
+      }))
+    )
+  }
 
   return (
     <header className="fixed z-50">
@@ -51,12 +69,13 @@ export default function Header({projectId}:{projectId:string}) {
             </Image>
           </div>
           <Button
-            className={cn("px-3 rounded-sm h-9 bg-gray-300")}
+            className={cn("px-3 rounded-sm h-9 bg-[#E9E9E9]")}
             onClick={handleOpenModal}
           >
             <p className="text-black font-normal">Share</p>
           </Button>
           <Button
+            onClick={handleClickPuhblish}
             className={cn("px-3 rounded-sm h-9 bg-[#7768E6]")}
           >
             Publish

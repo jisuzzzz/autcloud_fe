@@ -66,28 +66,6 @@ export const useLiveFlowStore = create<FlowMapState>((set, get) => ({
     })
   },
 
-  // // 노드 배열 설정 함수 - 단방향 데이터 흐름: Y.js → Zustand → React Flow
-  // setNewNodes: (nodes) => {
-  //   const { yNodes } = get() // 현재 Y.js 노드 배열 가져오기
-  //   if (yNodes) { // Y.js가 초기화되었는지 확인
-  //     yNodes.delete(0, yNodes.length) // 기존 노드 배열 전체 삭제
-  //     yNodes.insert(0, nodes) // 새 노드 배열 삽입
-  //   }
-  //   set({ nodes }) // Zustand 상태 업데이트
-  // },
-
-  // // 엣지 배열 설정 함수 - 함수형 업데이트 지원
-  // setEdges: (edges) => {
-  //   const { yEdges } = get() // 현재 Y.js 엣지 배열 가져오기
-  //   // 함수형 업데이트의 경우 현재 상태를 인자로 전달하여 새 상태 계산
-  //   const newEdges = typeof edges === 'function' ? edges(get().edges) : edges
-  //   if (yEdges) { // Y.js가 초기화되었는지 확인
-  //     yEdges.delete(0, yEdges.length) // 기존 엣지 배열 전체 삭제
-  //     yEdges.insert(0, newEdges) // 새 엣지 배열 삽입
-  //   }
-  //   set({ edges: newEdges }) // Zustand 상태 업데이트
-  // },
-
   updateNodePosition: (nodeId, point, yDoc) => {
     if (!yDoc) return
     const yNodes = yDoc.getArray<Node>('nodes')
@@ -167,54 +145,6 @@ export const useLiveFlowStore = create<FlowMapState>((set, get) => ({
     })
   },
 
-  // undo: (userId: string, yDoc) => {
-  //   const { userStacks, nodes, setNewNodes } = get()
-    
-  //   console.log(nodes)
-  //   if (!yDoc || !userStacks) return // 필요한 객체가 없으면 undo를 수행할 수 없음
-  //   // Y.js 트랜잭션으로 실행
-  //   const userStack = userStacks?.get(userId)
-  //   // 해당 사용자의 스택이 없거나 비어있으면 취소할 작업이 없음
-  //   if (!userStack || userStack.undoStack.length === 0) return
-  //   const yNodes = yDoc.getArray<Node>('nodes')
-  //   // 스택에서 가장 최근 작업을 꺼냄
-  //   const action = userStack.undoStack.pop()!
-  //   // console.log(action)
-
-  //   // 작업 타입에 따라 다른 취소 동작 수행
-  //   switch (action.type) {
-  //     case 'add':
-  //       // 노드 추가 작업 취소: 추가했던 노드들을 제거
-  //       if (action.nodes) {
-  //         // setNewNodes(nodes.filter(n => 
-  //         //   !action.nodes?.find(an => an.id === n.id) // 추가했던 노드들을 현재 노드 목록에서 필터링
-  //         // ))
-  //         yDoc.transact(() => {
-  //           const currentNodes = yNodes.toArray()
-  //           const filteredNodes = currentNodes.filter(n => 
-  //             !action.nodes?.find(an => an.id === n.id)
-  //           )
-  //           yNodes.delete(0, yNodes.length)
-  //           yNodes.insert(0, filteredNodes)
-  //         })
-  //       }
-  //       break
-  //     case 'remove':
-  //       // 노드 제거 작업 취소: 제거했던 노드들을 복원
-  //       if (action.nodes) {
-  //         // setNewNodes([...nodes, ...action.nodes]) // 현재 노드 목록에 제거했던 노드들을 다시 추가
-  //         yDoc.transact(() => {
-  //           const currentNodes = yNodes.toArray()
-  //           yNodes.delete(0, yNodes.length)
-  //           yNodes.insert(0, [...currentNodes, ...action.nodes])
-  //         })
-  //       }
-  //       break
-  //   }
-  //   // 변경된 스택을 다시 저장
-  //   // 작업을 꺼낸 후의 스택 상태를 유지하기 위해 필요
-  //   userStacks.set(userId, userStack)
-  // },
   undo: (userId: string, yDoc) => {
     const { userStacks } = get()
     if (!yDoc || !userStacks) return

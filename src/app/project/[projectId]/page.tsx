@@ -12,9 +12,9 @@ export default async function ProjectIdPage({
   const param = await params;
   return (
     <Room>
-      <Header projectId={param.projectId}/>
-      <ToolBar/>
-      <SpecBar />
+      {/* <Header projectId={param.projectId}/> */}
+      {/* <ToolBar/> */}
+      {/* <SpecBar /> */}
       <YjsReactFlow />
     </Room>
   )

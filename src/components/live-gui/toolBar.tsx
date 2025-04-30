@@ -7,9 +7,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { useLiveFlowStore } from "@/store/liveFlowStore"
+import { useYjsStore } from "@/store/useYjsStore"
+import { Node } from 'reactflow'
 
 interface Resource {
-  type: 'EC2' | 'S3' | 'RDS' | 'ClOUDFRONT' | 'WAF'
+  type: 'Compute' | 'BlockStorage' | 'Database' | 'ObjectStorage' | 'FireWall'
   label: string
   icon: string
 }
@@ -21,21 +24,31 @@ interface SubItem {
 interface TemplateItem {
   value: string
   label: string
+  img: string
   items: SubItem[]
 }
 
+interface ToolBarProps {
+  userId: string | undefined
+  // setNodes는 함수를 받음
+  // 그 함수는 이전 상태(prev: Node[])를 매개변수로 받고
+  // 새로운 상태(Node[])를 반환
+  setNodes: (updater: (prev: Node[]) => Node[]) => void 
+}
+
 const resources: Resource[] = [
-  { type: 'EC2', label: 'EC2', icon: '/logos_aws-ec2.svg' },
-  { type: 'S3', label: 'S3', icon: '/logos_aws-s3.svg' },
-  { type: 'RDS', label: 'RDS', icon: '/logos_aws-rds.svg' },
-  { type: 'ClOUDFRONT', label: 'CloudFront', icon: '/logos_aws-cloudfront.svg' },
-  { type: 'WAF', label: 'WAF', icon: '/logos_aws-waf.svg' },
+  { type: 'Compute', label: 'Compute', icon: '/aut-compute.svg' },
+  { type: 'Database', label: 'Database', icon: '/aut-database.svg' },
+  { type: 'BlockStorage', label: 'BlockStorage', icon: '/aut-block-storage.svg' },
+  { type: 'ObjectStorage', label: 'ObjectStorage', icon: '/aut-obj-storage.svg' },
+  { type: 'FireWall', label: 'Firewall', icon: '/aut-firewall.svg' },
 ]
 
 const templates: TemplateItem[] = [
   {
     value: "templates1",
     label: "Templates-1",
+    img: "/object-storage.svg",
     items: [
       { label: "temp-1-1" },
       { label: "temp-1-2" }
@@ -44,6 +57,7 @@ const templates: TemplateItem[] = [
   {
     value: "templates2",
     label: "Templates-2",
+    img: "/compute.svg",
     items: [
       { label: "temp-2-1" },
       { label: "temp-2-2" }
@@ -52,6 +66,7 @@ const templates: TemplateItem[] = [
   {
     value: "templates3",
     label: "Templates-3",
+    img: "/databases.svg",
     items: [
       { label: "temp-3-1" },
       { label: "temp-3-2" }
@@ -73,7 +88,12 @@ function TemplateAccordion({ item }: { item: TemplateItem }) {
     <AccordionItem value={item.value} className="border-none">
       <div className="flex justify-between items-center">
         <div className="flex gap-2 items-center">
-          <Boxes size={20} />
+          <Image
+            alt=""
+            width={18}
+            height={18}
+            src={item.img}
+          ></Image>
           <p className="text-sm">{item.label}</p>
         </div>
         <AccordionTrigger />
@@ -93,11 +113,39 @@ function TemplateAccordion({ item }: { item: TemplateItem }) {
   )
 }
 
-export default function ToolBar() {
+export default function ToolBar({ userId, setNodes }: ToolBarProps) {
+  const { addNode, pushToUndoStack } = useLiveFlowStore()
+  const { yDoc } = useYjsStore()
+
+  const handleResourceClick = (resource: Resource) => {
+    if(!userId || !yDoc) return
+
+    const centerPosition = {
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2,
+    };
+
+    const newNode: Node = {
+      id: `${resource.type}-${Date.now()}`,
+      type: 'resource',
+      position: centerPosition,
+      data: { 
+        type: resource.type,
+        isNew: true
+      },
+    }
+    setNodes((prev: Node[]) => [...prev, newNode])
+    addNode(newNode, yDoc)
+    pushToUndoStack(userId, {
+      type: 'add',
+      nodes: [newNode],
+      timestamp: Date.now(),
+    }, yDoc)
+  }
   return (
     <div className="fixed top-[60px] left-0 bg-white border-r w-[256px] h-screen z-50">
       
-      <div className="flex justify-between items-center px-4 py-3 border-b">
+      <div className="flex justify-between items-center px-4 py-[14px] border-b">
         <h3 className="text-sm font-medium">Objects</h3>
         <Search size={18} />
       </div>
@@ -106,10 +154,10 @@ export default function ToolBar() {
         {resources.map((resource) => (
           <div
             key={resource.type}
-            
+            onClick={() => handleResourceClick(resource)}
             className="flex items-center gap-3 px-3 py-2 hover:bg-gray-100 rounded cursor-pointer"
           >
-            <div className="w-6 h-6 relative">
+            <div className="w-[25px] h-[25px] relative">
               <Image
                 src={resource.icon}
                 alt={resource.type}
