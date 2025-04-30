@@ -3,9 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Upload, Folder, Search, List, LayoutGrid } from 'lucide-react';
+import { Plus, List, LayoutGrid } from 'lucide-react';
 import Header from '@/components/custom/header';
 import ProjectItem from '@/components/custom/projectItem';
 import SortDropdown from '@/components/custom/sortDropdown';
@@ -47,25 +46,29 @@ export default function ProjectPage() {
         <Header />
 
         <div className="p-6">
-          <div className="mb-6 flex items-center justify-between">
-            <div className="flex gap-4">
-              <Button
-                onClick={handleCreateClick}
-                className="h-9 px-4 bg-black text-white hover:bg-gray-900"
-              >
-                <Plus size={16} />
-                Create project
-              </Button>
-              <Button variant="outline">
-                <Upload size={16} />
-                Upload
-              </Button>
-              <Button variant="outline">
-                <Folder size={16} />
-                Create folder
-              </Button>
-            </div>
+          {/* 제목 + 생성 버튼 */}
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-medium">Project</h2>
+            <Button
+              onClick={handleCreateClick}
+              className="h-9 px-4 bg-black text-white hover:bg-gray-700"
+            >
+              <Plus size={16} className="mr-1" />
+              Create project
+            </Button>
+          </div>
 
+          <div className="mt-6 mb-6 flex items-center justify-between">
+            {/* 탭 */}
+            <Tabs defaultValue="recent">
+              <TabsList>
+                <TabsTrigger value="recent">Recent</TabsTrigger>
+                <TabsTrigger value="starred">Activate</TabsTrigger>
+                <TabsTrigger value="shared">Completed</TabsTrigger>
+              </TabsList>
+            </Tabs>
+
+            {/* 정렬 및 보기 모드 */}
             <div className="flex items-center gap-2">
               <SortDropdown />
               <button
@@ -77,7 +80,6 @@ export default function ProjectPage() {
               >
                 <List size={20} />
               </button>
-
               <button
                 onClick={() => setViewMode('grid')}
                 className={`p-1 rounded-md hover:bg-gray-100 transition ${
@@ -90,11 +92,9 @@ export default function ProjectPage() {
             </div>
           </div>
 
+          {/* 리스트 헤더 */}
           {viewMode === 'list' && (
-            <div
-              className="grid grid-cols-[minmax(320px,auto)_1px_repeat(5,96px)_96px_48px_48px] 
-              items-center gap-x-6 px-6 pb-2 text-sm font-medium text-gray-400"
-            >
+            <div className="mt-4 grid grid-cols-[minmax(320px,auto)_1px_repeat(5,96px)_96px_48px_48px] items-center gap-x-6 px-6 pb-2 text-sm font-medium text-gray-400">
               <div className="pl-1">Label</div>
               <div></div>
               <div className="text-center">Label</div>
@@ -108,12 +108,13 @@ export default function ProjectPage() {
             </div>
           )}
 
+          {/* 프로젝트 목록 */}
           <div
-            className={
+            className={`mt-4 ${
               viewMode === 'grid'
                 ? 'grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'
                 : 'flex flex-col'
-            }
+            }`}
           >
             {PROJECT_TEMPLATES.map((project) => (
               <ProjectItem
