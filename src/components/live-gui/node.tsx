@@ -33,7 +33,7 @@ export default function ResourceNode({ id, data, selected=false }: NodeProps) {
     <>
       <div className={`
         w-15 h-15 bg-white p-2
-        ${selected ? 'ring-3' : ''}
+        ${selected ? 'ring-2' : ''}
         ${!data.isConfirm ? 'shadow-[0_0_15px_rgba(34,197,94,0.7)]' : ''}
         ${isOccupiedByOthers ? 'opacity-70 cursor-not-allowed' : ''}
         flex flex-col items-center justify-center`}

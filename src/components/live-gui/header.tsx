@@ -10,6 +10,7 @@ import Avatar from "./avator"
 
 interface HeaderProps {
   projectId: string
+  projectName: string
   setNodes: (updater: (prev: Node[]) => Node[]) => void
 }
 
@@ -41,7 +42,7 @@ const Avatars = React.memo(function Avatars() {
   )
 })
 
-export default function Header({ projectId, setNodes }: HeaderProps) {
+export default function Header({ projectId, projectName, setNodes }: HeaderProps) {
   const [isModalOpen, setIsModalOepn] = useState(false)
 
   const handleOpenModal = () => setIsModalOepn(true)
@@ -61,14 +62,14 @@ export default function Header({ projectId, setNodes }: HeaderProps) {
 
   return (
     <header className="fixed z-50">
-      <div className="flex items-center justify-between w-screen h-[60px] border-b px-6 py-4">
+      <div className="flex items-center justify-between bg-white w-screen h-[55px] border-b px-6 py-4">
         
         <div className="flex gap-6 items-center">
           <h1 className="text-xl font-bold">AutCloud</h1>
           <div className="flex gap-4">
             <p className="text-gray-500">{"Project"}</p>
             <p>/</p>
-            <p>{"project_name"}</p>
+            <p>{projectName}</p>
           </div>
         </div>
 

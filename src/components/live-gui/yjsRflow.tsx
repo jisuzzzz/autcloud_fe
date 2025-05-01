@@ -9,17 +9,18 @@ import ReactFlow, {
 import 'reactflow/dist/style.css'
 import ResourceNode from './node'
 import ArrowEdge from './edge'
-import { useYjsStore } from '@/store/useYjsStore'
-import { useLiveFlowStore } from '@/store/liveFlowStore'
+import { useYjsStore } from '@/lib/useYjsStore'
 import * as Y from 'yjs'
 import { useMyPresence, useSelf } from '@liveblocks/react'
 import ToolBar from './toolBar'
 import SpecBar from './specBar'
 import Header from './header'
 import { ResourceConfig } from '@/lib/projectDB'
+import { ProjectTemplate } from '@/lib/projectDB'
+import { LiveFlowService } from '@/services/liveflow'
 
 interface YjsReactFlowProps {
-  initial_resources: ResourceConfig[] | []
+  project: ProjectTemplate  
 }
 
 const nodeTypes = { resource: ResourceNode }
@@ -39,14 +40,11 @@ const convertToNodes = (resources: ResourceConfig[]): Node[] => {
   }))
 }
 
-export function YjsReactFlow({ initial_resources }: YjsReactFlowProps) {
+export function YjsReactFlow({ project }: YjsReactFlowProps) {
+  const { initial_resources, name, id, description } = project
   // useMemo -> return data를 메모이제이션
   const initialNodes = useMemo(() => convertToNodes(initial_resources), [initial_resources]);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
-  const { updateNodePosition, initNodes, 
-    pushToUndoStack, undo, initUserStacks, 
-    addNode, removeNode
-  } = useLiveFlowStore()
   
   const { yDoc }  = useYjsStore()
   const [myPresence, setMyPresence] = useMyPresence()
@@ -60,8 +58,8 @@ export function YjsReactFlow({ initial_resources }: YjsReactFlowProps) {
     if (!yDoc || !user?.id) return
     const yNodes = yDoc.getArray<Node>('nodes')
     // yNodes.delete(0, yNodes.length)
-    initNodes(initialNodes, [], yDoc)
-    initUserStacks(user.id, yDoc)
+    LiveFlowService.initNodes(initialNodes, [], yDoc)
+    LiveFlowService.initUserActionHistory(user.id, yDoc)
     
   
     const observer = (event: Y.YArrayEvent<Node>, tr: Y.Transaction) => {
@@ -84,13 +82,13 @@ export function YjsReactFlow({ initial_resources }: YjsReactFlowProps) {
     )
     
     if (positionChange && 'position' in positionChange && positionChange.position) {
-      updateNodePosition(
+      LiveFlowService.updateNodePosition(
         positionChange.id,
         positionChange.position,
         yDoc
       )
     }
-  }, [onNodesChange, updateNodePosition])
+  }, [onNodesChange, LiveFlowService.updateNodePosition])
 
   // 노드 선택 처리
   const handleSelectionChange = useCallback(({ nodes: selectedNodes }: { nodes: Node[] }) => {
@@ -127,8 +125,8 @@ export function YjsReactFlow({ initial_resources }: YjsReactFlowProps) {
               selected: false
             }
             setNodes(prev => [...prev, newNode])
-            addNode(newNode, yDoc)
-            pushToUndoStack(user.id, {
+            LiveFlowService.addNode(newNode, yDoc)
+            LiveFlowService.pushToUndoStack(user.id, {
               type: 'add',
               nodes: [newNode],
               timestamp: Date.now()
@@ -139,9 +137,9 @@ export function YjsReactFlow({ initial_resources }: YjsReactFlowProps) {
             if(!occupiedNode) return
             setNodes(nodes.filter(n => !occupiedNode.find(sn => sn.id === n.id)))
             occupiedNode.forEach(node => {
-              removeNode(node.id, yDoc)
+              LiveFlowService.removeNode(node.id, yDoc)
             })
-            pushToUndoStack(user.id, {
+            LiveFlowService.pushToUndoStack(user.id, {
               type: 'remove',
               nodes: occupiedNode,
               timestamp: Date.now()
@@ -149,10 +147,10 @@ export function YjsReactFlow({ initial_resources }: YjsReactFlowProps) {
             break
           
           case 'z':
-            undo(user.id, yDoc)
+            const undoNodes = LiveFlowService.undo(user.id, yDoc)
             // console.log(useLiveFlowStore.getState().nodes)
-            if(useLiveFlowStore.getState().nodes.length === 0) return
-            setNodes(useLiveFlowStore.getState().nodes)
+            if(!undoNodes) return
+            setNodes(undoNodes)
             break
         }
       }
@@ -168,9 +166,13 @@ export function YjsReactFlow({ initial_resources }: YjsReactFlowProps) {
 
   return (
     <div className="h-[calc(100vh)] w-full">
-      <Header projectId={"9cd47912-c94a-451f-a1a2-ec5b2097c461"} setNodes={setNodes}/>
+      <Header 
+        projectId={id}
+        projectName={name} 
+        setNodes={setNodes}
+      />
       <ToolBar userId={user?.id} setNodes={setNodes}/>
-      <SpecBar />
+      <SpecBar project={project}/>
       <ReactFlow
         nodes={nodes}
         onSelectionChange={handleSelectionChange}

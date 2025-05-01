@@ -7,8 +7,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { useLiveFlowStore } from "@/store/liveFlowStore"
-import { useYjsStore } from "@/store/useYjsStore"
+import { LiveFlowService } from "@/services/liveflow"
+import { useYjsStore } from "@/lib/useYjsStore"
 import { Node } from 'reactflow'
 
 interface Resource {
@@ -114,7 +114,7 @@ function TemplateAccordion({ item }: { item: TemplateItem }) {
 }
 
 export default function ToolBar({ userId, setNodes }: ToolBarProps) {
-  const { addNode, pushToUndoStack } = useLiveFlowStore()
+  
   const { yDoc } = useYjsStore()
 
   const handleResourceClick = (resource: Resource) => {
@@ -135,15 +135,15 @@ export default function ToolBar({ userId, setNodes }: ToolBarProps) {
       },
     }
     setNodes((prev: Node[]) => [...prev, newNode])
-    addNode(newNode, yDoc)
-    pushToUndoStack(userId, {
+    LiveFlowService.addNode(newNode, yDoc)
+    LiveFlowService.pushToUndoStack(userId, {
       type: 'add',
       nodes: [newNode],
       timestamp: Date.now(),
     }, yDoc)
   }
   return (
-    <div className="fixed top-[60px] left-0 bg-white border-r w-[256px] h-screen z-50">
+    <div className="md:block hidden fixed top-[55px] left-0 bg-white border-r w-[256px] h-screen z-50">
       
       <div className="flex justify-between items-center px-4 py-[14px] border-b">
         <h3 className="text-sm font-medium">Objects</h3>

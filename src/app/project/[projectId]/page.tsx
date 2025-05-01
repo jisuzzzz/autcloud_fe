@@ -12,7 +12,14 @@ export default async function ProjectIdPage({
   // console.log(project)
   return (
     <Room projectId={param.projectId}>
-      <YjsReactFlow initial_resources={project?.initial_resources || []} />
+      <YjsReactFlow 
+        project={project || {
+          id: param.projectId,
+          name: "project_name",
+          description: "project_description",
+          initial_resources: []
+        }}
+      />
     </Room>
   )
 }

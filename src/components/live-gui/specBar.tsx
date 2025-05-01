@@ -1,10 +1,19 @@
 'use client'
-import Image from "next/image"
-import { Box, Copy } from "lucide-react"
-import { Button } from "../ui/button"
 import { cn } from "@/lib/utils"
+import ComputeSpec from "./specs/compute"
+import DatabaseSpec from "./specs/database"
+import BlockStorageSpec from "./specs/block-storage"
+import ObjectStorageSpec from "./specs/object-storage"
+import FirewallSpec from "./specs/firewall"
+import { ProjectTemplate, ResourceConfig } from "@/lib/projectDB"
+import { useState, useEffect } from "react"
+import { useSelf } from "@liveblocks/react"
 
-function InfoIcon({ label }: { label: string }) {
+interface SpecBarProps {
+  project: ProjectTemplate
+}
+
+export function InfoIcon({ label }: { label: string }) {
   return (
     <div className="rounded-full bg-gray-400 w-4 h-4 flex items-center justify-center">
       <p className="text-white text-sm">{label}</p>
@@ -12,92 +21,55 @@ function InfoIcon({ label }: { label: string }) {
   )
 }
 
-export default function SpecBar() {
+export function InfoItem({ label, children, icon }: { 
+    label: string, children: React.ReactNode, icon?: React.ReactNode
+  }) {
   return (
-    <div className="fixed top-[60px] right-0 bg-white border-l w-[256px] h-screen z-40">
-      
-      <div className="flex gap-3 items-center px-4 py-3 border-b">
-        <Image
-          alt="compute instance"
-          src={"/aut-block-storage.svg"}
-          width={25}
-          height={25}
-          className="rounded-xs"
-        ></Image>
-        <h3 className="text-sm font-medium">Instance</h3>
+    <div className="space-y-2">
+      <h3 className="text-xs text-gray-500">{label}</h3>
+      <div className="flex items-center gap-2">
+        {/* children이 문자열이면 p태그로 감싸서, 아니면 JSX 그대로 */}
+        {typeof children === 'string' ? <p className="text-sm">{children}</p> : children}
+        {icon}
       </div>
-
-      <div className="flex justify-between items-center px-4 py-2.5 border-b">
-        <h3 className="text-xs text-gray-500">Stauts</h3>
-        <Button
-            className={cn("px-3 h-7 rounded-sm bg-yellow-500")}
-          >
-            status
-        </Button>
-      </div>
-
-      <div className="flex flex-col space-y-4 px-4 py-4 border-b">
-        <div className="space-y-2">
-          <h3 className="text-xs text-gray-500">Location</h3>
-          <div className="flex items-center gap-3">
-            <Image
-              alt="region"
-              src={"/flag-for-south-korea.svg"}
-              width={25}
-              height={25}
-            ></Image>
-            <p className="text-sm">icn1, Seoul</p>
-          </div>
-        </div>
-        <div className="space-y-2">
-          <h3 className="text-xs text-gray-500">IP Adress</h3>
-          <div className="flex justify-between items-center">
-            <p className="text-sm">64.176.217.21</p>
-            <Copy size={18} className="text-gray-500"/>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex flex-col space-y-4 px-4 py-4 border-b">
-        <div className="space-y-2">
-          <h3 className="text-xs text-gray-500">vCPU/s</h3>
-          <p className="text-sm">1 vCPU</p>
-        </div>
-        <div className="space-y-2">
-          <h3 className="text-xs text-gray-500">RAM</h3>
-          <p className="text-sm">1024.00MB</p>
-        </div>
-        <div className="space-y-2">
-          <h3 className="text-xs text-gray-500">Storage</h3>
-          <p className="text-sm">25 GB SSD</p>
-        </div>
-        <div className="space-y-2">
-          <h3 className="text-xs text-gray-500">Bandwidht</h3>
-          <div className="flex items-center gap-3">
-            <p className="text-sm text-[#8171E8]">0.34 GB</p>
-            <InfoIcon label="?"/>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex flex-col space-y-4 px-4 py-4 border-b">
-        <div className="space-y-2">
-          <h3 className="text-xs text-gray-500">Label</h3>
-          <p className="text-sm text-[#8171E8]">autcloud_be</p>
-        </div>
-        <div className="space-y-2">
-          <h3 className="text-xs text-gray-500">OS</h3>
-          <p className="text-sm">Ubuntu 22.04 x64</p>
-        </div>
-        <div className="space-y-2">
-          <h3 className="text-xs text-gray-500">Auto Backups</h3>
-          <div className="flex items-center gap-3">
-            <p className="text-sm text-red-600">Not Enabled</p>
-            <InfoIcon label="!"/>
-          </div>
-        </div>
-      </div>
-      
     </div>
+  )
+}
+
+export function SpecSection({ children, className="" }:{
+  children: React.ReactNode, className?: string
+}) {
+  return (
+    <div className={cn("flex flex-col space-y-4 px-4 py-4 border-b", className)}>
+      {children}
+    </div>
+  )
+}
+
+export default function SpecBar({project}: SpecBarProps) {
+  const [selectedResource, setSelectedResource]  = useState<ResourceConfig | null>(null)
+  const me = useSelf()
+
+  useEffect(() => {
+    // 유저가 처음 선택한 노드 id
+    const selectedNodeId = (me?.presence.selectedNodes as string[])?.[0]
+    if(selectedNodeId && project.initial_resources) {
+      const resource = project.initial_resources.find(r => r.id === selectedNodeId)
+      setSelectedResource(resource || null)
+    } else {
+      setSelectedResource(null)
+    }
+  }, [me?.presence.selectedNodes, project.initial_resources])
+
+  return (
+    selectedResource ? (
+      <div className="md:block hidden fixed top-[55px] right-0 bg-white border-l w-[256px] h-screen z-40">
+        {selectedResource.type === 'Compute' && <ComputeSpec />}
+        {selectedResource.type === 'Database' && <DatabaseSpec />}
+        {selectedResource.type === 'BlockStorage' && <BlockStorageSpec />}
+        {selectedResource.type === 'ObjectStorage' && <ObjectStorageSpec />}
+        {selectedResource.type === 'FireWall' && <FirewallSpec />}
+      </div>
+    ) : null
   )
 }
