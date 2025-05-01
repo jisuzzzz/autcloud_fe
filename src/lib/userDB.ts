@@ -1,69 +1,70 @@
-const USER_INFO: { id: string; info: any }[] = [
+// liveblocks useSelf() hook result
+// {
+//   "connectionId": 3,
+//   "id": "mislav.abha@example.com",
+//   "info": {
+//       "name": "Mislav",
+//       "color": "#F08385",
+//       "avatar": "https://liveblocks.io/avatars/avatar-2.png"
+//   },
+//   "presence": {
+//       "__yjs_clientid": 2344943196,
+//       "selectedNodes": []
+//   },
+//   "canWrite": true,
+//   "canComment": true
+// }
+
+const USER_INFO: {
+  id: string, verified: boolean,
+  info: any
+}[] = [
   {
     id: "charlie.layne@example.com",
     info: {
-      name: "Charlie Layne",
+      name: "Charlie",
       color: "#D583F0",
       avatar: "https://liveblocks.io/avatars/avatar-1.png",
     },
+    verified: true,
   },
   {
     id: "mislav.abha@example.com",
     info: {
-      name: "Mislav Abha",
+      name: "Mislav",
       color: "#F08385",
       avatar: "https://liveblocks.io/avatars/avatar-2.png",
     },
+    verified: true,
   },
   {
     id: "tatum.paolo@example.com",
     info: {
-      name: "Tatum Paolo",
+      name: "Tatum",
       color: "#F0D885",
       avatar: "https://liveblocks.io/avatars/avatar-3.png",
     },
+    verified: true,
   },
   {
     id: "anjali.wanda@example.com",
     info: {
-      name: "Anjali Wanda",
+      name: "Anjali",
       color: "#85EED6",
       avatar: "https://liveblocks.io/avatars/avatar-4.png",
     },
+    verified: false,
   },
   {
     id: "jody.hekla@example.com",
     info: {
-      name: "Jody Hekla",
+      name: "Jody",
       color: "#85BBF0",
       avatar: "https://liveblocks.io/avatars/avatar-5.png",
     },
+    verified: true,
   },
-  {
-    id: "emil.joyce@example.com",
-    info: {
-      name: "Emil Joyce",
-      color: "#8594F0",
-      avatar: "https://liveblocks.io/avatars/avatar-6.png",
-    },
-  },
-  {
-    id: "jory.quispe@example.com",
-    info: {
-      name: "Jory Quispe",
-      color: "#85DBF0",
-      avatar: "https://liveblocks.io/avatars/avatar-7.png",
-    },
-  },
-  {
-    id: "quinn.elton@example.com",
-    info: {
-      name: "Quinn Elton",
-      color: "#87EE85",
-      avatar: "https://liveblocks.io/avatars/avatar-8.png",
-    },
-  },
-];
+]
 
 export function getRandomUser() {
   return USER_INFO[Math.floor(Math.random() * 10) % USER_INFO.length];

@@ -1,8 +1,6 @@
 import { Room } from "@/components/live-gui/room";
 import { YjsReactFlow } from "@/components/live-gui/yjsRflow";
-import ToolBar from "@/components/live-gui/toolBar";
-import SpecBar from "@/components/live-gui/specBar";
-import Header from "@/components/live-gui/header";
+import { getProjectById } from "@/lib/projectDB";
 
 export default async function ProjectIdPage({
   params
@@ -10,12 +8,11 @@ export default async function ProjectIdPage({
   params: Promise<{ projectId: string }>
 }) {
   const param = await params;
+  const project = getProjectById(param.projectId)
+  // console.log(project)
   return (
-    <Room>
-      {/* <Header projectId={param.projectId}/> */}
-      {/* <ToolBar/> */}
-      {/* <SpecBar /> */}
-      <YjsReactFlow />
+    <Room projectId={param.projectId}>
+      <YjsReactFlow initial_resources={project?.initial_resources || []} />
     </Room>
   )
 }

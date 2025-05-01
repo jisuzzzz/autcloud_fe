@@ -14,7 +14,7 @@ function InfoIcon({ label }: { label: string }) {
 
 export default function SpecBar() {
   return (
-    <div className="fixed top-[60px] right-0 bg-white border-l w-[256px] h-screen z-50">
+    <div className="fixed top-[60px] right-0 bg-white border-l w-[256px] h-screen z-40">
       
       <div className="flex gap-3 items-center px-4 py-3 border-b">
         <Image

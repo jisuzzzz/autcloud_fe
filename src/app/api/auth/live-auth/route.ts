@@ -1,6 +1,6 @@
 import { Liveblocks } from "@liveblocks/node";
 import { NextRequest } from "next/server";
-import { getRandomUser } from "@/lib/db";
+import { getRandomUser } from "@/lib/userDB";
 
 // Authenticating your Liveblocks application
 // https://liveblocks.io/docs/authentication
@@ -11,7 +11,7 @@ type User = {
 }
 
 const liveblocks = new Liveblocks({
-  secret: process.env.LIVEBLOCKS_SECRET_KEY as string,
+  secret: process.env.LIVEBLOCKS_SECRET_KEY!,
 });
 
 export async function POST(request: NextRequest) {
@@ -22,6 +22,12 @@ export async function POST(request: NextRequest) {
   // userInfo is made available in Liveblocks presence hooks, e.g. useOthers
   const session = liveblocks.prepareSession(`${user.id}`, {
     userInfo: user.info,
+    // userInfo: {
+    //   name: NAMES[userIndex],
+    //   avatar: `https://liveblocks.io/avatars/avatar-${Math.floor(
+    //     Math.random() * 30
+    //   )}.png`,
+    // },
   });
 
   // Use a naming pattern to allow access to rooms with a wildcard

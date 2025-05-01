@@ -107,8 +107,6 @@ export const useLiveFlowStore = create<FlowMapState>((set, get) => ({
     set({ 
       userId,
       userName: `User-${userId.slice(-4)}`,
-      yNodes,
-      yEdges
     })
 
   },
