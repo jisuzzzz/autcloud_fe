@@ -2,7 +2,7 @@ import { Node, Edge } from "reactflow"
 import * as Y from 'yjs'
 
 interface UserAction {
-  type: 'add' | 'remove' | 'move' | 'copy' | 'paste'
+  type: 'add' | 'remove'
   nodes?: Node[]
   edges?: Edge[]
   timestamp: number
@@ -70,12 +70,28 @@ export const LiveFlowService = {
   addNode : (node: Node, yDoc: Y.Doc) => {
     if (!yDoc) return
     const yNodes = yDoc.getArray<Node>('nodes')
-    
+
     yDoc.transact(() => {
-      yNodes.push([node])  // Yjs에 추가
+      yNodes.push([node]) 
     })
   },
-  
+
+  removeNodeV2 : (nodeId: string, yDoc: Y.Doc) => {
+    if (!yDoc) return
+    const yNodes = yDoc.getArray<Node>('nodes')
+    
+    yDoc.transact(() => {
+      const nodes = yNodes.toArray() as Node[]
+      const updatedNodes = nodes.map(node => 
+        node.id === nodeId
+          ? {...node, data: {...node.data, status: 'remove'}}
+          : node
+      )
+      yNodes.delete(0, yNodes.length)
+      yNodes.insert(0, updatedNodes)
+    })
+  },
+
   removeNode : (nodeId: string, yDoc: Y.Doc) => {
     if (!yDoc) return
     const yNodes = yDoc.getArray<Node>('nodes')
@@ -83,6 +99,21 @@ export const LiveFlowService = {
     yDoc.transact(() => {
       const index = yNodes.toArray().findIndex(n => n.id === nodeId)
       if (index !== -1) yNodes.delete(index, 1)
+    })
+  },
+
+  editNode: (nodeId:string, yDoc: Y.Doc) => {
+    if (!yDoc) return
+    const yNodes = yDoc.getArray<Node>('nodes')
+    yDoc.transact(() => {
+      const nodes = yNodes.toArray() as Node[]
+      const updatedNodes = nodes.map(node => 
+        node.id === nodeId
+          ? {...node, data: {...node.data, status: 'remove'}}
+          : node
+      )
+      yNodes.delete(0, yNodes.length)
+      yNodes.insert(0, updatedNodes)
     })
   },
 
@@ -98,7 +129,7 @@ export const LiveFlowService = {
     })
   },
 
-  undo: (userId: string, yDoc:Y.Doc): Node[] | null  => {
+  undoV2: (userId: string, yDoc:Y.Doc): Node[] | null  => {
     if (!yDoc) return null
     const userActionHistory = yDoc.getMap<UserStack>('userActionHistory')
     
@@ -111,23 +142,31 @@ export const LiveFlowService = {
     let undoNodes: Node[] = []
   
     yDoc.transact(() => {
+      const currentNodes = yNodes.toArray()
       switch (action.type) {
         case 'add':
           if (action.nodes) {
-            const currentNodes = yNodes.toArray()
-            const filteredNodes = currentNodes.filter(n => 
-              !action.nodes?.find(an => an.id === n.id)
-            )
+            const updatedNodes = currentNodes.map(node => {
+              const actionNode = action.nodes?.find(an => an.id === node.id)
+              if (actionNode) {
+                return { ...node, data: {...node.data, status: 'remove'}}
+              }
+              return node
+            })
             yNodes.delete(0, yNodes.length)
-            yNodes.insert(0, filteredNodes)
-            undoNodes = filteredNodes
+            yNodes.insert(0, updatedNodes)
+            undoNodes = updatedNodes
           }
           break
         case 'remove':
           if (action.nodes) {
-            const currentNodes = yNodes.toArray()
-            // 액션노드랑 현재 노드랑 합치기
-            const updatedNodes = currentNodes.concat(action.nodes)
+            const updatedNodes = currentNodes.map(node => {
+              const actionNode = action.nodes?.find(an => an.id === node.id)
+              if (actionNode) {
+                return { ...node, data: {...node.data, status: actionNode.data.status}}
+              }
+              return node
+            })
             yNodes.delete(0, yNodes.length)
             yNodes.insert(0, updatedNodes)
             undoNodes = updatedNodes
@@ -136,9 +175,6 @@ export const LiveFlowService = {
       }
       userActionHistory.set(userId, userStack)
     })
-
     return undoNodes
-  }
-
-
+  },
 }

@@ -34,7 +34,7 @@ const convertToNodes = (resources: ResourceConfig[]): Node[] => {
     position: { x: resource.position.x, y: resource.position.y },
     data: { 
       type: resource.type,
-      isConfirm: resource.is_confirm,
+      status: resource.status,
       spec: resource.spec
     }
   }))
@@ -120,7 +120,7 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
               },
               data: { 
                 type: toPaste.data.type,
-                isConfirm: true
+                status: 'add'
               },
               selected: false
             }
@@ -135,20 +135,38 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
 
           case 'x':
             if(!occupiedNode) return
-            setNodes(nodes.filter(n => !occupiedNode.find(sn => sn.id === n.id)))
-            occupiedNode.forEach(node => {
-              LiveFlowService.removeNode(node.id, yDoc)
-            })
+            setNodes(prev => prev.map(node => 
+              node.id === occupiedNode[0].id 
+                ? {
+                    ...node,
+                    data: {
+                      ...node.data,
+                      status: 'remove'
+                    },
+                    selected: false
+                  } 
+                : node
+            ))
+            // setNodes(nodes.filter(n => !occupiedNode.find(sn => sn.id === n.id)))
+            // occupiedNode.forEach(node => {
+            //   LiveFlowService.removeNodeV2(node.id, yDoc)
+            // })
+            LiveFlowService.removeNodeV2(occupiedNode[0].id, yDoc)
             LiveFlowService.pushToUndoStack(user.id, {
               type: 'remove',
               nodes: occupiedNode,
               timestamp: Date.now()
             }, yDoc)
             break
-          
+
+          case '/':
+            if(!occupiedNode) return
+            setNodes(nodes.filter(n => !occupiedNode.find(sn => sn.id === n.id)))
+            LiveFlowService.removeNode(occupiedNode[0].id, yDoc)
+            break
+
           case 'z':
-            const undoNodes = LiveFlowService.undo(user.id, yDoc)
-            // console.log(useLiveFlowStore.getState().nodes)
+            const undoNodes = LiveFlowService.undoV2(user.id, yDoc)
             if(!undoNodes) return
             setNodes(undoNodes)
             break
@@ -162,8 +180,6 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
   }, [occupiedNode, clipboard, nodes, yDoc, user?.id])
 
 
-
-
   return (
     <div className="h-[calc(100vh)] w-full">
       <Header 
@@ -172,7 +188,7 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
         setNodes={setNodes}
       />
       <ToolBar userId={user?.id} setNodes={setNodes}/>
-      <SpecBar project={project}/>
+      <SpecBar initial_resources={initial_resources} />
       <ReactFlow
         nodes={nodes}
         onSelectionChange={handleSelectionChange}

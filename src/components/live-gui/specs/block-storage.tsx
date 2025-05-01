@@ -7,9 +7,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { BlockStorageSpecType } from "@/lib/projectDB"
 
+interface BlockStorageSpecProps {
+  spec: BlockStorageSpecType
+}
 
-export default function BlockStorageSpec() {
+export default function BlockStorageSpec({spec}:BlockStorageSpecProps) {
   return (
     <>
       <div className="flex gap-3 items-center px-4 py-3 border-b">
@@ -25,7 +29,7 @@ export default function BlockStorageSpec() {
 
       <SpecSection>
         <InfoItem label="ID">
-          e.g.999c0000-0000-0000-0000-00000000000000
+          {spec.label}
         </InfoItem>
         <InfoItem label="Location">
           <div className="flex items-center gap-3">
@@ -35,18 +39,18 @@ export default function BlockStorageSpec() {
               width={25}
               height={25}
             ></Image>
-            <p className="text-sm">icn1, Seoul</p>
+            <p className="text-sm">{spec.location}</p>
           </div>
         </InfoItem>
         <InfoItem label="Type">
-          NVMe
+          {spec.type}
         </InfoItem>
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <h3 className="text-xs text-gray-500">{"Mount ID"}</h3>
             <InfoIcon label="?"/>
           </div>
-          <p className="text-sm">ewr-a23cda1547af4b</p>
+          <p className="text-sm">{spec.mount_id}</p>
         </div>
 
         <div className="space-y-2">
@@ -54,12 +58,12 @@ export default function BlockStorageSpec() {
           <div className="flex itmes-center">
             <Select>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="1024.00 MB Ubuntu 22.04..." />
+                <SelectValue placeholder={spec.attached_to} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="U1">1024.00 MB Ubuntu 22.04...</SelectItem>
-                <SelectItem value="U2">1024.00 MB Ubuntu 22.04...</SelectItem>
-                <SelectItem value="U3">1024.00 MB Ubuntu 22.04...</SelectItem>
+                <SelectItem value="U1">{spec.attached_to}</SelectItem>
+                <SelectItem value="U2">{spec.attached_to}</SelectItem>
+                <SelectItem value="U3">{spec.attached_to}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -69,16 +73,16 @@ export default function BlockStorageSpec() {
 
       <SpecSection>
         <InfoItem label="Size">
-          <p className="text-sm text-[#8171E8]">1 GB</p>
+          <p className="text-sm text-[#8171E8]">{spec.size}</p>
         </InfoItem>
         <InfoItem label="Label">
-          <p className="text-sm text-[#8171E8]">[Click here to set]</p>
+          <p className="text-sm text-[#8171E8]">{spec.label}</p>
         </InfoItem>
       </SpecSection>
 
       <div className="flex flex-col p-4">
         <InfoItem label="Date Created">
-          05/02/2025 01:09:20
+          {spec.date_created}
         </InfoItem>
       </div>
     </>

@@ -2,8 +2,13 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { InfoItem, SpecSection, InfoIcon } from "../specBar"
+import { DatabaseSpecType } from "@/lib/projectDB"
 
-export default function DatabaseSpec() {
+interface DatabaseSpecProps {
+  spec: DatabaseSpecType
+}
+
+export default function DatabaseSpec({spec}:DatabaseSpecProps) {
   return (
     <>
       <div className="flex gap-3 items-center px-4 py-3 border-b">
@@ -20,33 +25,40 @@ export default function DatabaseSpec() {
       <div className="flex justify-between items-center px-4 py-2.5 border-b">
         <h3 className="text-xs text-gray-500">Stauts</h3>
         <Button
-            className={cn("px-3 h-7 rounded-sm bg-yellow-500")}
-          >
-            status
+          className={cn(
+          "px-2.5 h-7 rounded-sm pointer-events-none",
+            {
+              "bg-green-500": spec.status === "running",
+              "bg-yellow-500": spec.status === "pending",
+              "bg-red-500": spec.status === "stopped",
+            }
+          )}
+        >
+          {spec.status}
         </Button>
       </div>
 
       <SpecSection>
         <InfoItem label="ID">
-          e.g.999c0000-0000-0000-0000-00000000000000
+          {spec.id}
         </InfoItem>
         <InfoItem label="Node-Plan">
-          vultr-dbaas-startup-cc-1-55-2
+          {spec.node_plan}
         </InfoItem>
-        <InfoItem label="Node-Plan">
-          3 hours ago
+        <InfoItem label="Cluster Created">
+          {spec.cluster_created}
         </InfoItem>
       </SpecSection>
 
       <SpecSection>
         <InfoItem label="DB Engine">
-          PostgreSQL
+          {spec.db_engine}
         </InfoItem>
         <InfoItem label="Latest Backup">
-          2 hours ago
+          {spec.latest_backup}
         </InfoItem>
         <InfoItem label="Replica Nodes">
-          Yes
+          {spec.replica_nodes ? "Yes": "No"}
         </InfoItem>
         <InfoItem label="Location">
           <div className="flex items-center gap-3">
@@ -56,14 +68,14 @@ export default function DatabaseSpec() {
               width={25}
               height={25}
             ></Image>
-            <p className="text-sm">icn1, Seoul</p>
+            <p className="text-sm">{spec.location}</p>
           </div>
         </InfoItem>
         <InfoItem label="Label">
-          <p className="text-sm text-[#8171E8]">test</p>
+          <p className="text-sm text-[#8171E8]">{spec.label}</p>
         </InfoItem>
         <InfoItem label="Tag">
-          <p className="text-sm text-[#8171E8]">[Click here to set]</p>
+          <p className="text-sm text-[#8171E8]">{spec.tag}</p>
           <InfoIcon label="?" />
         </InfoItem>
       </SpecSection>

@@ -3,28 +3,44 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { InfoItem, SpecSection, InfoIcon } from "../specBar"
 import { Copy } from "lucide-react"
+import { EditButton } from "@/components/custom/actionButtons"
+import { ComputeSpecType } from "@/lib/projectDB"
 
-export default function ComputeSpec() {
+interface ComputeSpecProps{
+  spec: ComputeSpecType
+}
+
+export default function ComputeSpec({spec}:ComputeSpecProps) {
   return (
     <>
-      <div className="flex gap-3 items-center px-4 py-3 border-b">
-        <Image
-          alt="compute instance"
-          src={"/aut-compute.svg"}
-          width={25}
-          height={25}
-          className="rounded-xs"
-        ></Image>
-        <h3 className="text-sm font-medium">Instance</h3>
+      <div className="flex justify-between items-center px-4 py-3 border-b">
+        <div className="gap-3 flex items-center">
+          <Image
+            alt="compute instance"
+            src={"/aut-compute.svg"}
+            width={25}
+            height={25}
+            className="rounded-xs"
+          ></Image>
+          <h3 className="text-sm font-medium">Instance</h3>
+        </div>
+        <EditButton />
       </div>
       
 
       <div className="flex justify-between items-center px-4 py-2.5 border-b">
         <h3 className="text-xs text-gray-500">Stauts</h3>
         <Button
-            className={cn("px-3 h-7 rounded-sm bg-yellow-500")}
-          >
-            status
+          className={cn(
+          "px-2.5 h-7 rounded-sm pointer-events-none",
+            {
+              "bg-green-500": spec.status === "running",
+              "bg-yellow-500": spec.status === "pending",
+              "bg-red-500": spec.status === "stopped",
+            }
+          )}
+        >
+          {spec.status}
         </Button>
       </div>
 
@@ -37,13 +53,13 @@ export default function ComputeSpec() {
               width={25}
               height={25}
             ></Image>
-            <p className="text-sm">icn1, Seoul</p>
+            <p className="text-sm">{spec.location}</p>
           </div>
         </InfoItem>
 
         <InfoItem label="IP Adress">
           <div className="flex w-full justify-between items-center">
-            <p className="text-sm">64.176.217.21</p>
+            <p className="text-sm">{spec.ip_address}</p>
             <Copy size={18} className="text-gray-500"/>
           </div>
         </InfoItem>
@@ -51,28 +67,33 @@ export default function ComputeSpec() {
       
       <SpecSection>
         <InfoItem label="vCPU/s">
-          1 vCPU
+          {spec.vcpu}
         </InfoItem>
         <InfoItem label="RAM">
-          1024.00MB
+          {spec.ram}
         </InfoItem>
         <InfoItem label="Storage">
-          25 GB SSD
+          {spec.storage}
         </InfoItem>
         <InfoItem label="Bandwidht">
-          <p className="text-sm text-[#8171E8]">0.34 GB</p>
+          <p className="text-sm text-[#8171E8]">{spec.bandwidth}</p>
           <InfoIcon label="?" />
         </InfoItem>
       </SpecSection>
 
       <SpecSection>
         <InfoItem label="Label">
-          <p className="text-sm text-[#8171E8]">autcloud_be</p>
+          <p className="text-sm text-[#8171E8]">{spec.label}</p>
         </InfoItem>
         <InfoItem label="OS">
-          Ubuntu 22.04 x64
+          {spec.os}
         </InfoItem>
         <InfoItem label="Auto Backups">
+          {spec.auto_backups ? (
+            <p className="text-sm text-green-600">Enabled</p>
+          ) : (
+            <p className="text-sm text-red-600">Not Enabled</p>
+          )}
           <p className="text-sm text-red-600">Not Enabled</p>
           <InfoIcon label="!"/>
         </InfoItem>

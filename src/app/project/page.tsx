@@ -10,28 +10,6 @@ import SortDropdown from '@/components/custom/sortDropdown';
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getProjects } from '@/lib/projectDB';
 
-// const PROJECT_TEMPLATES = [
-//   {
-//     id: '9cd47912-c94a-451f-a1a2-ec5b2097c461',
-//     name: 'project-example-1-api-test',
-//     description: 'project-example-1-api-test',
-//   },
-//   {
-//     id: '601f9404-1cea-431d-88ac-a5fadaffc36e',
-//     name: 'project-example-2-api-test',
-//     description: 'project-example-2-api-test',
-//   },
-//   {
-//     id: 'aabbccdd-1234-5678-9999-example03',
-//     name: 'project-example-3',
-//     description: 'project-example-3-description',
-//   },
-//   {
-//     id: 'eeffeeff-5678-4321-8888-example04',
-//     name: 'project-example-4',
-//     description: 'project-example-4-description',
-//   },
-// ];
 
 export default function ProjectPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');

@@ -1,8 +1,13 @@
 import Image from "next/image"
 import { InfoItem, SpecSection } from "../specBar"
 import { Plus, Minus } from "lucide-react"
+import { FirewallSpecType } from "@/lib/projectDB"
 
-export default function FirewallSpec() {
+interface FireWallSpecProps {
+  spec: FirewallSpecType
+}
+
+export default function FirewallSpec({spec}:FireWallSpecProps) {
   return (
     <>
       <div className="flex gap-3 items-center px-4 py-3 border-b">
@@ -22,7 +27,7 @@ export default function FirewallSpec() {
           <Plus size={16} className="text-gray-600" />
         </div>
         <div className="flex justify-between items-center">
-          <p className="text-sm">action1</p>
+          <p className="text-sm">{spec.action}</p>
           <Minus size={16} className="text-gray-600" />
         </div>
       </SpecSection>

@@ -5,12 +5,16 @@ import DatabaseSpec from "./specs/database"
 import BlockStorageSpec from "./specs/block-storage"
 import ObjectStorageSpec from "./specs/object-storage"
 import FirewallSpec from "./specs/firewall"
-import { ProjectTemplate, ResourceConfig } from "@/lib/projectDB"
 import { useState, useEffect } from "react"
 import { useSelf } from "@liveblocks/react"
+import { 
+  ResourceConfig, ComputeSpecType, 
+  DatabaseSpecType, BlockStorageSpecType, 
+  ObjectStorageSpecType, FirewallSpecType 
+} from "@/lib/projectDB"
 
 interface SpecBarProps {
-  project: ProjectTemplate
+  initial_resources: ResourceConfig[]
 }
 
 export function InfoIcon({ label }: { label: string }) {
@@ -28,7 +32,6 @@ export function InfoItem({ label, children, icon }: {
     <div className="space-y-2">
       <h3 className="text-xs text-gray-500">{label}</h3>
       <div className="flex items-center gap-2">
-        {/* children이 문자열이면 p태그로 감싸서, 아니면 JSX 그대로 */}
         {typeof children === 'string' ? <p className="text-sm">{children}</p> : children}
         {icon}
       </div>
@@ -46,29 +49,29 @@ export function SpecSection({ children, className="" }:{
   )
 }
 
-export default function SpecBar({project}: SpecBarProps) {
+export default function SpecBar({initial_resources}: SpecBarProps) {
   const [selectedResource, setSelectedResource]  = useState<ResourceConfig | null>(null)
   const me = useSelf()
 
   useEffect(() => {
     // 유저가 처음 선택한 노드 id
     const selectedNodeId = (me?.presence.selectedNodes as string[])?.[0]
-    if(selectedNodeId && project.initial_resources) {
-      const resource = project.initial_resources.find(r => r.id === selectedNodeId)
+    if(selectedNodeId && initial_resources) {
+      const resource = initial_resources.find(r => r.id === selectedNodeId)
       setSelectedResource(resource || null)
     } else {
       setSelectedResource(null)
     }
-  }, [me?.presence.selectedNodes, project.initial_resources])
+  }, [me?.presence.selectedNodes, initial_resources])
 
   return (
     selectedResource ? (
       <div className="md:block hidden fixed top-[55px] right-0 bg-white border-l w-[256px] h-screen z-40">
-        {selectedResource.type === 'Compute' && <ComputeSpec />}
-        {selectedResource.type === 'Database' && <DatabaseSpec />}
-        {selectedResource.type === 'BlockStorage' && <BlockStorageSpec />}
-        {selectedResource.type === 'ObjectStorage' && <ObjectStorageSpec />}
-        {selectedResource.type === 'FireWall' && <FirewallSpec />}
+        {selectedResource.type === 'Compute' && <ComputeSpec spec={selectedResource.spec as ComputeSpecType}/>}
+        {selectedResource.type === 'Database' && <DatabaseSpec spec={selectedResource.spec as DatabaseSpecType} />}
+        {selectedResource.type === 'BlockStorage' && <BlockStorageSpec spec={selectedResource.spec as BlockStorageSpecType} />}
+        {selectedResource.type === 'ObjectStorage' && <ObjectStorageSpec spec={selectedResource.spec as ObjectStorageSpecType} />}
+        {selectedResource.type === 'FireWall' && <FirewallSpec spec={selectedResource.spec as FirewallSpecType} />}
       </div>
     ) : null
   )

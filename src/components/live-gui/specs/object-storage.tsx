@@ -1,7 +1,12 @@
 import Image from "next/image"
 import { InfoItem, SpecSection } from "../specBar"
+import { ObjectStorageSpecType } from "@/lib/projectDB"
 
-export default function ObjectStorageSpec() {
+interface ObectStorageSpecProps {
+  spec: ObjectStorageSpecType
+}
+
+export default function ObjectStorageSpec({spec}: ObectStorageSpecProps) {
   return (
     <>
       <div className="flex gap-3 items-center px-4 py-3 border-b">
@@ -18,7 +23,7 @@ export default function ObjectStorageSpec() {
       <SpecSection>
         <h2 className="font-semibold text-sm">Storage Information</h2>
         <InfoItem label="Label">
-          <p className="text-sm text-[#8171E8]">Test</p>
+          <p className="text-sm text-[#8171E8]">{spec.label}</p>
         </InfoItem>
         <InfoItem label="Location">
           <div className="flex items-center gap-3">
@@ -28,21 +33,21 @@ export default function ObjectStorageSpec() {
               width={25}
               height={25}
             ></Image>
-            <p className="text-sm">icn1, Seoul</p>
+            <p className="text-sm">{spec.location}</p>
           </div>
         </InfoItem>
       </SpecSection>
 
       <SpecSection>
         <InfoItem label="Tier">
-          Standard
+          {spec.tier}
         </InfoItem>
         <InfoItem label="Storage Price">
-          <p className="text-sm">$0.018/GB</p>
+          <p className="text-sm">{spec.storage_price}</p>
           <p className="text-sm text-gray-400">over 1000GB</p>
         </InfoItem>
         <InfoItem label="Transfer Price">
-          <p className="text-sm">$0.018/GB</p>
+          <p className="text-sm">{spec.transfer_price}</p>
           <p className="text-sm text-gray-400">over 1000GB</p>
         </InfoItem>
       </SpecSection>

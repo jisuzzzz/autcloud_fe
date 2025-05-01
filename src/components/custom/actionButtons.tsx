@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '../ui/button';
 import { ActionButton } from './actionButton';
-import { Plus, Ellipsis } from 'lucide-react';
+import { Plus, Ellipsis, PencilLine } from 'lucide-react';
 import CreateProjectModal from './createProjectModal';
 import MenuModal from './menuModal';
 
@@ -23,6 +22,15 @@ export function CreateButton() {
       )}
     </>
   );
+}
+
+export function EditButton() {
+  
+  return (
+    <button>
+      <PencilLine size={18} className="text-gray-500" />
+    </button>
+  )
 }
 
 export function MenuButton({ projectId }: { projectId: string }) {

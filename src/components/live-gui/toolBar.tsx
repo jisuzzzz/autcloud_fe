@@ -124,14 +124,14 @@ export default function ToolBar({ userId, setNodes }: ToolBarProps) {
       x: window.innerWidth / 2,
       y: window.innerHeight / 2,
     };
-
+    
     const newNode: Node = {
       id: `${resource.type}-${Date.now()}`,
       type: 'resource',
       position: centerPosition,
       data: { 
         type: resource.type,
-        isNew: true
+        status: 'add'
       },
     }
     setNodes((prev: Node[]) => [...prev, newNode])

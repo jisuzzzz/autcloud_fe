@@ -5,8 +5,8 @@ type ResourceConfig = {
     x: number,
     y: number
   },
-  is_confirm: boolean,
-  spec: ComputeSpec | DatabaseSpec | BlockStorageSpec | ObjectStorageSpec | FirewallSpec
+  status: 'add' | 'remove' | 'edit' | 'comfirm',
+  spec: ComputeSpecType | DatabaseSpecType | BlockStorageSpecType | ObjectStorageSpecType | FirewallSpecType
 }
 
 type ProjectTemplate = {
@@ -16,7 +16,7 @@ type ProjectTemplate = {
   initial_resources: ResourceConfig[]
 }
 
-type ComputeSpec = {
+type ComputeSpecType = {
   status: string,
   location: string,
   ip_address: string,
@@ -29,7 +29,7 @@ type ComputeSpec = {
   auto_backups: boolean
 }
 
-type DatabaseSpec = {
+type DatabaseSpecType = {
   status: string,
   id: string,
   node_plan: string,
@@ -42,7 +42,7 @@ type DatabaseSpec = {
   tag: string
 }
 
-type BlockStorageSpec = {
+type BlockStorageSpecType = {
   id: string,
   location: string,
   type: string,
@@ -53,7 +53,7 @@ type BlockStorageSpec = {
   date_created: string
 }
 
-type ObjectStorageSpec = {
+type ObjectStorageSpecType = {
   label: string,
   location: string,
   tier: string,
@@ -61,7 +61,7 @@ type ObjectStorageSpec = {
   transfer_price: string
 }
 
-type FirewallSpec = {
+type FirewallSpecType = {
   action: string
 }
 
@@ -75,7 +75,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         id: "compute-1",
         type: "Compute",
         position: { x: 500, y: 250 },
-        is_confirm: false,
+        status: 'add', 
         spec: {
           status: "running",
           location: "New Jersey",
@@ -93,7 +93,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         id: "storage-1",
         type: "ObjectStorage",
         position: { x: 350, y: 400 },
-        is_confirm: false,
+        status: 'add',
         spec: {
           label: "shopify_be",
           location: "New Jersey",
@@ -106,7 +106,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         id: "block-1",
         type: "BlockStorage",
         position: { x: 500, y: 400 },
-        is_confirm: false,
+        status: 'add',
         spec: {
           id: "999c0000-0000-0000-0000-0000000001",
           location: "New Jersey",
@@ -122,9 +122,9 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         id: "db-1",
         type: "Database",
         position: { x: 650, y: 400 },
-        is_confirm: false,
+        status: 'add',
         spec: {
-          status: "running",
+          status: "pending",
           id: "999c0000-0000-0000-0000-0000000002",
           node_plan: "vultur-dbaas-startup-cc-1-55-2",
           cluster_created: "3 hours ago",
@@ -140,7 +140,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         id: "firewall-1",
         type: "FireWall",
         position: { x: 500, y: 100 },
-        is_confirm: false,
+        status: 'add',
         spec: {
           action: "allow"
         }
@@ -156,7 +156,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         id: "compute-1",
         type: "Compute",
         position: { x: 400, y: 200 },
-        is_confirm: false,
+        status: 'add',
         spec: {
           status: "running",
           location: "Silicon Valley",
@@ -174,7 +174,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         id: "compute-2",
         type: "Compute",
         position: { x: 600, y: 200 },
-        is_confirm: false,
+        status: 'add',
         spec: {
           status: "running",
           location: "Silicon Valley",
@@ -192,7 +192,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         id: "storage-1",
         type: "ObjectStorage",
         position: { x: 400, y: 350 },
-        is_confirm: false,
+        status: 'add',
         spec: {
           label: "tensorhub_be",
           location: "Silicon Valley",
@@ -205,7 +205,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         id: "block-1",
         type: "BlockStorage",
         position: { x: 600, y: 350 },
-        is_confirm: false,
+        status: 'add',
         spec: {
           id: "999c0000-0000-0000-0000-0000000003",
           location: "Silicon Valley",
@@ -221,7 +221,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         id: "firewall-1",
         type: "FireWall",
         position: { x: 500, y: 50 },
-        is_confirm: false,
+        status: 'add',
         spec: {
           action: "allow"
         }
@@ -237,14 +237,14 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         id: "firewall-1",
         type: "FireWall",
         position: { x: 500, y: 150 },
-        is_confirm: false,
+        status: 'add',
         spec: { action: "allow" }
       },
       {
         id: "compute-1",
         type: "Compute",
         position: { x: 350, y: 300 },
-        is_confirm: false,
+        status: 'add',
         spec: {
           status: "running",
           location: "Dublin",
@@ -262,7 +262,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         id: "compute-2",
         type: "Compute",
         position: { x: 650, y: 300 },
-        is_confirm: false,
+        status: 'add',
         spec: {
           status: "running",
           location: "Dublin",
@@ -280,7 +280,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         id: "block-1",
         type: "BlockStorage",
         position: { x: 350, y: 450 },
-        is_confirm: false,
+        status: 'add',
         spec: {
           id: "999c0000-0000-0000-0000-0000000004",
           location: "Dublin",
@@ -296,7 +296,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         id: "db-1",
         type: "Database",
         position: { x: 500, y: 450 },
-        is_confirm: false,
+        status: 'add',
         spec: {
           status: "running",
           id: "999c0000-0000-0000-0000-0000000005",
@@ -314,7 +314,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         id: "storage-1",
         type: "ObjectStorage",
         position: { x: 650, y: 450 },
-        is_confirm: false,
+        status: 'add',
         spec: {
           label: "microflow_be",
           location: "Dublin",
@@ -335,14 +335,14 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         id: "firewall-1",
         type: "FireWall",
         position: { x: 500, y: 100 },
-        is_confirm: false,
+        status: 'add',
         spec: { action: "allow" }
       },
       {
         id: "compute-1",
         type: "Compute",
         position: { x: 400, y: 250 },
-        is_confirm: false,
+        status: 'add',
         spec: {
           status: "running",
           location: "Tokyo",
@@ -360,7 +360,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         id: "compute-2",
         type: "Compute",
         position: { x: 600, y: 250 },
-        is_confirm: false,
+        status: 'add',
         spec: {
           status: "running",
           location: "Tokyo",
@@ -378,7 +378,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         id: "db-1",
         type: "Database",
         position: { x: 400, y: 400 },
-        is_confirm: false,
+        status: 'add',
         spec: {
           status: "running",
           id: "999c0000-0000-0000-0000-0000000006",
@@ -396,7 +396,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         id: "block-1",
         type: "BlockStorage",
         position: { x: 500, y: 400 },
-        is_confirm: false,
+        status: 'add',
         spec: {
           id: "999c0000-0000-0000-0000-0000000007",
           location: "Tokyo",
@@ -412,7 +412,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         id: "storage-1",
         type: "ObjectStorage",
         position: { x: 600, y: 400 },
-        is_confirm: false,
+        status: 'add',
         spec: {
           label: "gamecore_be",
           location: "Tokyo",
@@ -438,17 +438,12 @@ export function getProjects() {
   }));
 }
 
-// export function getProjectResources(id: string) {
-//   const project = getProjectById(id);
-//   return project ? project.initial_resources : [];
-// }
-
 export { 
   type ProjectTemplate, 
   type ResourceConfig, 
-  type ComputeSpec,
-  type DatabaseSpec,
-  type BlockStorageSpec,
-  type ObjectStorageSpec,
-  type FirewallSpec
+  type ComputeSpecType,
+  type DatabaseSpecType,
+  type BlockStorageSpecType,
+  type ObjectStorageSpecType,
+  type FirewallSpecType
 }
