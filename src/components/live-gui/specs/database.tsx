@@ -3,23 +3,28 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { InfoItem, SpecSection, InfoIcon } from "../specBar"
 import { DatabaseSpecType } from "@/lib/projectDB"
+import { EditButton } from "@/components/custom/actionButtons"
 
 interface DatabaseSpecProps {
   spec: DatabaseSpecType
+  setNodes: () => void
 }
 
-export default function DatabaseSpec({spec}:DatabaseSpecProps) {
+export default function DatabaseSpec({spec,setNodes}:DatabaseSpecProps) {
   return (
     <>
-      <div className="flex gap-3 items-center px-4 py-3 border-b">
-        <Image
-          alt="managed database"
-          src={"/aut-database.svg"}
-          width={25}
-          height={25}
-          className="rounded-xs"
-        ></Image>
-        <h3 className="text-sm font-medium">Managed Database</h3>
+      <div className="flex justify-between items-center px-4 py-3 border-b">
+        <div className="gap-3 flex items-center">
+          <Image
+            alt="managed database"
+            src={"/aut-database.svg"}
+            width={25}
+            height={25}
+            className="rounded-xs"
+          ></Image>
+          <h3 className="text-sm font-medium">Managed Database</h3>
+        </div>
+        <EditButton setNodes={setNodes}/>
       </div>
 
       <div className="flex justify-between items-center px-4 py-2.5 border-b">

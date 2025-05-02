@@ -5,6 +5,13 @@ import { ActionButton } from './actionButton';
 import { Plus, Ellipsis, PencilLine } from 'lucide-react';
 import CreateProjectModal from './createProjectModal';
 import MenuModal from './menuModal';
+import { useYjsStore } from '@/lib/useYjsStore'
+import { useSelf } from '@liveblocks/react'
+import { Node } from 'reactflow'
+
+interface EditButtonProps {
+  setNodes?: (updater: (prev: Node[]) => Node[]) => void
+}
 
 export function CreateButton() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,13 +28,42 @@ export function CreateButton() {
         <CreateProjectModal onClose={() => setIsModalOpen(false)} />
       )}
     </>
-  );
+  )
 }
 
-export function EditButton() {
+export function EditButton({ setNodes }: EditButtonProps) {
+  const { yDoc } = useYjsStore()
+  const me = useSelf()
+  
+  const handleClickEdit = () => {
+    if(!yDoc || !me?.presence.selectedNodes) return
+
+    const selectedNodeId = (me.presence.selectedNodes as string[])?.[0]
+    if(!selectedNodeId) return
+    
+    const yNodes = yDoc.getArray<Node>('nodes')
+    yDoc.transact(() => {
+      const nodes = yNodes.toArray() as Node[]
+      const updatedNodes = nodes.map(node => 
+        node.id === selectedNodeId
+          ? {...node, data: {...node.data, status: 'edit'}}
+          : node
+      )
+      yNodes.delete(0, yNodes.length)
+      yNodes.insert(0, updatedNodes)
+    })
+    
+    if (setNodes) {
+      setNodes(prev => prev.map(node => 
+        node.id === selectedNodeId
+          ? {...node, data: {...node.data, status: 'edit'}}
+          : node
+      ))
+    }
+  }
   
   return (
-    <button>
+    <button onClick={handleClickEdit}>
       <PencilLine size={18} className="text-gray-500" />
     </button>
   )
@@ -49,5 +85,5 @@ export function MenuButton({ projectId }: { projectId: string }) {
         />
       )}
     </div>
-  );
+  )
 }

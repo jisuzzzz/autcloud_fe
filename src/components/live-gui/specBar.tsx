@@ -15,6 +15,8 @@ import {
 
 interface SpecBarProps {
   initial_resources: ResourceConfig[]
+  // setNodes: () => void
+  setNodes: any
 }
 
 export function InfoIcon({ label }: { label: string }) {
@@ -49,7 +51,7 @@ export function SpecSection({ children, className="" }:{
   )
 }
 
-export default function SpecBar({initial_resources}: SpecBarProps) {
+export default function SpecBar({initial_resources, setNodes}: SpecBarProps) {
   const [selectedResource, setSelectedResource]  = useState<ResourceConfig | null>(null)
   const me = useSelf()
 
@@ -67,11 +69,11 @@ export default function SpecBar({initial_resources}: SpecBarProps) {
   return (
     selectedResource ? (
       <div className="md:block hidden fixed top-[55px] right-0 bg-white border-l w-[256px] h-screen z-40">
-        {selectedResource.type === 'Compute' && <ComputeSpec spec={selectedResource.spec as ComputeSpecType}/>}
-        {selectedResource.type === 'Database' && <DatabaseSpec spec={selectedResource.spec as DatabaseSpecType} />}
-        {selectedResource.type === 'BlockStorage' && <BlockStorageSpec spec={selectedResource.spec as BlockStorageSpecType} />}
-        {selectedResource.type === 'ObjectStorage' && <ObjectStorageSpec spec={selectedResource.spec as ObjectStorageSpecType} />}
-        {selectedResource.type === 'FireWall' && <FirewallSpec spec={selectedResource.spec as FirewallSpecType} />}
+        {selectedResource.type === 'Compute' && <ComputeSpec spec={selectedResource.spec as ComputeSpecType} setNodes={setNodes} />}
+        {selectedResource.type === 'Database' && <DatabaseSpec spec={selectedResource.spec as DatabaseSpecType} setNodes={setNodes} />}
+        {selectedResource.type === 'BlockStorage' && <BlockStorageSpec spec={selectedResource.spec as BlockStorageSpecType} setNodes={setNodes} />}
+        {selectedResource.type === 'ObjectStorage' && <ObjectStorageSpec spec={selectedResource.spec as ObjectStorageSpecType} setNodes={setNodes} />}
+        {selectedResource.type === 'FireWall' && <FirewallSpec spec={selectedResource.spec as FirewallSpecType} setNodes={setNodes} />}
       </div>
     ) : null
   )
