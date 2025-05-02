@@ -1,4 +1,3 @@
-// src/components/live/useYjsStore.ts
 import { useEffect, useMemo, useState } from "react"
 import { useRoom } from "@liveblocks/react"
 import { getYjsProviderForRoom } from "@liveblocks/yjs"

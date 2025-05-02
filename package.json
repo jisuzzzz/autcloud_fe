@@ -14,7 +14,6 @@
     "@liveblocks/node": "^2.24.1",
     "@liveblocks/react": "^2.24.1",
     "@liveblocks/yjs": "^2.24.1",
-    "@liveblocks/zustand": "^2.24.1",
     "@radix-ui/react-accordion": "^1.2.8",
     "@radix-ui/react-popover": "^1.1.11",
     "@radix-ui/react-select": "^2.2.2",
@@ -25,7 +24,6 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.9.2",
-    "http": "^0.0.1-security",
     "lucide-react": "^0.486.0",
     "next": "15.2.3",
     "react": "^19.0.0",
@@ -35,11 +33,8 @@
     "reactflow": "^11.11.4",
     "tailwind-merge": "^3.1.0",
     "tw-animate-css": "^1.2.5",
-    "ws": "^8.18.1",
-    "y-webrtc": "^10.3.0",
     "yjs": "^13.6.26",
-    "zod": "^3.24.3",
-    "zustand": "^5.0.3"
+    "zod": "^3.24.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

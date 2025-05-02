@@ -41,24 +41,28 @@ const convertToNodes = (resources: ResourceConfig[]): Node[] => {
 }
 
 export function YjsReactFlow({ project }: YjsReactFlowProps) {
+
   const { initial_resources, name, id, description } = project
+  const { yDoc, isConnected }  = useYjsStore()
+  const user = useSelf()
+  
   // useMemo -> return data를 메모이제이션
   const initialNodes = useMemo(() => convertToNodes(initial_resources), [initial_resources]);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   
-  const { yDoc }  = useYjsStore()
   const [myPresence, setMyPresence] = useMyPresence()
   const [clipboard, setClipboard] = useState<{nodes: Node[]} | null>(null)
   const [occupiedNode, setoccupiedNode] = useState<Node[]>([])
-  // console.log(myPresence)
-  const user = useSelf()
-  // console.log(user)
+  
   
   useEffect(() => {
     if (!yDoc || !user?.id) return
     const yNodes = yDoc.getArray<Node>('nodes')
-    // yNodes.delete(0, yNodes.length)
-    LiveFlowService.initNodes(initialNodes, [], yDoc)
+    if(isConnected) {
+      if(yNodes.length===0){
+        LiveFlowService.initNodes(initialNodes, [], yDoc)
+      }
+    }
     LiveFlowService.initUserActionHistory(user.id, yDoc)
     
   
@@ -147,10 +151,6 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
                   } 
                 : node
             ))
-            // setNodes(nodes.filter(n => !occupiedNode.find(sn => sn.id === n.id)))
-            // occupiedNode.forEach(node => {
-            //   LiveFlowService.removeNodeV2(node.id, yDoc)
-            // })
             LiveFlowService.removeNodeV2(occupiedNode[0].id, yDoc)
             LiveFlowService.pushToUndoStack(user.id, {
               type: 'remove',

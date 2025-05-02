@@ -17,6 +17,8 @@ const STACK_TIMEOUT = 1000*60*10
 export const LiveFlowService = {
 
   initNodes: (initialNodes:Node[], initialEdges:Edge[], yDoc:Y.Doc) => {
+
+    if(!yDoc) return
     // Y.js 문서 및 공유 데이터 구조 생성
     const yNodes = yDoc.getArray<Node>('nodes')
     const yEdges = yDoc.getArray<Edge>('edges')
