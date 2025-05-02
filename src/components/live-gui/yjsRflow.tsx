@@ -18,6 +18,7 @@ import Header from './header'
 import { ResourceConfig } from '@/lib/projectDB'
 import { ProjectTemplate } from '@/lib/projectDB'
 import { LiveFlowService } from '@/services/liveflow'
+import Loading from '../custom/loading'
 
 interface YjsReactFlowProps {
   project: ProjectTemplate  
@@ -56,16 +57,15 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
   
   
   useEffect(() => {
-    if (!yDoc || !user?.id) return
+    if (!yDoc || !user?.id || !isConnected) return
+
     const yNodes = yDoc.getArray<Node>('nodes')
-    if(isConnected) {
-      if(yNodes.length===0){
+
+    if(yNodes.length===0){
         LiveFlowService.initNodes(initialNodes, [], yDoc)
-      }
     }
     LiveFlowService.initUserActionHistory(user.id, yDoc)
     
-  
     const observer = (event: Y.YArrayEvent<Node>, tr: Y.Transaction) => {
       if (event.transaction.local) return
       const updatedNodes = yNodes.toArray() as Node[]
@@ -178,6 +178,12 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
       window.removeEventListener('keydown', handleKeyDown)
     }
   }, [occupiedNode, clipboard, nodes, yDoc, user?.id])
+
+  if(!isConnected) {
+    return (
+      <Loading />
+    )
+  }
 
 
   return (
