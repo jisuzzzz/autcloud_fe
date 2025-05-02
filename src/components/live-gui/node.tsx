@@ -35,7 +35,7 @@ export default function ResourceNode({ id, data, selected=false }: NodeProps) {
         w-15 h-15 bg-white p-2
         ${selected ? 'ring-2' : ''}
         ${data.status === 'add' ? 'shadow-[0_0_15px_rgba(34,197,94,0.7)]' : ''}
-        ${data.status === 'remove' ? 'shadow-[0_0_15px_rgba(239,68,68,0.7)] opacity-60' : ''}
+        ${data.status === 'remove' ? 'shadow-[0_0_15px_rgba(239,68,68,0.7)]' : ''}
         ${data.status === 'edit' ? 'shadow-[0_0_15px_rgba(234,179,8,0.7)]' : ''}
         ${isOccupiedByOthers ? 'opacity-70 cursor-not-allowed' : ''}
         flex flex-col items-center justify-center`}

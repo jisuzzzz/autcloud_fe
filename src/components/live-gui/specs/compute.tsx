@@ -8,10 +8,9 @@ import { ComputeSpecType } from "@/lib/projectDB"
 
 interface ComputeSpecProps{
   spec: ComputeSpecType
-  setNodes: () => void
 }
 
-export default function ComputeSpec({spec,setNodes}:ComputeSpecProps) {
+export default function ComputeSpec({spec}:ComputeSpecProps) {
   return (
     <>
       <div className="flex justify-between items-center px-4 py-3 border-b">
@@ -25,7 +24,7 @@ export default function ComputeSpec({spec,setNodes}:ComputeSpecProps) {
           ></Image>
           <h3 className="text-sm font-medium">Instance</h3>
         </div>
-        <EditButton setNodes={setNodes}/>
+        <EditButton />
       </div>
       
 
@@ -95,6 +94,7 @@ export default function ComputeSpec({spec,setNodes}:ComputeSpecProps) {
           ) : (
             <p className="text-sm text-red-600">Not Enabled</p>
           )}
+          <p className="text-sm text-red-600">Not Enabled</p>
           <InfoIcon label="!"/>
         </InfoItem>
       </SpecSection>

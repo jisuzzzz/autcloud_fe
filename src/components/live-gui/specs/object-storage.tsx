@@ -1,28 +1,23 @@
 import Image from "next/image"
 import { InfoItem, SpecSection } from "../specBar"
 import { ObjectStorageSpecType } from "@/lib/projectDB"
-import { EditButton } from "@/components/custom/actionButtons"
 
 interface ObectStorageSpecProps {
   spec: ObjectStorageSpecType
-  setNodes: () => void
 }
 
-export default function ObjectStorageSpec({spec,setNodes}: ObectStorageSpecProps) {
+export default function ObjectStorageSpec({spec}: ObectStorageSpecProps) {
   return (
     <>
-      <div className="flex justify-between items-center px-4 py-3 border-b">
-        <div className="gap-3 flex items-center">
-          <Image
-            alt="object storage"
-            src={"/aut-obj-storage.svg"}
-            width={25}
-            height={25}
-            className="rounded-xs"
-          ></Image>
-          <h3 className="text-sm font-medium">Object Storage</h3>
-        </div>
-        <EditButton setNodes={setNodes}/>
+      <div className="flex gap-3 items-center px-4 py-3 border-b">
+        <Image
+          alt="object storage"
+          src={"/aut-obj-storage.svg"}
+          width={25}
+          height={25}
+          className="rounded-xs"
+        ></Image>
+        <h3 className="text-sm font-medium">Object Storage</h3>
       </div>
 
       <SpecSection>

@@ -18,7 +18,6 @@ import Header from './header'
 import { ResourceConfig } from '@/lib/projectDB'
 import { ProjectTemplate } from '@/lib/projectDB'
 import { LiveFlowService } from '@/services/liveflow'
-import { EditButton } from '@/components/custom/actionButtons'
 
 interface YjsReactFlowProps {
   project: ProjectTemplate  
@@ -189,7 +188,7 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
         setNodes={setNodes}
       />
       <ToolBar userId={user?.id} setNodes={setNodes}/>
-      <SpecBar initial_resources={initial_resources} setNodes={setNodes} />
+      <SpecBar initial_resources={initial_resources} />
       <ReactFlow
         nodes={nodes}
         onSelectionChange={handleSelectionChange}

@@ -8,28 +8,23 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { BlockStorageSpecType } from "@/lib/projectDB"
-import { EditButton } from "@/components/custom/actionButtons"
 
 interface BlockStorageSpecProps {
   spec: BlockStorageSpecType
-  setNodes: () => void
 }
 
-export default function BlockStorageSpec({spec,setNodes}:BlockStorageSpecProps) {
+export default function BlockStorageSpec({spec}:BlockStorageSpecProps) {
   return (
     <>
-      <div className="flex justify-between items-center px-4 py-3 border-b">
-        <div className="gap-3 flex items-center">
-          <Image
-            alt="block storage"
-            src={"/aut-block-storage.svg"}
-            width={25}
-            height={25}
-            className="rounded-xs"
-          ></Image>
-          <h3 className="text-sm font-medium">Block Storage</h3>
-        </div>
-        <EditButton setNodes={setNodes}/>
+      <div className="flex gap-3 items-center px-4 py-3 border-b">
+        <Image
+          alt="block storage"
+          src={"/aut-block-storage.svg"}
+          width={25}
+          height={25}
+          className="rounded-xs"
+        ></Image>
+        <h3 className="text-sm font-medium">Block Storage</h3>
       </div>
 
       <SpecSection>
@@ -85,7 +80,7 @@ export default function BlockStorageSpec({spec,setNodes}:BlockStorageSpecProps) 
         </InfoItem>
       </SpecSection>
 
-      <div className="flex flex-col p-4 border-b">
+      <div className="flex flex-col p-4">
         <InfoItem label="Date Created">
           {spec.date_created}
         </InfoItem>
