@@ -123,7 +123,7 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
                 y: toPaste.position.y + 50,
               },
               data: { 
-                type: toPaste.data.type,
+                ...toPaste.data,
                 status: 'add'
               },
               selected: false

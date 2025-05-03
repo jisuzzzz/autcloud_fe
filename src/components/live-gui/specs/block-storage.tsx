@@ -1,12 +1,6 @@
 import Image from "next/image"
 import { InfoItem, SpecSection, InfoIcon } from "../specBar"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import SelectBox from "@/components/custom/selectBox"
 import { BlockStorageSpecType } from "@/lib/projectDB"
 
 interface BlockStorageSpecProps {
@@ -56,16 +50,7 @@ export default function BlockStorageSpec({spec}:BlockStorageSpecProps) {
         <div className="space-y-2">
           <h3 className="text-xs text-gray-500">{"Attatch to"}</h3>
           <div className="flex itmes-center">
-            <Select>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder={spec.attached_to} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="U1">{spec.attached_to}</SelectItem>
-                <SelectItem value="U2">{spec.attached_to}</SelectItem>
-                <SelectItem value="U3">{spec.attached_to}</SelectItem>
-              </SelectContent>
-            </Select>
+            <SelectBox option={spec.attached_to} className="w-full"/>
           </div>
           <p className="text-xs text-gray-500">on this page, GB = 1024^3 bytes</p>
         </div>
