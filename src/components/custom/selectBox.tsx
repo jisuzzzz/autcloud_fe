@@ -1,14 +1,20 @@
-'use client'
-import { cn } from "@/lib/utils"
+'use client';
+import { cn } from '@/lib/utils';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from '@/components/ui/select';
 
-export default function SelectBox({ option, className="" }: { option: string, className: string}) {
+export default function SelectBox({
+  option,
+  className = '',
+}: {
+  option: string;
+  className: string;
+}) {
   return (
     <Select>
       <SelectTrigger className={className}>
@@ -20,5 +26,5 @@ export default function SelectBox({ option, className="" }: { option: string, cl
         <SelectItem value="U3">{option}</SelectItem>
       </SelectContent>
     </Select>
-  )
+  );
 }
