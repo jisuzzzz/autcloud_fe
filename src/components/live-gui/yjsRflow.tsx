@@ -1,5 +1,5 @@
 'use client'
-import { useCallback, useEffect, useRef, useState, useMemo } from 'react' 
+import { useCallback, useEffect, useState, useMemo } from 'react' 
 import ReactFlow, {
   MiniMap, Controls, Background,
   useNodesState, useEdgesState, addEdge,
@@ -14,9 +14,8 @@ import * as Y from 'yjs'
 import { useMyPresence, useSelf } from '@liveblocks/react'
 import ToolBar from './toolBar'
 import SpecBar from './specBar'
-import Header from './header'
-import { ResourceConfig } from '@/lib/projectDB'
-import { ProjectTemplate } from '@/lib/projectDB'
+import FlowHeader from './flowHeader'
+import { ResourceConfig, ProjectTemplate } from '@/lib/projectDB'
 import { LiveFlowService } from '@/services/liveflow'
 import Loading from '../custom/loading'
 
@@ -44,17 +43,15 @@ const convertToNodes = (resources: ResourceConfig[]): Node[] => {
 export function YjsReactFlow({ project }: YjsReactFlowProps) {
 
   const { initial_resources, name, id, description } = project
+
   const { yDoc, isConnected }  = useYjsStore()
   const user = useSelf()
-  
-  // useMemo -> return data를 메모이제이션
-  const initialNodes = useMemo(() => convertToNodes(initial_resources), [initial_resources]);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
-  
   const [myPresence, setMyPresence] = useMyPresence()
+
+  const [nodes, setNodes, onNodesChange] = useNodesState([])
   const [clipboard, setClipboard] = useState<{nodes: Node[]} | null>(null)
   const [occupiedNode, setoccupiedNode] = useState<Node[]>([])
-  
+
   
   useEffect(() => {
     if (!yDoc || !user?.id || !isConnected) return
@@ -62,9 +59,16 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
     const yNodes = yDoc.getArray<Node>('nodes')
 
     if(yNodes.length===0){
-        LiveFlowService.initNodes(initialNodes, [], yDoc)
+      const initialNodes = convertToNodes(initial_resources)
+      setNodes(initialNodes)
+      LiveFlowService.initNodes(initialNodes, [], yDoc)
+    } else {
+      const sharedNodes = yNodes.toArray() as Node[]
+      setNodes(sharedNodes)
     }
+    // LiveFlowService.initNodes(initialNodes, [], yDoc)
     LiveFlowService.initUserActionHistory(user.id, yDoc)
+    LiveFlowService.initProjectHistory(yDoc)
     
     const observer = (event: Y.YArrayEvent<Node>, tr: Y.Transaction) => {
       if (event.transaction.local) return
@@ -76,7 +80,7 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
     return () => {
       yNodes.unobserve(observer)
     }
-  }, [yDoc, user])
+  }, [yDoc, isConnected])
 
   const handleNodesChange = useCallback((changes: NodeChange[]) => {
 
@@ -103,7 +107,7 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if(!yDoc || !user?.id) return
+      if(!yDoc || !user?.id || !user.info?.name) return
       
       if (event.metaKey || event.ctrlKey) {
         switch(event.key) {
@@ -113,7 +117,7 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
             break
           
           case 'v':
-            if(!clipboard) return
+            if(!clipboard || !clipboard.nodes[0]) return
             const toPaste = clipboard.nodes[0]
             const newNode = {
               ...toPaste,
@@ -124,21 +128,26 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
               },
               data: { 
                 ...toPaste.data,
+                spec: {
+                  ...toPaste.data.spec,
+                  label: `${toPaste.data.spec.label}-copy`
+                },
                 status: 'add'
               },
               selected: false
             }
             setNodes(prev => [...prev, newNode])
-            LiveFlowService.addNode(newNode, yDoc)
+            LiveFlowService.addNode(newNode, user.id, user.info.name, yDoc)
             LiveFlowService.pushToUndoStack(user.id, {
               type: 'add',
               nodes: [newNode],
               timestamp: Date.now()
             }, yDoc)
+            setoccupiedNode([])
             break
 
           case 'x':
-            if(!occupiedNode) return
+            if(!occupiedNode || !occupiedNode[0]) return
             setNodes(prev => prev.map(node => 
               node.id === occupiedNode[0].id 
                 ? {
@@ -151,7 +160,7 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
                   } 
                 : node
             ))
-            LiveFlowService.removeNodeV2(occupiedNode[0].id, yDoc)
+            LiveFlowService.removeNodeV2(occupiedNode[0].id, user.id, user.info.name, yDoc)
             LiveFlowService.pushToUndoStack(user.id, {
               type: 'remove',
               nodes: occupiedNode,
@@ -166,7 +175,7 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
             break
 
           case 'z':
-            const undoNodes = LiveFlowService.undoV2(user.id, yDoc)
+            const undoNodes = LiveFlowService.undo(user.id, user.info.name, yDoc)
             if(!undoNodes) return
             setNodes(undoNodes)
             break
@@ -188,13 +197,19 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
 
   return (
     <div className="h-[calc(100vh)] w-full">
-      <Header 
+      <FlowHeader 
         projectId={id}
         projectName={name} 
         setNodes={setNodes}
       />
-      <ToolBar userId={user?.id} setNodes={setNodes}/>
-      <SpecBar initial_resources={initial_resources} />
+      <ToolBar userId={user?.id} userName={user?.info?.name || ''} setNodes={setNodes} init_resources={initial_resources}/>
+      <SpecBar resources={nodes.map(node => ({
+        id: node.id,
+        type: node.data.type,
+        position: node.position,
+        status: node.data.status,
+        spec: node.data.spec
+      }))}/>
       <ReactFlow
         nodes={nodes}
         onSelectionChange={handleSelectionChange}
@@ -205,6 +220,13 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
         connectionMode={ConnectionMode.Strict}
         proOptions={{ hideAttribution: true }}
       >
+        <Background 
+          // color="F6F5FD"
+          gap={16}
+          size={1}
+          variant={BackgroundVariant.Dots}
+          
+        />
       </ReactFlow>
   </div>
   );

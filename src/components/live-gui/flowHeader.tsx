@@ -42,7 +42,7 @@ const Avatars = React.memo(function Avatars() {
   )
 })
 
-export default function Header({ projectId, projectName, setNodes }: HeaderProps) {
+export default function FlowHeader({ projectId, projectName, setNodes }: HeaderProps) {
   const [isModalOpen, setIsModalOepn] = useState(false)
 
   const handleOpenModal = () => setIsModalOepn(true)

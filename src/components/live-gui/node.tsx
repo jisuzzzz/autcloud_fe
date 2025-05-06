@@ -2,12 +2,13 @@
 import React from 'react'
 import Image from 'next/image'
 import { useOthers, useSelf } from '@liveblocks/react'
+import { ComputeSpecType, DatabaseSpecType, BlockStorageSpecType, ObjectStorageSpecType, FirewallSpecType } from '@/lib/projectDB'
 
 const resourceIcons = {
   Compute: '/aut-compute.svg',
-  ObjectStorage: '/aut-obj-storage.svg',
+  ObjectStorage: '/aut-objectstorage.svg',
   Database: '/aut-database.svg',
-  BlockStorage: '/aut-block-storage.svg',
+  BlockStorage: '/aut-blockstorage.svg',
   FireWall: '/aut-firewall.svg'
 }
 
@@ -16,11 +17,13 @@ interface NodeProps {
   data: {
     type: string
     status: string
+    spec: ComputeSpecType | DatabaseSpecType | BlockStorageSpecType | ObjectStorageSpecType | FirewallSpecType
   }
   selected: boolean
 }
 
 export default function ResourceNode({ id, data, selected=false }: NodeProps) {
+  // console.log(data)
   const users = useOthers()
   const me = useSelf()
   const myColor = me?.info?.color as string || '#FFCA28'
@@ -32,7 +35,7 @@ export default function ResourceNode({ id, data, selected=false }: NodeProps) {
   return (
     <>
       <div className={`
-        w-15 h-15 bg-white p-2
+        w-15 h-15 p-2
         ${selected ? 'ring-2' : ''}
         ${data.status === 'add' ? 'shadow-[0_0_15px_rgba(34,197,94,0.7)]' : ''}
         ${data.status === 'remove' ? 'shadow-[0_0_15px_rgba(239,68,68,0.7)]' : ''}
@@ -51,8 +54,8 @@ export default function ResourceNode({ id, data, selected=false }: NodeProps) {
           fill
           className="object-contain rounded-xs"
         />
-        <div className="fixed top-[60px] text-xs font-medium text-gray-700 text-center mt-1">
-          {data.type}
+        <div className="fixed top-[70px] w-[200px] text-xs font-medium text-gray-700 text-center mt-1">
+          {data.spec.label}
         </div>
       </div>
       {users.map(({ connectionId, info, presence }) => {

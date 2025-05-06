@@ -3,14 +3,39 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { InfoItem, SpecSection, InfoIcon } from "../specBar"
 import { DatabaseSpecType } from "@/lib/projectDB"
+import { useForm } from "react-hook-form"
 
 interface DatabaseSpecProps {
   spec: DatabaseSpecType
+  onEdit: (data: DatabaseSpecType) => void
 }
 
-export default function DatabaseSpec({spec}:DatabaseSpecProps) {
+export default function EditDatabaseSpec({spec, onEdit}:DatabaseSpecProps) {
+  const { register, handleSubmit } = useForm<DatabaseSpecType>({
+    defaultValues: spec
+  })
+  
+  const onSubmit = (data:DatabaseSpecType) => {
+    if(onEdit) {
+      onEdit(data)
+    }
+  }
   return (
-    <>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="flex gap-3 items-center px-4 py-3 border-b justify-center">
+        <Image
+          alt="managed database"
+          src={"/aut-database.svg"}
+          width={25}
+          height={25}
+          className="rounded-xs"
+        ></Image>
+        <h3 className="text-sm font-medium">Managed Database</h3>
+        <Button type="submit" className="px-3 py-1 h-8 text-xs">
+            Save Changes
+        </Button>
+      </div>
+
       <div className="flex justify-between items-center px-4 py-2.5 border-b">
         <h3 className="text-xs text-gray-500">Stauts</h3>
         <Button
@@ -68,7 +93,7 @@ export default function DatabaseSpec({spec}:DatabaseSpecProps) {
           <InfoIcon label="?" />
         </InfoItem>
       </SpecSection>
-    </>
+    </form>
   )
 }
 

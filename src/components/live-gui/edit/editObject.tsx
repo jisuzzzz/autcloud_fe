@@ -1,14 +1,40 @@
 import Image from "next/image"
 import { InfoItem, SpecSection } from "../specBar"
 import { ObjectStorageSpecType } from "@/lib/projectDB"
+import { useForm } from "react-hook-form"
+import { Button } from "@/components/ui/button"
 
 interface ObectStorageSpecProps {
   spec: ObjectStorageSpecType
+  onEdit: (data: ObjectStorageSpecType) => void
 }
 
-export default function ObjectStorageSpec({spec}: ObectStorageSpecProps) {
+export default function EditObjectStorageSpec({spec, onEdit}: ObectStorageSpecProps) {
+  const { register, handleSubmit } = useForm<ObjectStorageSpecType>({
+    defaultValues: spec
+  })
+  
+  const onSubmit = (data:ObjectStorageSpecType) => {
+    if(onEdit) {
+      onEdit(data)
+    }
+  }
   return (
-    <>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="flex gap-3 items-center px-4 py-3 border-b justify-between">
+        <Image
+          alt="object storage"
+          src={"/aut-obj-storage.svg"}
+          width={25}
+          height={25}
+          className="rounded-xs"
+        ></Image>
+        <h3 className="text-sm font-medium">Object Storage</h3>
+        <Button type="submit" className="px-3 py-1 h-8 text-xs">
+            Save Changes
+        </Button>
+      </div>
+
       <SpecSection>
         <h2 className="font-semibold text-sm">Storage Information</h2>
         <InfoItem label="Label">
@@ -40,6 +66,6 @@ export default function ObjectStorageSpec({spec}: ObectStorageSpecProps) {
           <p className="text-sm text-gray-400">over 1000GB</p>
         </InfoItem>
       </SpecSection>
-    </>
+    </form>
   )
 }

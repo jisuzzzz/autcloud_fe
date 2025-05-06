@@ -12,9 +12,11 @@ import {
   DatabaseSpecType, BlockStorageSpecType, 
   ObjectStorageSpecType, FirewallSpecType 
 } from "@/lib/projectDB"
+import Image from "next/image"
+import { StartEditButton } from "./resourceEdit"
 
 interface SpecBarProps {
-  initial_resources: ResourceConfig[]
+  resources: ResourceConfig[]
 }
 
 export function InfoIcon({ label }: { label: string }) {
@@ -49,25 +51,55 @@ export function SpecSection({ children, className="" }:{
   )
 }
 
-export default function SpecBar({initial_resources}: SpecBarProps) {
+export default function SpecBar({resources}: SpecBarProps) {
   const [selectedResource, setSelectedResource]  = useState<ResourceConfig | null>(null)
   const me = useSelf()
+  const [isEditing,] = useState(false)
 
   useEffect(() => {
     // 유저가 처음 선택한 노드 id
     const selectedNodeId = (me?.presence.selectedNodes as string[])?.[0]
-    if(selectedNodeId && initial_resources) {
-      const resource = initial_resources.find(r => r.id === selectedNodeId)
+    // console.log(selectedNodeId)
+    if(selectedNodeId && resources) {
+      const resource = resources.find(r => r.id === selectedNodeId)
       setSelectedResource(resource || null)
     } else {
       setSelectedResource(null)
     }
-  }, [me?.presence.selectedNodes, initial_resources])
+  }, [me?.presence.selectedNodes, resources])
+
+  const getResourceType = (type: string) => {
+    switch(type) {
+      case 'Compute': return 'Instance'
+      case 'Database': return 'Managed Database'
+      case 'BlockStorage': return 'Block Storage'
+      case 'ObjectStorage': return 'Object Storage'
+      case 'FireWall': return 'Firewall'
+      default: return 'Resource'
+    }
+  }
 
   return (
     selectedResource ? (
       <div className="md:block hidden fixed top-[55px] right-0 bg-white border-l w-[256px] h-screen z-40">
-        {selectedResource.type === 'Compute' && <ComputeSpec spec={selectedResource.spec as ComputeSpecType}/>}
+        <div className="flex justify-between items-center px-4 py-3 border-b">
+          <div className="gap-3 flex items-center">
+            <Image
+              alt="compute instance"
+              src={`/aut-${selectedResource.type.toLowerCase()}.svg`}
+              width={25}
+              height={25}
+              className="rounded-xs"
+            ></Image>
+            <h3 className="text-sm font-medium">{getResourceType(selectedResource.type)}</h3>
+          </div>
+          {!isEditing && selectedResource.type === 'Compute' && <StartEditButton spec={selectedResource.spec as ComputeSpecType} type="Compute" />}
+          {!isEditing && selectedResource.type === 'Database' && <StartEditButton spec={selectedResource.spec as DatabaseSpecType} type="Database" />}
+          {!isEditing && selectedResource.type === 'BlockStorage' && <StartEditButton spec={selectedResource.spec as BlockStorageSpecType} type="BlockStorage" />}
+          {!isEditing && selectedResource.type === 'ObjectStorage' && <StartEditButton spec={selectedResource.spec as ObjectStorageSpecType} type="ObjectStorage" />}
+          {!isEditing && selectedResource.type === 'FireWall' && <StartEditButton spec={selectedResource.spec as FirewallSpecType} type="FireWall" />}
+        </div>
+        {selectedResource.type === 'Compute' && <ComputeSpec spec={selectedResource.spec as ComputeSpecType} />}
         {selectedResource.type === 'Database' && <DatabaseSpec spec={selectedResource.spec as DatabaseSpecType} />}
         {selectedResource.type === 'BlockStorage' && <BlockStorageSpec spec={selectedResource.spec as BlockStorageSpecType} />}
         {selectedResource.type === 'ObjectStorage' && <ObjectStorageSpec spec={selectedResource.spec as ObjectStorageSpecType} />}

@@ -2,14 +2,41 @@ import Image from "next/image"
 import { InfoItem, SpecSection, InfoIcon } from "../specBar"
 import SelectBox from "@/components/custom/selectBox"
 import { BlockStorageSpecType } from "@/lib/projectDB"
+import { useForm } from "react-hook-form"
+import { Button } from "@/components/ui/button"
 
 interface BlockStorageSpecProps {
   spec: BlockStorageSpecType
+  onEdit: (data: BlockStorageSpecType) => void
 }
 
-export default function BlockStorageSpec({spec}:BlockStorageSpecProps) {
+export default function EditBlockStorageSpec({spec, onEdit}:BlockStorageSpecProps) {
+
+  const { register, handleSubmit } = useForm<BlockStorageSpecType>({
+    defaultValues: spec
+  })
+  
+  const onSubmit = (data:BlockStorageSpecType) => {
+    if(onEdit) {
+      onEdit(data)
+    }
+  }
   return (
-    <>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="flex gap-3 items-center px-4 py-3 border-b justify-between">
+        <Image
+          alt="block storage"
+          src={"/aut-block-storage.svg"}
+          width={25}
+          height={25}
+          className="rounded-xs"
+        ></Image>
+        <h3 className="text-sm font-medium">Block Storage</h3>
+        <Button type="submit" className="px-3 py-1 h-8 text-xs">
+            Save Changes
+        </Button>
+      </div>
+
       <SpecSection>
         <InfoItem label="ID">
           {spec.label}
@@ -59,6 +86,6 @@ export default function BlockStorageSpec({spec}:BlockStorageSpecProps) {
           {spec.date_created}
         </InfoItem>
       </div>
-    </>
+    </form>
   )
 }

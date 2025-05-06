@@ -14,7 +14,6 @@
     "@liveblocks/node": "^2.24.1",
     "@liveblocks/react": "^2.24.1",
     "@liveblocks/yjs": "^2.24.1",
-    "@radix-ui/react-accordion": "^1.2.8",
     "@radix-ui/react-popover": "^1.1.11",
     "@radix-ui/react-select": "^2.2.2",
     "@radix-ui/react-slot": "^1.1.2",

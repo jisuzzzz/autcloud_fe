@@ -1,18 +1,49 @@
+'use client'
+
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { InfoItem, SpecSection, InfoIcon } from "../specBar"
 import { Copy } from "lucide-react"
 import { ComputeSpecType } from "@/lib/projectDB"
-import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { Input } from "@/components/ui/input"
 
-interface ComputeSpecProps{
+interface EditComputeSpecProps{
   spec: ComputeSpecType
+  onEdit: (data: ComputeSpecType) => void
 }
 
-export default function ComputeSpec({spec}:ComputeSpecProps) {
+export default function EditComputeSpec({spec, onEdit}:EditComputeSpecProps) {
+
+  const { register, handleSubmit } = useForm<ComputeSpecType>({
+    defaultValues: spec
+  })
+  
+  const onSubmit = (data:ComputeSpecType) => {
+    if(onEdit) {
+      onEdit(data)
+    }
+  }
+
   return (
-    <>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="flex justify-between items-center px-4 py-3 border-b">
+        <div className="gap-3 flex items-center">
+          <Image
+            alt="compute instance"
+            src={"/aut-compute.svg"}
+            width={25}
+            height={25}
+            className="rounded-xs"
+          ></Image>
+          <h3 className="text-sm font-medium">Instance</h3>
+        </div>
+        <Button type="submit" className="px-3 py-1 h-8 text-xs">
+            Save Changes
+        </Button>
+      </div>
+    
       <div className="flex justify-between items-center px-4 py-2.5 border-b">
         <h3 className="text-xs text-gray-500">Stauts</h3>
         
@@ -32,14 +63,11 @@ export default function ComputeSpec({spec}:ComputeSpecProps) {
 
       <SpecSection>
         <InfoItem label="Location">
-          <div className="flex items-center gap-3">
-            <Image
-              alt="region"
-              src={"/flag-for-south-korea.svg"}
-              width={25}
-              height={25}
-            ></Image>
-            <p className="text-sm">{spec.location}</p>
+          <div className="flex items-center gap-3 w-full">
+            <Input 
+              className="h-9 text-sm bg-[#F1F5F9] border-none rounded-sm"
+              {...register("location")}
+            />
           </div>
         </InfoItem>
 
@@ -53,7 +81,10 @@ export default function ComputeSpec({spec}:ComputeSpecProps) {
       
       <SpecSection>
         <InfoItem label="vCPU/s">
-          {spec.vcpu}
+          <Input 
+              className="h-9 text-sm bg-[#F1F5F9] border-none rounded-sm"
+              {...register("vcpu")}
+            />
         </InfoItem>
         <InfoItem label="RAM">
           {spec.ram}
@@ -61,7 +92,7 @@ export default function ComputeSpec({spec}:ComputeSpecProps) {
         <InfoItem label="Storage">
           {spec.storage}
         </InfoItem>
-        <InfoItem label="Bandwidht">
+        <InfoItem label="Bandwidth">
           <p className="text-sm text-[#8171E8]">{spec.bandwidth}</p>
           <InfoIcon label="?" />
         </InfoItem>
@@ -69,7 +100,10 @@ export default function ComputeSpec({spec}:ComputeSpecProps) {
 
       <SpecSection>
         <InfoItem label="Label">
-          <p className="text-sm text-[#8171E8]">{spec.label}</p>
+          <Input 
+            className="h-9 text-sm text-[#8171E8] bg-[#F1F5F9] border-none rounded-sm"
+            {...register("label")}
+          />
         </InfoItem>
         <InfoItem label="OS">
           {spec.os}
@@ -83,6 +117,6 @@ export default function ComputeSpec({spec}:ComputeSpecProps) {
           <InfoIcon label="!"/>
         </InfoItem>
       </SpecSection>
-    </>
+    </form>
   )
 }

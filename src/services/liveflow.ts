@@ -1,5 +1,6 @@
 import { Node, Edge } from "reactflow"
 import * as Y from 'yjs'
+import { ProjectChanges } from "@/lib/projectDB"
 
 interface UserAction {
   type: 'add' | 'remove'
@@ -22,6 +23,7 @@ export const LiveFlowService = {
     // Y.js 문서 및 공유 데이터 구조 생성
     const yNodes = yDoc.getArray<Node>('nodes')
     const yEdges = yDoc.getArray<Edge>('edges')
+    // yNodes.delete(0, yNodes.length)
 
     // 초기 데이터가 없을 때만 초기화
     if (yNodes.length === 0) {
@@ -38,6 +40,7 @@ export const LiveFlowService = {
   initUserActionHistory: (userId:string, yDoc:Y.Doc) => {
     if(!yDoc) return
     const userActionHistory = yDoc.getMap<UserStack>('userActionHistory')
+    // userActionHistory.delete("mislav.abha@example.com")
 
     const existingStack = userActionHistory.get(userId)
     if(existingStack) {
@@ -48,6 +51,15 @@ export const LiveFlowService = {
     } else {
       userActionHistory.set(userId, { undoStack: [] })
     }
+  },
+  
+  initProjectHistory: (yDoc: Y.Doc) => {
+    if(!yDoc) return
+    const projectHistory = yDoc.getMap<ProjectChanges>('projectHistory')
+    if (!projectHistory.has('nodes')) {
+      projectHistory.set('nodes', {})
+    }
+    // projectHistory.delete('nodes')
   },
 
   updateNodePosition: (nodeId:string, point:{x:number, y:number}, yDoc:Y.Doc) => {
@@ -69,28 +81,58 @@ export const LiveFlowService = {
     })
   },
 
-  addNode : (node: Node, yDoc: Y.Doc) => {
+  addNode : (node: Node, userId:string, userName:string, yDoc: Y.Doc) => {
     if (!yDoc) return
     const yNodes = yDoc.getArray<Node>('nodes')
+    const projectHistroy = yDoc.getMap<ProjectChanges>('projectHistory')
 
     yDoc.transact(() => {
-      yNodes.push([node]) 
+      yNodes.push([node])
+
+      const changes = projectHistroy.get('nodes') || {}
+      changes[node.id] = {
+        userId: userId,
+        userName: userName,
+        status: 'added',
+        specChanges: {...node.data.spec}
+      }
+      projectHistroy.set('nodes', changes)
     })
   },
 
-  removeNodeV2 : (nodeId: string, yDoc: Y.Doc) => {
+  removeNodeV2 : (nodeId: string, userId:string, userName: string, yDoc: Y.Doc) => {
     if (!yDoc) return
     const yNodes = yDoc.getArray<Node>('nodes')
+    const projectHistory = yDoc.getMap<ProjectChanges>('projectHistory')
     
     yDoc.transact(() => {
+      const changes = projectHistory.get('nodes') || {}
       const nodes = yNodes.toArray() as Node[]
+
       const updatedNodes = nodes.map(node => 
         node.id === nodeId
-          ? {...node, data: {...node.data, status: 'remove'}}
-          : node
+        ? {...node, data: {...node.data, status: 'remove'}}
+        : node
       )
+
+      const removedNode = updatedNodes.find(node => node.id === nodeId)
+      if(!removedNode) return
+
+      const existingChange = changes[nodeId]
+      if(existingChange && existingChange.status === 'added') {
+        delete changes[nodeId]
+      } else {
+        changes[nodeId] = {
+          userId: userId,
+          userName: userName,
+          status: 'removed',
+          specChanges: {...removedNode.data.spec}
+        }
+      }
+
       yNodes.delete(0, yNodes.length)
       yNodes.insert(0, updatedNodes)
+      projectHistory.set('nodes', changes)
     })
   },
 
@@ -104,18 +146,64 @@ export const LiveFlowService = {
     })
   },
 
-  editNode: (nodeId:string, yDoc: Y.Doc) => {
+  editNodeV2: (nodeId:string, changes: Record<string, string>, userId: string, userName:string, yDoc: Y.Doc) => {
     if (!yDoc) return
     const yNodes = yDoc.getArray<Node>('nodes')
+    const projectHistory = yDoc.getMap<ProjectChanges>('projectHistory')
+    
+    const nodes = yNodes.toArray() as Node[]
+    const prevNode = nodes.find(n => n.id === nodeId)
+    if(!prevNode) return
+    
     yDoc.transact(() => {
-      const nodes = yNodes.toArray() as Node[]
-      const updatedNodes = nodes.map(node => 
-        node.id === nodeId
-          ? {...node, data: {...node.data, status: 'remove'}}
-          : node
-      )
-      yNodes.delete(0, yNodes.length)
-      yNodes.insert(0, updatedNodes)
+      const historyChanges = projectHistory.get('nodes') || {}
+
+      if(!historyChanges[nodeId]) {
+        historyChanges[nodeId] = {
+          userId: userId,
+          userName: userName,
+          status: 'unchanged',
+          specChanges: {}
+        }
+      }
+      
+      let changeFlag = false
+      Object.entries(changes).forEach(([property, newValue]) => {
+        const oldValue =  prevNode.data.spec[property]
+
+        if(oldValue !== newValue) {
+          changeFlag = true
+
+          if(!historyChanges[nodeId].specChanges[property]) {
+            historyChanges[nodeId].specChanges[property] = {
+              prevValue: oldValue,
+              currValue: oldValue
+            }
+          }
+          historyChanges[nodeId].specChanges[property].currValue = newValue
+        }
+      })
+
+      if(changeFlag) {
+        historyChanges[nodeId].status = 'modified'
+        historyChanges[nodeId].userName = userName
+
+        const updatedNodes = nodes.map(node => {
+          if(node.id === nodeId) {
+            const updatedSpec = {...node.data.spec, stauts: "edit"}
+
+            Object.entries(changes).forEach(([property, newValue]) => {
+              updatedSpec[property] = newValue
+            })
+            return {...node, data:{...node.data, spec: updatedSpec}}
+          }
+          return node
+        }) 
+
+        yNodes.delete(0, yNodes.length)
+        yNodes.insert(0, updatedNodes)
+        projectHistory.set('nodes', historyChanges)
+      }
     })
   },
 
@@ -131,9 +219,10 @@ export const LiveFlowService = {
     })
   },
 
-  undoV2: (userId: string, yDoc:Y.Doc): Node[] | null  => {
+  undo: (userId: string, userName:string, yDoc:Y.Doc): Node[] | null  => {
     if (!yDoc) return null
     const userActionHistory = yDoc.getMap<UserStack>('userActionHistory')
+    const projectHistory = yDoc.getMap<ProjectChanges>('projectHistory')
     
     const userStack = userActionHistory?.get(userId)
     if (!userStack || userStack.undoStack.length === 0) return null
@@ -145,6 +234,8 @@ export const LiveFlowService = {
   
     yDoc.transact(() => {
       const currentNodes = yNodes.toArray()
+      const changes = projectHistory.get('nodes') || {}
+
       switch (action.type) {
         case 'add':
           if (action.nodes) {
@@ -155,13 +246,26 @@ export const LiveFlowService = {
               }
               return node
             })
+
+            action.nodes.forEach(node => {
+              if(changes[node.id] && changes[node.id].status === 'added') {
+                delete changes[node.id]
+              } else {
+                changes[node.id] = {
+                  userId: userId,
+                  userName: userName,
+                  status: 'removed',
+                  specChanges: {...node.data.spec}
+                }
+              }
+            })
             yNodes.delete(0, yNodes.length)
             yNodes.insert(0, updatedNodes)
             undoNodes = updatedNodes
           }
           break
         case 'remove':
-          if (action.nodes) {
+          if (action.nodes) { 
             const updatedNodes = currentNodes.map(node => {
               const actionNode = action.nodes?.find(an => an.id === node.id)
               if (actionNode) {
@@ -169,6 +273,20 @@ export const LiveFlowService = {
               }
               return node
             })
+            
+            action.nodes.forEach(node => {
+              if(changes[node.id] && changes[node.id].status === 'removed') {
+                delete changes[node.id]
+              } else {
+                changes[node.id] = {
+                  userId: userId,
+                  userName: userName,
+                  status: 'added',
+                  specChanges: {...node.data.spec}
+                }
+              }
+            })
+
             yNodes.delete(0, yNodes.length)
             yNodes.insert(0, updatedNodes)
             undoNodes = updatedNodes

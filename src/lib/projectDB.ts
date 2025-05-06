@@ -62,7 +62,23 @@ type ObjectStorageSpecType = {
 }
 
 type FirewallSpecType = {
-  action: string
+  label: string
+}
+
+type SpecValueType = string | number | boolean
+type NodeChangeStatus = 'added' | 'removed' | 'modified' | 'unchanged'
+type ProjectChanges = {
+  [noedId: string]: {
+    userId: string,
+    userName: string,
+    status: NodeChangeStatus,
+    specChanges: {
+      [key: string] : {
+        prevValue: SpecValueType,
+        currValue: SpecValueType,
+      } 
+    }
+  }
 }
 
 const PROJECT_TEMPLATES: ProjectTemplate[] = [
@@ -84,7 +100,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           ram: "1024.00 MB",
           storage: "25 GB SSD",
           bandwidth: "0.34 GB",
-          label: "shopify_be",
+          label: "Shopify-Web-Server",
           os: "Ubuntu 22.04 x64",
           auto_backups: false
         }
@@ -95,7 +111,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 350, y: 400 },
         status: 'add',
         spec: {
-          label: "shopify_be",
+          label: "Shopify-Asset-Storage",
           location: "New Jersey",
           tier: "Standard",
           storage_price: "$0.018/GB",
@@ -114,7 +130,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           mount_id: "ewr-a23cda1547af4b",
           attached_to: "1024.00 MB Ubuntu 22.04 LTS",
           size: "1GB",
-          label: "shopify_be",
+          label: "Shopify-Data-Volume",
           date_created: "04/15/2024 14:49:20"
         }
       },
@@ -132,7 +148,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           latest_backup: "2 hours ago",
           replica_nodes: false,
           location: "New Jersey",
-          label: "shopify_be",
+          label: "Shopify-PostgreSQL-DB",
           tag: "production"
         }
       },
@@ -142,7 +158,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 500, y: 100 },
         status: 'add',
         spec: {
-          action: "allow"
+          label: "allow"
         }
       }
     ]
@@ -165,7 +181,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           ram: "8192.00 MB",
           storage: "100 GB SSD",
           bandwidth: "4.00 GB",
-          label: "tensorhub_be",
+          label: "TensorHub-Training-Server",
           os: "Ubuntu 22.04 x64",
           auto_backups: true
         }
@@ -183,7 +199,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           ram: "8192.00 MB",
           storage: "100 GB SSD",
           bandwidth: "4.00 GB",
-          label: "tensorhub_be_2",
+          label: "TensorHub-Inference-Server",
           os: "Ubuntu 22.04 x64",
           auto_backups: true
         }
@@ -194,7 +210,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 400, y: 350 },
         status: 'add',
         spec: {
-          label: "tensorhub_be",
+          label: "TensorHub-Model-Storage",
           location: "Silicon Valley",
           tier: "Premium",
           storage_price: "$0.023/GB",
@@ -213,7 +229,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           mount_id: "sjc-b23cda1547af4b",
           attached_to: "8192.00 MB Ubuntu 22.04 LTS",
           size: "500GB",
-          label: "tensorhub_be",
+          label: "TensorHub-Dataset-Volume",
           date_created: "04/15/2024 14:49:20"
         }
       },
@@ -223,7 +239,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 500, y: 50 },
         status: 'add',
         spec: {
-          action: "allow"
+          label: "allow"
         }
       }
     ]
@@ -238,7 +254,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         type: "FireWall",
         position: { x: 500, y: 150 },
         status: 'add',
-        spec: { action: "allow" }
+        spec: { label: "allow" }
       },
       {
         id: "compute-1",
@@ -253,7 +269,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           ram: "4096.00 MB",
           storage: "50 GB SSD",
           bandwidth: "2.00 GB",
-          label: "microflow_be",
+          label: "MicroFlow-API-Gateway",
           os: "Ubuntu 20.04 LTS",
           auto_backups: false
         }
@@ -271,7 +287,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           ram: "4096.00 MB",
           storage: "50 GB SSD",
           bandwidth: "2.00 GB",
-          label: "microflow_be_2",
+          label: "MicroFlow-Auth-Service",
           os: "Ubuntu 20.04 LTS",
           auto_backups: false
         }
@@ -288,7 +304,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           mount_id: "dub-c23cda1547af4b",
           attached_to: "4096.00 MB Ubuntu 20.04 LTS",
           size: "100GB",
-          label: "microflow_be",
+          label: "MicroFlow-Config-Volume",
           date_created: "04/15/2024 14:49:20"
         }
       },
@@ -306,7 +322,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           latest_backup: "1 hour ago",
           replica_nodes: true,
           location: "Dublin",
-          label: "microflow_be",
+          label: "MicroFlow-User-DB",
           tag: "staging"
         }
       },
@@ -316,7 +332,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 650, y: 450 },
         status: 'add',
         spec: {
-          label: "microflow_be",
+          label: "MicroFlow-Logs-Storage",
           location: "Dublin",
           tier: "Standard",
           storage_price: "$0.020/GB",
@@ -336,7 +352,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         type: "FireWall",
         position: { x: 500, y: 100 },
         status: 'add',
-        spec: { action: "allow" }
+        spec: { label: "allow" }
       },
       {
         id: "compute-1",
@@ -351,7 +367,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           ram: "16384.00 MB",
           storage: "200 GB SSD",
           bandwidth: "6.00 GB",
-          label: "gamecore_be",
+          label: "GameCore-Match-Server",
           os: "Amazon Linux 2",
           auto_backups: true
         }
@@ -369,7 +385,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           ram: "16384.00 MB",
           storage: "200 GB SSD",
           bandwidth: "6.00 GB",
-          label: "gamecore_be_2",
+          label: "GameCore-User-Server",
           os: "Amazon Linux 2",
           auto_backups: true
         }
@@ -388,7 +404,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           latest_backup: "30 mins ago",
           replica_nodes: true,
           location: "Tokyo",
-          label: "gamecore_be",
+          label: "GameCore-Player-DB",
           tag: "production"
         }
       },
@@ -404,7 +420,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           mount_id: "nrt-d23cda1547af4b",
           attached_to: "16384.00 MB Amazon Linux 2",
           size: "1TB",
-          label: "gamecore_be",
+          label: "GameCore-Assets-Volume",
           date_created: "04/15/2024 14:49:20"
         }
       },
@@ -414,7 +430,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 600, y: 400 },
         status: 'add',
         spec: {
-          label: "gamecore_be",
+          label: "GameCore-Media-Storage",
           location: "Tokyo",
           tier: "Premium",
           storage_price: "$0.025/GB",
@@ -438,6 +454,54 @@ export function getProjects() {
   }));
 }
 
+// 리소스별 기본값 정의
+export const DEFAULT_RESOURCES = {
+  Compute: {
+    status: "running",
+    location: "New York",
+    ip_address: "192.168.0.1",
+    vcpu: "2 vCPU",
+    ram: "4096.00 MB",
+    storage: "50 GB SSD",
+    bandwidth: "2.00 GB",
+    label: "New-Compute",
+    os: "Ubuntu 22.04 x64",
+    auto_backups: false
+  },
+  Database: {
+    status: "running",
+    id: `db-${Date.now()}`,
+    node_plan: "vultur-dbaas-startup-cc-1-55-2",
+    cluster_created: "Just now",
+    db_engine: "PostgreSQL",
+    latest_backup: "Not available",
+    replica_nodes: false,
+    location: "New York",
+    label: "New-Database",
+    tag: "development"
+  },
+  BlockStorage: {
+    id: `bs-${Date.now()}`,
+    location: "New York",
+    type: "NVMe",
+    mount_id: `ny-${Date.now().toString(36)}`,
+    attached_to: "Not attached",
+    size: "50GB",
+    label: "New-BlockStorage",
+    date_created: new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString()
+  },
+  ObjectStorage: {
+    label: "New-ObjectStorage",
+    location: "New York",
+    tier: "Standard",
+    storage_price: "$0.020/GB",
+    transfer_price: "$0.020/GB"
+  },
+  FireWall: {
+    label: "New-Firewall"
+  }
+};
+
 export { 
   type ProjectTemplate, 
   type ResourceConfig, 
@@ -445,5 +509,8 @@ export {
   type DatabaseSpecType,
   type BlockStorageSpecType,
   type ObjectStorageSpecType,
-  type FirewallSpecType
+  type FirewallSpecType,
+  type SpecValueType,
+  type NodeChangeStatus, 
+  type ProjectChanges,
 }
