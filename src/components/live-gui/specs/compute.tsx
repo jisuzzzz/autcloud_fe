@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/components/ui/lib/utils';
+import { cn } from '@/lib/utils';
 import { InfoItem, SpecSection, InfoIcon } from '../specBar';
 import { Copy } from 'lucide-react';
 import { ComputeSpecType } from '@/lib/projectDB';
