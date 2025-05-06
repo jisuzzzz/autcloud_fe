@@ -17,7 +17,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
 import CostHeader from '@/components/custom/costHeader';
 import SideBar from '@/components/custom/sidebar';
 import { format } from 'date-fns';
@@ -51,14 +50,10 @@ export default function CostDashboardPage() {
                     {date ? format(date, 'LLL dd, y') : 'Pick a date'}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="end">
-                  <Calendar
-                    mode="single"
-                    selected={date}
-                    onSelect={setDate}
-                    initialFocus
-                  />
-                </PopoverContent>
+                <PopoverContent
+                  className="w-auto p-0"
+                  align="end"
+                ></PopoverContent>
               </Popover>
               <Button className="text-sm font-medium">Download</Button>
             </div>
