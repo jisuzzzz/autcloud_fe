@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Pencil, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function CreateProjectPage() {
   const router = useRouter();
@@ -17,8 +18,13 @@ export default function CreateProjectPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      {/* 상단 Back 버튼 */}
+    <motion.div
+      className="flex flex-col min-h-screen bg-white"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      {/* Back 버튼 */}
       <div className="p-6">
         <Button
           onClick={() => router.back()}
@@ -30,27 +36,42 @@ export default function CreateProjectPage() {
       </div>
 
       {/* 카드 영역 */}
-      <div className="flex flex-1 justify-center items-start pt-32 gap-5">
-        <Card onClick={handleStartFromScratch} className="cursor-pointer">
-          <CardContent>
-            <Pencil size={48} className="mb-6 text-black" />
-            <h2 className="text-lg font-semibold mb-2 text-black">
-              Start from scratch
-            </h2>
-            <p className="text-gray-500 text-sm">Description</p>
-          </CardContent>
-        </Card>
-
-        <Card onClick={handleCreateWithAI} className="cursor-pointer">
-          <CardContent>
-            <Sparkles size={48} className="mb-6 text-black" />
-            <h2 className="text-lg font-semibold mb-2 text-black">
-              Create with AI
-            </h2>
-            <p className="text-gray-500 text-sm">Description</p>
-          </CardContent>
-        </Card>
+      <div className="flex justify-center mt-20 gap-8">
+        {[
+          {
+            icon: <Pencil size={52} className="mb-6 text-black" />,
+            title: 'Start from scratch',
+            onClick: handleStartFromScratch,
+          },
+          {
+            icon: <Sparkles size={52} className="mb-6 text-black" />,
+            title: 'Create with AI',
+            onClick: handleCreateWithAI,
+          },
+        ].map((item, index) => (
+          <motion.div
+            key={index}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.98 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.15, duration: 0.4 }}
+          >
+            <Card
+              onClick={item.onClick}
+              className="cursor-pointer w-[300px] h-[270px] border border-gray-300 rounded-md hover:border-gray-500 hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md"
+            >
+              <CardContent className="flex flex-col items-center justify-center text-center p-8 h-full">
+                {item.icon}
+                <h2 className="text-xl font-semibold mb-2 text-black">
+                  {item.title}
+                </h2>
+                <p className="text-gray-500 text-sm">Description</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
       </div>
-    </div>
+    </motion.div>
   );
 }
