@@ -20,7 +20,7 @@ export default function ProjectPage() {
   const handleCreateClick = () => {
     router.push('/project/create');
   };
-
+  // #F6F5FD
   return (
     <div className="flex min-h-screen bg-white">
       <div className="flex-1">

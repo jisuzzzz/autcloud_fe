@@ -28,10 +28,10 @@ export default function EditSummary() {
   }, [yDoc])
 
   return (
-    <div className="mt-13 px-4 py-4 space-y-2 overflow-y-auto max-h-[calc(100vh-50vh)]">
+    <div className="mt-13 px-4 py-4 space-y-2 overflow-y-auto max-h-[calc(100vh-50vh)] custom-scrollbar">
       {projectHistory && Object.entries(projectHistory).map(([nodeId, data]: [string, any]) => (
 
-        <div key={nodeId} className="p-2 border rounded mb-2 text-xs h-14 hover:bg-violet-300"
+        <div key={nodeId} className="p-3 border rounded-md mb-3 text-xs hover:bg-violet-50 transition-colors duration-200 cursor-pointer"
           onClick={() => {
             setIsModalOpen(true)
             setSelectedItem({nodeId, data})
@@ -39,9 +39,9 @@ export default function EditSummary() {
         >
           <div className="flex justify-between items-center">
             <span className="font-medium truncate max-w-[150px]">
-              {data.specChanges?.id}
+              {data.label}
             </span>
-            <span className={`rounded-sm h-4 px-1 ${
+            <span className={`rounded-sm text-xs px-2 py-0.5 ${
               data.status === 'added' ? 'bg-green-100 text-green-800' : 
               data.status === 'modified' ? 'bg-blue-100 text-blue-800' : 
               'bg-red-100 text-red-800'
@@ -49,8 +49,11 @@ export default function EditSummary() {
               {data.status}
             </span>
           </div>
-          <div className="mt-1 text-gray-500">
-            Added by: {data.userName || 'Unknown'}
+          <div className="mt-2 text-gray-500 flex items-center gap-2">
+            <span className="inline-block w-5 h-5 rounded-full bg-gray-200 text-center text-[10px] leading-5 text-gray-700">
+              {data.userName?.charAt(0) || '?'}
+            </span>
+            <span>{data.userName || 'Unknown'}</span>
           </div>
         </div>
       ))}
@@ -65,6 +68,23 @@ export default function EditSummary() {
       {(!projectHistory || Object.keys(projectHistory).length === 0) && (
         <p className="text-sm text-gray-500">No history available</p>
       )}
+
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #c5c5c5;
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #a8a8a8;
+        }
+      `}</style>
     </div>
   )
 }

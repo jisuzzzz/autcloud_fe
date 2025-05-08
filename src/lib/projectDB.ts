@@ -72,6 +72,7 @@ type ProjectChanges = {
     userId: string,
     userName: string,
     status: NodeChangeStatus,
+    label: string,
     specChanges: {
       [key: string] : {
         prevValue: SpecValueType,

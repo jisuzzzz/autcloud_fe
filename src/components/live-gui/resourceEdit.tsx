@@ -2,7 +2,7 @@
 
 import { PencilLine } from 'lucide-react'
 import { useState } from 'react'
-import EditModal from '../custom/editModal'
+import EditModal from './edit/editModal'
 import { 
   ComputeSpecType, DatabaseSpecType,
   BlockStorageSpecType, ObjectStorageSpecType, FirewallSpecType 
@@ -11,8 +11,7 @@ import { Button } from '../ui/button'
 
 type SpecType = ComputeSpecType | DatabaseSpecType | BlockStorageSpecType | ObjectStorageSpecType | FirewallSpecType
 
-export function SaveEditButton({ formId }: { formId?: string }) {
-  
+export function SaveEditButton({ formId }: { formId?: string}) {
   return (
     <Button 
       type="submit"

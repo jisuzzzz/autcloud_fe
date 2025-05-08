@@ -1,8 +1,9 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import { useOthers, useSelf } from '@liveblocks/react'
 import { ComputeSpecType, DatabaseSpecType, BlockStorageSpecType, ObjectStorageSpecType, FirewallSpecType } from '@/lib/projectDB'
+import { Handle, Position } from 'reactflow'
 
 const resourceIcons = {
   Compute: '/aut-compute.svg',
@@ -23,7 +24,7 @@ interface NodeProps {
 }
 
 export default function ResourceNode({ id, data, selected=false }: NodeProps) {
-  // console.log(data)
+  const [isHovered, setIsHovered] = useState(false);
   const users = useOthers()
   const me = useSelf()
   const myColor = me?.info?.color as string || '#FFCA28'
@@ -32,21 +33,28 @@ export default function ResourceNode({ id, data, selected=false }: NodeProps) {
     Array.isArray(user.presence.selectedNodes) && 
     user.presence.selectedNodes.includes(id)
   )
+  
+  // 핸들이 보여야 하는지 여부 결정
+  const showHandles = selected || isHovered;
+  
   return (
     <>
-      <div className={`
-        w-15 h-15 p-2
-        ${selected ? 'ring-2' : ''}
-        ${data.status === 'add' ? 'shadow-[0_0_15px_rgba(34,197,94,0.7)]' : ''}
-        ${data.status === 'remove' ? 'shadow-[0_0_15px_rgba(239,68,68,0.7)]' : ''}
-        ${data.status === 'edit' ? 'shadow-[0_0_15px_rgba(234,179,8,0.7)]' : ''}
-        ${isOccupiedByOthers ? 'opacity-70 cursor-not-allowed' : ''}
-        flex flex-col items-center justify-center`}
+      <div 
+        className={`
+          w-15 h-15 p-2 relative
+          ${selected ? 'ring-2' : ''}
+          ${data.status === 'add' ? 'shadow-[0_0_15px_rgba(34,197,94,0.7)]' : ''}
+          ${data.status === 'remove' ? 'shadow-[0_0_15px_rgba(239,68,68,0.7)]' : ''}
+          ${data.status === 'edit' ? 'shadow-[0_0_15px_rgba(234,179,8,0.7)]' : ''}
+          ${isOccupiedByOthers ? 'opacity-70 cursor-not-allowed' : ''}
+          flex flex-col items-center justify-center`
+        }
         style={{
           ...(selected && {'--tw-ring-color': myColor}),
-          // 다른 유저가 점유중이면 상호작용 불가
           pointerEvents: isOccupiedByOthers ? 'none' : 'auto'
         }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         <Image
           alt='resources-icons'
@@ -77,20 +85,84 @@ export default function ResourceNode({ id, data, selected=false }: NodeProps) {
               >
                 {info?.name}
               </div>
-
             </div>
           )
         }
         return null
       })}
+      
+      {/* 테두리 중앙에 위치한 핸들들 - 조건부 스타일 적용 */}
+      <Handle 
+        type="target" 
+        position={Position.Bottom} 
+        style={{ 
+          width: '12px', 
+          height: '12px', 
+          border: '2px solid white',
+          bottom: '-6px',
+          transform: 'translateX(-50%)',
+          zIndex: 10,
+          background: '#8171E8',
+          opacity: showHandles ? 1 : 0,
+          transition: 'opacity 0.2s'
+        }}
+        isConnectable={true}
+        id="bottom"
+      />
+      
+      <Handle 
+        type="source" 
+        position={Position.Top} 
+        style={{ 
+          width: '12px', 
+          height: '12px', 
+          border: '2px solid white',
+          top: '-6px',
+          transform: 'translateX(-50%)',
+          zIndex: 10,
+          background: '#8171E8',
+          opacity: showHandles ? 1 : 0,
+          transition: 'opacity 0.2s'
+        }}
+        isConnectable={true}
+        id="top"
+      />
+      
+      <Handle 
+        type="source" 
+        position={Position.Left}
+        style={{ 
+          width: '12px', 
+          height: '12px', 
+          border: '2px solid white',
+          left: '-6px',
+          transform: 'translateY(-50%)',
+          zIndex: 10,
+          background: '#8171E8',
+          opacity: showHandles ? 1 : 0,
+          transition: 'opacity 0.2s'
+        }}
+        isConnectable={true}
+        id="left"
+      />
+      
+      <Handle 
+        type="target" 
+        position={Position.Right} 
+        style={{ 
+          width: '12px', 
+          height: '12px', 
+          border: '2px solid white',
+          right: '-6px',
+          transform: 'translateY(-50%)',
+          zIndex: 10,
+          background: '#8171E8',
+          opacity: showHandles ? 1 : 0,
+          transition: 'opacity 0.2s'
+        }}
+        isConnectable={true}
+        id="right"
+      />
     </>
   )
 }
-
-{/* <Handle 
-type="target" 
-position={Position.Bottom} 
-style={{ background: '#3b82f6', width: '16px', height: '16px' }}
-isConnectable={true}
-id="bottom"
-/> */}

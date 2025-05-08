@@ -1,14 +1,14 @@
 'use client'
-import Modal from "./modal"
-import EditComputeSpec from "../live-gui/edit/editCompute"
+import Modal from "../../custom/modal"
+import EditComputeSpec from "./editCompute"
 import { BlockStorageSpecType, ComputeSpecType, DatabaseSpecType, FirewallSpecType, ObjectStorageSpecType } from "@/lib/projectDB"
 import { useYjsStore } from '@/lib/useYjsStore'
 import { useSelf } from "@liveblocks/react"
 import { LiveFlowService } from "@/services/liveflow"
-import EditDatabaseSpec from "../live-gui/edit/editDatabase"
-import EditBlockStorageSpec from "../live-gui/edit/editBlock"
-import EditObjectStorageSpec from "../live-gui/edit/editObject"
-import EditFirewallSpec from "../live-gui/edit/editFirewall"
+import EditDatabaseSpec from "./editDatabase"
+import EditBlockStorageSpec from "./editBlock"
+import EditObjectStorageSpec from "./editObject"
+import EditFirewallSpec from "./editFirewall"
 
 type SpecType = ComputeSpecType | DatabaseSpecType | BlockStorageSpecType | ObjectStorageSpecType | FirewallSpecType
 
@@ -28,7 +28,7 @@ export default function EditModal({onClose, spec, type}: EditModalProps) {
     const selectedNodeId = (me?.presence.selectedNodes as string[])?.[0]
     if(!selectedNodeId) return
     
-    const changes: Record<string, string> = {};
+    const changes: Record<string, string> = {}
 
 
     Object.keys(updateSpec).forEach(key => {
@@ -51,6 +51,9 @@ export default function EditModal({onClose, spec, type}: EditModalProps) {
         yDoc
       )
     }
+    setTimeout(() => {
+      onClose()
+    }, 200)
   }
 
   const renderEditComponent = () => {

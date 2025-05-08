@@ -94,6 +94,7 @@ export const LiveFlowService = {
         userId: userId,
         userName: userName,
         status: 'added',
+        label: node.data.spec.label,
         specChanges: {...node.data.spec}
       }
       projectHistroy.set('nodes', changes)
@@ -126,6 +127,7 @@ export const LiveFlowService = {
           userId: userId,
           userName: userName,
           status: 'removed',
+          label: removedNode.data.spec.label,
           specChanges: {...removedNode.data.spec}
         }
       }
@@ -163,6 +165,7 @@ export const LiveFlowService = {
           userId: userId,
           userName: userName,
           status: 'unchanged',
+          label: 'label',
           specChanges: {}
         }
       }
@@ -187,6 +190,7 @@ export const LiveFlowService = {
       if(changeFlag) {
         historyChanges[nodeId].status = 'modified'
         historyChanges[nodeId].userName = userName
+        historyChanges[nodeId].label = prevNode.data.spec.label
 
         const updatedNodes = nodes.map(node => {
           if(node.id === nodeId) {
@@ -255,6 +259,7 @@ export const LiveFlowService = {
                   userId: userId,
                   userName: userName,
                   status: 'removed',
+                  label: node.data.spec.label,
                   specChanges: {...node.data.spec}
                 }
               }
@@ -282,6 +287,7 @@ export const LiveFlowService = {
                   userId: userId,
                   userName: userName,
                   status: 'added',
+                  label: node.data.spec.label,
                   specChanges: {...node.data.spec}
                 }
               }
@@ -294,6 +300,7 @@ export const LiveFlowService = {
           break
       }
       userActionHistory.set(userId, userStack)
+      projectHistory.set('nodes', changes)
     })
     return undoNodes
   },
