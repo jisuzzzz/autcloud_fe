@@ -43,7 +43,7 @@ export default function FirewallModal({onClose}: FirewallModalProps) {
         <div className="px-5 py-3 flex flex-col space-y-4">
 
           <FreWallOptionRow label="Action">Option</FreWallOptionRow>
-
+{/* 
           <FreWallOptionRow label="Added items">
             <SelectBox option={"Option"} className="w-[260px]"/>
           </FreWallOptionRow>
@@ -71,7 +71,7 @@ export default function FirewallModal({onClose}: FirewallModalProps) {
           </FreWallOptionRow>
           <FreWallOptionRow label="Source">
             <SelectBox option={"Option"} className="w-[260px]"/>
-          </FreWallOptionRow>
+          </FreWallOptionRow> */}
           <FreWallOptionRow label="Note">
             <Input 
               className="w-[260px] h-10 shadow-none placeholder:text-black"
