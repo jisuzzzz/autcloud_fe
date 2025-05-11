@@ -17,6 +17,7 @@ type ProjectTemplate = {
 }
 
 type ComputeSpecType = {
+  id: string,
   status: string,
   location: string,
   ip_address: string,
@@ -65,7 +66,7 @@ type FirewallSpecType = {
   label: string
 }
 
-type SpecValueType = string | number | boolean
+type SpecValueType = string | number | boolean | null
 type NodeChangeStatus = 'added' | 'removed' | 'modified' | 'unchanged'
 type ProjectChanges = {
   [noedId: string]: {
@@ -94,6 +95,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 500, y: 250 },
         status: 'add', 
         spec: {
+          id: 'vc2-2c-2gb',
           status: "running",
           location: "New Jersey",
           ip_address: "64.176.217.21",
@@ -175,6 +177,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 400, y: 200 },
         status: 'add',
         spec: {
+          id: 'vc2-2c-2gb',
           status: "running",
           location: "Silicon Valley",
           ip_address: "64.176.217.22",
@@ -193,6 +196,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 600, y: 200 },
         status: 'add',
         spec: {
+          id: 'vc2-2c-2gb',
           status: "running",
           location: "Silicon Valley",
           ip_address: "64.176.217.23",
@@ -263,6 +267,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 350, y: 300 },
         status: 'add',
         spec: {
+          id: 'vc2-2c-2gb',
           status: "running",
           location: "Dublin",
           ip_address: "64.176.217.24",
@@ -281,6 +286,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 650, y: 300 },
         status: 'add',
         spec: {
+          id: 'vc2-2c-2gb',
           status: "running",
           location: "Dublin",
           ip_address: "64.176.217.25",
@@ -361,6 +367,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 400, y: 250 },
         status: 'add',
         spec: {
+          id: 'vc2-2c-2gb',
           status: "running",
           location: "Tokyo",
           ip_address: "64.176.217.26",
@@ -379,6 +386,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 600, y: 250 },
         status: 'add',
         spec: {
+          id: 'vc2-2c-2gb',
           status: "running",
           location: "Tokyo",
           ip_address: "64.176.217.27",
@@ -455,51 +463,52 @@ export function getProjects() {
   }));
 }
 
-// 리소스별 기본값 정의
+// 리소스별 기본값
 export const DEFAULT_RESOURCES = {
   Compute: {
-    status: "running",
-    location: "New York",
-    ip_address: "192.168.0.1",
-    vcpu: "2 vCPU",
-    ram: "4096.00 MB",
-    storage: "50 GB SSD",
-    bandwidth: "2.00 GB",
-    label: "New-Compute",
-    os: "Ubuntu 22.04 x64",
+    id: '',
+    status: '',
+    location: '',
+    ip_address: '64.176.217.21',
+    vcpu: '',
+    ram: '',
+    storage: '',
+    bandwidth: '',
+    label: '',
+    os: '',
     auto_backups: false
   },
   Database: {
-    status: "running",
-    id: `db-${Date.now()}`,
-    node_plan: "vultur-dbaas-startup-cc-1-55-2",
-    cluster_created: "Just now",
-    db_engine: "PostgreSQL",
-    latest_backup: "Not available",
+    id: '',
+    status: '',
+    node_plan: '',
+    cluster_created: '',
+    db_engine: '',
+    latest_backup: '',
     replica_nodes: false,
-    location: "New York",
-    label: "New-Database",
-    tag: "development"
+    location: '',
+    label: '',
+    tag: ''
   },
   BlockStorage: {
-    id: `bs-${Date.now()}`,
-    location: "New York",
-    type: "NVMe",
-    mount_id: `ny-${Date.now().toString(36)}`,
-    attached_to: "Not attached",
-    size: "50GB",
-    label: "New-BlockStorage",
-    date_created: new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString()
+    id: '',
+    location: '',
+    type: '',
+    mount_id: '',
+    attached_to: '',
+    size: '',
+    label: '',
+    date_created: ''
   },
   ObjectStorage: {
-    label: "New-ObjectStorage",
-    location: "New York",
-    tier: "Standard",
-    storage_price: "$0.020/GB",
-    transfer_price: "$0.020/GB"
+    label: '',
+    location: '',
+    tier: '',
+    storage_price: '',
+    transfer_price: ''
   },
   FireWall: {
-    label: "New-Firewall"
+    label: ''
   }
 };
 

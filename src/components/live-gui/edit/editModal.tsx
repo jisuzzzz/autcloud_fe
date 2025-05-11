@@ -9,6 +9,7 @@ import EditDatabaseSpec from "./editDatabase"
 import EditBlockStorageSpec from "./editBlock"
 import EditObjectStorageSpec from "./editObject"
 import EditFirewallSpec from "./editFirewall"
+import { Node } from "reactflow"
 
 type SpecType = ComputeSpecType | DatabaseSpecType | BlockStorageSpecType | ObjectStorageSpecType | FirewallSpecType
 
@@ -16,9 +17,10 @@ interface EditModalProps{
   onClose: () => void
   spec: SpecType
   type: string
+  setNodes: (updater: (prev: Node[]) => Node[]) => void 
 }
 
-export default function EditModal({onClose, spec, type}: EditModalProps) {
+export default function EditModal({onClose, spec, type, setNodes}: EditModalProps) {
   const {yDoc} = useYjsStore() 
   const me = useSelf()
 
@@ -37,12 +39,23 @@ export default function EditModal({onClose, spec, type}: EditModalProps) {
         ? String(updateSpec[field]) 
         : updateSpec[field] as string
 
-      if(newValue !== spec[field]) {
-        changes[field] = newValue
-      }
+      changes[field] = newValue
     })
       
     if(Object.keys(changes).length > 0) {
+
+      setNodes(prev => prev.map(node => 
+        node.id === selectedNodeId
+         ? {
+          ...node,
+          data: {
+            ...node.data,
+            status: 'edit'
+          },
+          selected:false
+         }
+         : node
+      ))
       LiveFlowService.editNodeV2(
         selectedNodeId,
         changes,
@@ -59,7 +72,7 @@ export default function EditModal({onClose, spec, type}: EditModalProps) {
   const renderEditComponent = () => {
     switch(type) {
       case 'Compute':
-        return <EditComputeSpec spec={spec as ComputeSpecType} onEdit={handleEdit} />
+        return <EditComputeSpec spec={spec as ComputeSpecType} onEdit={handleEdit} onClose={onClose} />
       case 'Database':
         return <EditDatabaseSpec spec={spec as DatabaseSpecType} onEdit={handleEdit} />
       case 'BlockStorage':
@@ -73,7 +86,6 @@ export default function EditModal({onClose, spec, type}: EditModalProps) {
   
   return(
     <Modal
-      onClose={onClose}
       className="fixed top-[70px] right-[268px]"
     >
       <div className="w-[400px] h-[calc(100vh-90px)] bg-white rounded-xs border overflow-y-auto">

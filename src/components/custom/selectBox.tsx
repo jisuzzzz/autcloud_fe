@@ -1,5 +1,5 @@
 'use client';
-import { cn } from '@/lib/utils';
+
 import {
   Select,
   SelectContent,
@@ -7,23 +7,47 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import Image from 'next/image';
 
 export default function SelectBox({
   option,
+  placeholder,
   className = '',
+  onChange,
+  showFlags = false,
 }: {
-  option: string;
-  className: string;
+  option: {value: string; label: string; flag?: string}[];
+  placeholder: string;
+  className?: string;
+  onChange?: (value: string) => void;
+  showFlags?: boolean;
 }) {
+
   return (
-    <Select>
+    <Select onValueChange={onChange}>
       <SelectTrigger className={className}>
-        <SelectValue placeholder={option} />
+        <SelectValue placeholder={placeholder}>
+        </SelectValue>
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="U1">{option}</SelectItem>
-        <SelectItem value="U2">{option}</SelectItem>
-        <SelectItem value="U3">{option}</SelectItem>
+        {option.map((opt) => (
+          <SelectItem key={opt.value} value={opt.value}>
+            {showFlags && opt.flag ? (
+              <div className="flex items-center gap-2">
+                <Image 
+                  src={opt.flag} 
+                  alt={opt.label} 
+                  width={16} 
+                  height={16} 
+                  className="rounded-sm"
+                />
+                <span>{opt.label}</span>
+              </div>
+            ) : (
+              opt.label
+            )}
+          </SelectItem>
+        ))}
       </SelectContent>
     </Select>
   );

@@ -1,23 +1,58 @@
+'use client'
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { InfoItem, SpecSection, InfoIcon } from '../specBar';
 import { Copy } from 'lucide-react';
 import { ComputeSpecType } from '@/lib/projectDB';
-import { useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import { eventBus } from '@/services/eventBus';
+import { RegionsArray } from '@/lib/resourceOptions';
 
 interface ComputeSpecProps {
   spec: ComputeSpecType;
 }
 
-export default function ComputeSpec({ spec }: ComputeSpecProps) {
+export default function ComputeSpec({ spec: initSpec }: ComputeSpecProps) {
+  const [spec, setSpec] = useState(initSpec);
+
+  useEffect(() => {
+    setSpec(initSpec)
+  }, [initSpec])
+
+
+  useEffect(() => {
+    // 이벤트 구독
+    const unsubscribe = eventBus.subscribe('computeSpecUpdated', (updatedSpec) => {
+      setSpec(prevSpec => ({ ...prevSpec, ...updatedSpec }));
+    });
+    
+    // 컴포넌트 언마운트시 구독 해제
+    return () => unsubscribe();
+  }, []);
+
+  // 지역 ID에서 국기 이미지 경로 매핑
+  const regionInfo = useMemo(() => {
+
+    let regionId = spec.location;
+    const regionCodeMatch = spec.location.match(/\(([^)]+)\)/);
+    if (regionCodeMatch) {
+      regionId = regionCodeMatch[1];
+    }
+    
+    const region = RegionsArray.find(r => r.id === regionId);
+    return {
+      flag: region?.flag || '/flag-icn.svg',
+    };
+  }, [spec.location]);
+  
   return (
     <>
       <div className="flex justify-between items-center px-4 py-2.5 border-b">
         <h3 className="text-xs text-gray-500">Stauts</h3>
 
         <Button
-          className={cn('px-2.5 h-7 rounded-sm pointer-events-none', {
+          className={cn('px-2.5 h-7 rounded-sm pointer-events-none text-xs', {
             'bg-green-500': spec.status === 'running',
             'bg-yellow-500': spec.status === 'pending',
             'bg-red-500': spec.status === 'stopped',
@@ -32,18 +67,20 @@ export default function ComputeSpec({ spec }: ComputeSpecProps) {
           <div className="flex items-center gap-3">
             <Image
               alt="region"
-              src={'/flag-for-south-korea.svg'}
+              src={regionInfo.flag}
               width={25}
               height={25}
             ></Image>
-            <p className="text-sm">{spec.location}</p>
+            <p className="text-[13px]">{spec.location}</p>
           </div>
         </InfoItem>
-
+        
+        <InfoItem label='Compute ID'>{spec.id}</InfoItem>
+        <InfoItem label="OS">{spec.os}</InfoItem>
         <InfoItem label="IP Adress">
           <div className="flex w-full justify-between items-center">
-            <p className="text-sm">{spec.ip_address}</p>
-            <Copy size={18} className="text-gray-500" />
+            <p className="text-[13px]">{spec.ip_address}</p>
+            <Copy size={18} className="text-gray-500 hover:text-[#8171E8]" />
           </div>
         </InfoItem>
       </SpecSection>
@@ -53,21 +90,17 @@ export default function ComputeSpec({ spec }: ComputeSpecProps) {
         <InfoItem label="RAM">{spec.ram}</InfoItem>
         <InfoItem label="Storage">{spec.storage}</InfoItem>
         <InfoItem label="Bandwidht">
-          <p className="text-sm text-[#8171E8]">{spec.bandwidth}</p>
+          <p className="text-[13px] text-[#8171E8]">{spec.bandwidth}</p>
           <InfoIcon label="?" />
         </InfoItem>
       </SpecSection>
 
       <SpecSection>
-        <InfoItem label="Label">
-          <p className="text-sm text-[#8171E8]">{spec.label}</p>
-        </InfoItem>
-        <InfoItem label="OS">{spec.os}</InfoItem>
         <InfoItem label="Auto Backups">
           {spec.auto_backups ? (
-            <p className="text-sm text-green-600">Enabled</p>
+            <p className="text-[13px] text-green-600">Enabled</p>
           ) : (
-            <p className="text-sm text-red-600">Not Enabled</p>
+            <p className="text-[13px] text-red-600">Not Enabled</p>
           )}
           <InfoIcon label="!" />
         </InfoItem>

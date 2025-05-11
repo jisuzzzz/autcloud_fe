@@ -1,6 +1,6 @@
 'use client'
 
-import { PencilLine } from 'lucide-react'
+import { SquarePen } from 'lucide-react'
 import { useState } from 'react'
 import EditModal from './edit/editModal'
 import { 
@@ -8,6 +8,7 @@ import {
   BlockStorageSpecType, ObjectStorageSpecType, FirewallSpecType 
 } from "@/lib/projectDB"
 import { Button } from '../ui/button'
+import { Node } from 'reactflow'
 
 type SpecType = ComputeSpecType | DatabaseSpecType | BlockStorageSpecType | ObjectStorageSpecType | FirewallSpecType
 
@@ -22,17 +23,17 @@ export function SaveEditButton({ formId }: { formId?: string}) {
   )
 }
 
-export function StartEditButton({spec, type}: {spec: SpecType, type:string}) {
+export function StartEditButton({spec, type, setNodes}: {spec: SpecType, type:string, setNodes: (updater: (prev: Node[]) => Node[]) => void }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   return (
     <>
       <button
         onClick={() => setIsModalOpen(true)}
       >
-        <PencilLine size={18} className="text-gray-500 hover:text-[#8171E8] hover:fill-[#8171E8]" />
+        <SquarePen size={18} className="text-gray-500 hover:text-[#8171E8]" />
       </button>
       {isModalOpen && (
-        <EditModal spec={spec} onClose={() => setIsModalOpen(false)} type={type} />
+        <EditModal spec={spec} onClose={() => setIsModalOpen(false)} type={type} setNodes={setNodes}/>
       )}
     </>
   )

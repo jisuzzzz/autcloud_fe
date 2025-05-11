@@ -1,8 +1,7 @@
 'use client'
-import { useCallback, useEffect, useState, useMemo } from 'react' 
+import { useCallback, useEffect, useState } from 'react' 
 import ReactFlow, {
-  MiniMap, Controls, Background,
-  useNodesState, useEdgesState, addEdge,
+   Background, useNodesState, useEdgesState, addEdge,
   Connection, Edge, Node, BackgroundVariant, ConnectionMode,
   EdgeChange, NodeChange, MarkerType,
 } from 'reactflow'
@@ -42,13 +41,15 @@ const convertToNodes = (resources: ResourceConfig[]): Node[] => {
 
 export function YjsReactFlow({ project }: YjsReactFlowProps) {
 
-  const { initial_resources, name, id, description } = project
+  const { initial_resources, name, id } = project
 
   const { yDoc, isConnected }  = useYjsStore()
   const user = useSelf()
   const [myPresence, setMyPresence] = useMyPresence()
 
   const [nodes, setNodes, onNodesChange] = useNodesState([])
+  const [edges, setEdges, onEdgesChange] = useEdgesState([])
+
   const [clipboard, setClipboard] = useState<{nodes: Node[]} | null>(null)
   const [occupiedNode, setoccupiedNode] = useState<Node[]>([])
 
@@ -57,6 +58,7 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
     if (!yDoc || !user?.id || !isConnected) return
 
     const yNodes = yDoc.getArray<Node>('nodes')
+    const yEdges = yDoc.getArray<Edge>('edges')
 
     if(yNodes.length===0){
       const initialNodes = convertToNodes(initial_resources)
@@ -69,6 +71,12 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
     // LiveFlowService.initNodes(initialNodes, [], yDoc)
     LiveFlowService.initUserActionHistory(user.id, yDoc)
     LiveFlowService.initProjectHistory(yDoc)
+
+    if(yEdges.length > 0) {
+      const sharedEdges = yEdges.toArray() as Edge[]
+      setEdges(sharedEdges)
+    }
+    // yEdges.delete(0, yEdges.length)
     
     const observer = (event: Y.YArrayEvent<Node>, tr: Y.Transaction) => {
       if (event.transaction.local) return
@@ -77,8 +85,16 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
     }
     yNodes.observe(observer)
 
+    const edgeObserver = (event: Y.YArrayEvent<Edge>, tr: Y.Transaction) => {
+      if (event.transaction.local) return
+      const updatedEdges = yEdges.toArray() as Edge[]
+      setEdges(updatedEdges)
+    }
+    yEdges.observe(edgeObserver)
+
     return () => {
       yNodes.unobserve(observer)
+      yEdges.unobserve(edgeObserver)
     }
   }, [yDoc, isConnected])
 
@@ -104,6 +120,51 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
     setoccupiedNode(selectedNodes)
     setMyPresence({ selectedNodes: nodeIds })
   }, [setMyPresence])
+
+   // 엣지 변경 처리
+  const handleEdgesChange = useCallback((changes: EdgeChange[]) => {
+    onEdgesChange(changes)
+    
+    // 엣지 삭제 처리
+    const removeEdge = changes.find(change => change.type === 'remove')
+    if (removeEdge && removeEdge.id && yDoc && user?.id && user.info?.name) {
+      const yEdges = yDoc.getArray<Edge>('edges')
+      const edgeIndex = yEdges.toArray().findIndex((edge: Edge) => edge.id === removeEdge.id)
+      
+      if (edgeIndex !== -1) {
+        yEdges.delete(edgeIndex, 1)
+      }
+    }
+  }, [onEdgesChange, yDoc, user])
+
+  const onConnect = useCallback((connection: Connection) => {
+    if (!yDoc || !user?.id || !user.info?.name) return
+    
+    // 새 엣지 생성
+    const newEdge: Edge = {
+      id: `e-${connection.source}-${connection.target}-${Date.now()}`,
+      source: connection.source!,
+      target: connection.target!,
+      sourceHandle: connection.sourceHandle,
+      targetHandle: connection.targetHandle,
+      type: 'edge',
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        width: 10,
+        height: 10,
+      },
+      style: { strokeWidth: 2 }
+    }
+    
+    // 로컬 상태 업데이트
+    setEdges((eds) => addEdge(newEdge, eds))
+    
+    // // Yjs 문서에 엣지 추가
+    const yEdges = yDoc.getArray<Edge>('edges')
+    yEdges.push([newEdge])
+    
+    
+  }, [setEdges, yDoc, user]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -147,7 +208,8 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
             break
 
           case 'x':
-            if(!occupiedNode || !occupiedNode[0]) return
+            if(!occupiedNode || !occupiedNode[0] || occupiedNode[0].data.status === 'remove') return
+            
             setNodes(prev => prev.map(node => 
               node.id === occupiedNode[0].id 
                 ? {
@@ -169,7 +231,7 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
             break
 
           case '/':
-            if(!occupiedNode) return
+            if(!occupiedNode || !occupiedNode[0]) return
             setNodes(nodes.filter(n => !occupiedNode.find(sn => sn.id === n.id)))
             LiveFlowService.removeNode(occupiedNode[0].id, yDoc)
             break
@@ -179,6 +241,27 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
             if(!undoNodes) return
             setNodes(undoNodes)
             break
+
+          // case 'g':
+          //   const newGroupNode = {
+          //     id: `group-${Date.now()}`,
+          //     type: 'group',
+          //     position: {
+          //       x: 100,
+          //       y: 100,
+          //     },
+          //     style: {
+          //       width: 300,
+          //       height: 200,
+          //     },
+          //     data: { 
+          //       label: `Group ${nodes.filter(n => n.type === 'group').length + 1}`,
+          //       status: 'add'
+          //     },
+          //     selected: false
+          //   }
+          //   setNodes(prev => [...prev, newGroupNode])
+          //   break
         }
       }
     }
@@ -194,7 +277,6 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
     )
   }
 
-
   return (
     <div className="h-[calc(100vh)] w-full">
       <FlowHeader 
@@ -202,22 +284,23 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
         projectName={name} 
         setNodes={setNodes}
       />
-      <ToolBar userId={user?.id} userName={user?.info?.name || ''} setNodes={setNodes} init_resources={initial_resources}/>
-      <SpecBar resources={nodes.map(node => ({
-        id: node.id,
-        type: node.data.type,
-        position: node.position,
-        status: node.data.status,
-        spec: node.data.spec
-      }))}/>
+      <ToolBar 
+        userId={user?.id}
+        setNodes={setNodes} 
+        init_resources={initial_resources}
+      />
+      <SpecBar setNodes={setNodes}/>
       <ReactFlow
         nodes={nodes}
+        edges={edges}
         onSelectionChange={handleSelectionChange}
         onNodesChange={handleNodesChange}
+        onEdgesChange={handleEdgesChange}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
+        onConnect={onConnect}
         defaultViewport={{ x: 0, y: 0, zoom: 1 }}
-        connectionMode={ConnectionMode.Strict}
+        connectionMode={ConnectionMode.Loose}
         proOptions={{ hideAttribution: true }}
       >
         <Background 

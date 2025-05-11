@@ -40,7 +40,6 @@ export const LiveFlowService = {
   initUserActionHistory: (userId:string, yDoc:Y.Doc) => {
     if(!yDoc) return
     const userActionHistory = yDoc.getMap<UserStack>('userActionHistory')
-    // userActionHistory.delete("mislav.abha@example.com")
 
     const existingStack = userActionHistory.get(userId)
     if(existingStack) {
@@ -56,10 +55,10 @@ export const LiveFlowService = {
   initProjectHistory: (yDoc: Y.Doc) => {
     if(!yDoc) return
     const projectHistory = yDoc.getMap<ProjectChanges>('projectHistory')
+    // projectHistory.delete('nodes')
     if (!projectHistory.has('nodes')) {
       projectHistory.set('nodes', {})
     }
-    // projectHistory.delete('nodes')
   },
 
   updateNodePosition: (nodeId:string, point:{x:number, y:number}, yDoc:Y.Doc) => {
@@ -95,8 +94,17 @@ export const LiveFlowService = {
         userName: userName,
         status: 'added',
         label: node.data.spec.label,
-        specChanges: {...node.data.spec}
+        specChanges: {}
       }
+
+      const specProperties = Object.keys(node.data.spec)
+      specProperties.forEach(property => {
+        changes[node.id].specChanges[property] = {
+          prevValue: null,
+          currValue: node.data.spec[property]
+        }
+      })
+      
       projectHistroy.set('nodes', changes)
     })
   },
@@ -125,13 +133,19 @@ export const LiveFlowService = {
       } else {
         changes[nodeId] = {
           userId: userId,
-          userName: userName,
+          userName:userName,
           status: 'removed',
           label: removedNode.data.spec.label,
-          specChanges: {...removedNode.data.spec}
+          specChanges: {}
         }
+        const specProperties = Object.keys(removedNode.data.spec)
+        specProperties.forEach(property => {
+          changes[nodeId].specChanges[property] = {
+            prevValue: removedNode.data.spec[property],
+            currValue: null
+          }
+        })
       }
-
       yNodes.delete(0, yNodes.length)
       yNodes.insert(0, updatedNodes)
       projectHistory.set('nodes', changes)
@@ -171,19 +185,20 @@ export const LiveFlowService = {
       }
       
       let changeFlag = false
+      
       Object.entries(changes).forEach(([property, newValue]) => {
         const oldValue =  prevNode.data.spec[property]
 
         if(oldValue !== newValue) {
           changeFlag = true
 
-          if(!historyChanges[nodeId].specChanges[property]) {
-            historyChanges[nodeId].specChanges[property] = {
-              prevValue: oldValue,
-              currValue: oldValue
-            }
+          historyChanges[nodeId].specChanges[property] = {
+            prevValue: oldValue,
+            currValue: newValue
           }
           historyChanges[nodeId].specChanges[property].currValue = newValue
+        } else if (oldValue === newValue) {
+          delete historyChanges[nodeId].specChanges[property]
         }
       })
 
@@ -218,6 +233,7 @@ export const LiveFlowService = {
     yDoc.transact(() => {
       // 해당 사용자의 스택을 가져오거나, 없으면 새로운 빈 스택을 생성
       const userStack = userActionHistory.get(userId) || { undoStack: [] }
+      
       userStack.undoStack.push(action) // 새로운 작업을 스택에 추가
       userActionHistory.set(userId, userStack) // 변경된 스택을 다시 저장
     })

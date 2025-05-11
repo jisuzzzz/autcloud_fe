@@ -7,6 +7,8 @@ import ShareModal from '../custom/shareModal';
 import { Node } from 'reactflow';
 import { useSelf, useOthersMapped } from '@liveblocks/react';
 import Avatar from './avator';
+import Link from 'next/link';
+import Image from 'next/image';
 
 interface HeaderProps {
   projectId: string;
@@ -67,11 +69,23 @@ export default function FlowHeader({
   return (
     <header className="fixed z-50">
       <div className="flex items-center justify-between bg-white w-screen h-[55px] border-b px-6 py-4">
-        <div className="flex gap-6 items-center">
-          <h1 className="text-xl font-bold">AutCloud</h1>
-          <div className="flex gap-4">
+        <div className="flex gap-7 items-center">
+          <Link
+            href={'/project'}
+            className='flex items-center gap-2'
+          >
+            <Image
+              alt='logo'
+              src={'/aut-cloud-logo.svg'}
+              width={45}
+              height={45}
+            >
+            </Image>
+            <h1 className="text-lg font-bold">AutCloud</h1>
+          </Link>
+          <div className="flex gap-2 text-[15px]">
             <p className="text-gray-500">{'Project'}</p>
-            <p>/</p>
+            <p className='text-gray-500'>|</p>
             <p>{projectName}</p>
           </div>
         </div>
@@ -79,14 +93,14 @@ export default function FlowHeader({
         <div className="flex items-center gap-3">
           <Avatars />
           <Button
-            className={cn('px-3 rounded-sm h-9 bg-[#E9E9E9]')}
+            className={cn('px-3 rounded-sm h-8 bg-gray-50 hover:bg-violet-50 text-black border')}
             onClick={handleOpenModal}
           >
             <p className="text-black font-normal">Share</p>
           </Button>
           <Button
             onClick={handleClickPuhblish}
-            className={cn('px-3 rounded-sm h-9 bg-[#7768E6]')}
+            className={cn('px-3 rounded-sm h-8 bg-[#7868E6] border border-[#6035BE] hover:bg-[#8474FF]')}
           >
             Publish
           </Button>

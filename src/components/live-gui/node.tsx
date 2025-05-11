@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import Image from 'next/image'
 import { useOthers, useSelf } from '@liveblocks/react'
 import { ComputeSpecType, DatabaseSpecType, BlockStorageSpecType, ObjectStorageSpecType, FirewallSpecType } from '@/lib/projectDB'
-import { Handle, Position } from 'reactflow'
 
 const resourceIcons = {
   Compute: '/aut-compute.svg',
@@ -45,8 +44,7 @@ export default function ResourceNode({ id, data, selected=false }: NodeProps) {
           ${selected ? 'ring-2' : ''}
           ${data.status === 'add' ? 'shadow-[0_0_15px_rgba(34,197,94,0.7)]' : ''}
           ${data.status === 'remove' ? 'shadow-[0_0_15px_rgba(239,68,68,0.7)]' : ''}
-          ${data.status === 'edit' ? 'shadow-[0_0_15px_rgba(234,179,8,0.7)]' : ''}
-          ${isOccupiedByOthers ? 'opacity-70 cursor-not-allowed' : ''}
+          ${data.status === 'edit' ? 'shadow-[0_0_15px_rgba(59,130,246,0.7)]' : ''}
           flex flex-col items-center justify-center`
         }
         style={{
@@ -90,79 +88,6 @@ export default function ResourceNode({ id, data, selected=false }: NodeProps) {
         }
         return null
       })}
-      
-      {/* 테두리 중앙에 위치한 핸들들 - 조건부 스타일 적용 */}
-      <Handle 
-        type="target" 
-        position={Position.Bottom} 
-        style={{ 
-          width: '12px', 
-          height: '12px', 
-          border: '2px solid white',
-          bottom: '-6px',
-          transform: 'translateX(-50%)',
-          zIndex: 10,
-          background: '#8171E8',
-          opacity: showHandles ? 1 : 0,
-          transition: 'opacity 0.2s'
-        }}
-        isConnectable={true}
-        id="bottom"
-      />
-      
-      <Handle 
-        type="source" 
-        position={Position.Top} 
-        style={{ 
-          width: '12px', 
-          height: '12px', 
-          border: '2px solid white',
-          top: '-6px',
-          transform: 'translateX(-50%)',
-          zIndex: 10,
-          background: '#8171E8',
-          opacity: showHandles ? 1 : 0,
-          transition: 'opacity 0.2s'
-        }}
-        isConnectable={true}
-        id="top"
-      />
-      
-      <Handle 
-        type="source" 
-        position={Position.Left}
-        style={{ 
-          width: '12px', 
-          height: '12px', 
-          border: '2px solid white',
-          left: '-6px',
-          transform: 'translateY(-50%)',
-          zIndex: 10,
-          background: '#8171E8',
-          opacity: showHandles ? 1 : 0,
-          transition: 'opacity 0.2s'
-        }}
-        isConnectable={true}
-        id="left"
-      />
-      
-      <Handle 
-        type="target" 
-        position={Position.Right} 
-        style={{ 
-          width: '12px', 
-          height: '12px', 
-          border: '2px solid white',
-          right: '-6px',
-          transform: 'translateY(-50%)',
-          zIndex: 10,
-          background: '#8171E8',
-          opacity: showHandles ? 1 : 0,
-          transition: 'opacity 0.2s'
-        }}
-        isConnectable={true}
-        id="right"
-      />
     </>
   )
 }

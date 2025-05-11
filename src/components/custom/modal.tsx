@@ -4,7 +4,7 @@ import { useEffect, ReactNode, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 interface ModalProps {
-  onClose(): void;
+  onClose?: () => void
   children: ReactNode;
   className: string;
 }
@@ -19,9 +19,9 @@ export default function Modal({
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (target.closest('ignore-click')) return;
+      if (target.closest('.ignore-click')) return;
 
-      if (modalRef.current && !modalRef.current.contains(target)) {
+      if (modalRef.current && !modalRef.current.contains(target) && onClose) {
         onClose();
       }
     };

@@ -1,15 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
 import Image from 'next/image';
 
 export default function Header() {
   const [hovered, setHovered] = useState(false);
 
   return (
-    <header className="flex items-center justify-between border-b px-6 py-4 relative bg-white">
+    <header className="flex items-center justify-between border-b px-6 py-4 relative bg-white h-[60px]">
       {/* 로고 + 검색창 */}
       <div className="flex items-center gap-16 w-full">
         <div className='flex items-center gap-2'>
@@ -22,10 +20,10 @@ export default function Header() {
           </Image>
           <div className="text-md font-medium text-black">AutCloud</div>
         </div>
-        <div className="relative flex-1">
+        {/* <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
           <Input type="search" placeholder="Search files..." className="pl-9 w-[400px]" />
-        </div>
+        </div> */}
       </div>
 
       {/* 유저 프로필 */}

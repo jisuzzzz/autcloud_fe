@@ -4,6 +4,11 @@ import { cn } from '@/lib/utils';
 import { InfoItem, SpecSection, InfoIcon } from '../specBar';
 import { DatabaseSpecType } from '@/lib/projectDB';
 import { useForm } from 'react-hook-form';
+import SelectBox from '@/components/custom/selectBox';
+import { DatabasePlans } from '@/lib/dbOptions';
+import { RegionsArray } from '@/lib/resourceOptions';
+import { useState, useCallback } from 'react';
+import { eventBus } from '@/services/eventBus';
 
 interface DatabaseSpecProps {
   spec: DatabaseSpecType;
@@ -15,22 +20,32 @@ export default function EditDatabaseSpec({ spec, onEdit }: DatabaseSpecProps) {
     defaultValues: spec,
   });
 
+  const [filteredDBOptions, setFilteredComputeOptions] = useState<any[]>([])
+
+  const [selectedSpec, setSelectedSpec] = useState({
+    engines: ['mysql', 'pg']
+    
+  })
+
   const onSubmit = (data: DatabaseSpecType) => {
     if (onEdit) {
       onEdit(data);
+      eventBus.publish('dbSpecUpdated', data)
     }
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex gap-3 items-center px-4 py-3 border-b justify-center">
-        <Image
-          alt="managed database"
-          src={'/aut-database.svg'}
-          width={25}
-          height={25}
-          className="rounded-xs"
-        ></Image>
-        <h3 className="text-sm font-medium">Managed Database</h3>
+      <div className="flex items-center px-4 py-3 border-b justify-between">
+        <div className='gap-3 flex items-center'>
+          <Image
+            alt="managed database"
+            src={'/aut-database.svg'}
+            width={25}
+            height={25}
+            className="rounded-xs"
+          ></Image>
+          <h3 className="text-sm font-medium">Managed Database</h3>
+        </div>
         <Button type="submit" className="px-3 py-1 h-8 text-xs">
           Save Changes
         </Button>

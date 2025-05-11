@@ -4,6 +4,7 @@ import SelectBox from "@/components/custom/selectBox"
 import { BlockStorageSpecType } from "@/lib/projectDB"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
+import { eventBus } from "@/services/eventBus"
 
 interface BlockStorageSpecProps {
   spec: BlockStorageSpecType
@@ -19,19 +20,22 @@ export default function EditBlockStorageSpec({spec, onEdit}:BlockStorageSpecProp
   const onSubmit = (data:BlockStorageSpecType) => {
     if(onEdit) {
       onEdit(data)
+      eventBus.publish('blockSpecUpdated', data)
     }
   }
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex gap-3 items-center px-4 py-3 border-b justify-between">
-        <Image
-          alt="block storage"
-          src={"/aut-block-storage.svg"}
-          width={25}
-          height={25}
-          className="rounded-xs"
-        ></Image>
-        <h3 className="text-sm font-medium">Block Storage</h3>
+      <div className="flex items-center px-4 py-3 border-b justify-between">
+        <div className="gap-3 flex items-center">
+          <Image
+            alt="block storage"
+            src={"/aut-blockstorage.svg"}
+            width={25}
+            height={25}
+            className="rounded-xs"
+          ></Image>
+          <h3 className="text-sm font-medium">Block Storage</h3>
+        </div>
         <Button type="submit" className="px-3 py-1 h-8 text-xs">
             Save Changes
         </Button>
@@ -66,7 +70,7 @@ export default function EditBlockStorageSpec({spec, onEdit}:BlockStorageSpecProp
         <div className="space-y-2">
           <h3 className="text-xs text-gray-500">{"Attatch to"}</h3>
           <div className="flex itmes-center">
-            <SelectBox option={spec.attached_to} className="w-full"/>
+            {spec.attached_to}
           </div>
           <p className="text-xs text-gray-500">on this page, GB = 1024^3 bytes</p>
         </div>

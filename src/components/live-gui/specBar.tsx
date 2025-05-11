@@ -8,7 +8,6 @@ import FirewallSpec from './specs/firewall';
 import { useState, useEffect } from 'react';
 import { useSelf } from '@liveblocks/react';
 import {
-  ResourceConfig,
   ComputeSpecType,
   DatabaseSpecType,
   BlockStorageSpecType,
@@ -17,10 +16,8 @@ import {
 } from '@/lib/projectDB';
 import Image from 'next/image';
 import { StartEditButton } from './resourceEdit';
-
-interface SpecBarProps {
-  resources: ResourceConfig[];
-}
+import { useYjsStore } from '@/lib/useYjsStore';
+import { Node } from 'reactflow';
 
 export function InfoIcon({ label }: { label: string }) {
   return (
@@ -44,7 +41,7 @@ export function InfoItem({
       <h3 className="text-xs text-gray-500">{label}</h3>
       <div className="flex items-center gap-2">
         {typeof children === 'string' ? (
-          <p className="text-sm">{children}</p>
+          <p className="text-[13px]">{children}</p>
         ) : (
           children
         )}
@@ -70,40 +67,29 @@ export function SpecSection({
   );
 }
 
-export default function SpecBar({ resources }: SpecBarProps) {
-  const [selectedResource, setSelectedResource] =
-    useState<ResourceConfig | null>(null);
+export default function SpecBar({setNodes}:{setNodes: (updater: (prev: Node[]) => Node[]) => void }) {
+
+  const [selectedResource, setSelectedResource] = useState<Node | null>(null)
   const me = useSelf();
   const [isEditing] = useState(false);
-
+  const  {yDoc} = useYjsStore()
+  
   useEffect(() => {
-    // 유저가 처음 선택한 노드 id
-    const selectedNodeId = (me?.presence.selectedNodes as string[])?.[0];
-    // console.log(selectedNodeId)
-    if (selectedNodeId && resources) {
-      const resource = resources.find((r) => r.id === selectedNodeId);
-      setSelectedResource(resource || null);
-    } else {
-      setSelectedResource(null);
-    }
-  }, [me?.presence.selectedNodes, resources]);
+    if(!yDoc) return
 
-  const getResourceType = (type: string) => {
-    switch (type) {
-      case 'Compute':
-        return 'Instance';
-      case 'Database':
-        return 'Managed Database';
-      case 'BlockStorage':
-        return 'Block Storage';
-      case 'ObjectStorage':
-        return 'Object Storage';
-      case 'FireWall':
-        return 'Firewall';
-      default:
-        return 'Resource';
+    const yNodes = yDoc.getArray<Node>('nodes')
+    const specBarNodes = yNodes.toArray() as Node[]
+    const selectedNodeId = (me?.presence.selectedNodes as string[])?.[0]
+    if(selectedNodeId && specBarNodes) {
+      const resource = specBarNodes.find((r) => r.id === selectedNodeId)
+      setSelectedResource(resource || null)
+      // console.log(resource) 
+    } else {
+      setSelectedResource(null)
     }
-  };
+  }, [me?.presence.selectedNodes])
+  // console.log(selectedResource)
+  
 
   return selectedResource ? (
     <div className="md:block hidden fixed top-[55px] right-0 bg-white border-l w-[256px] h-screen z-40">
@@ -111,64 +97,69 @@ export default function SpecBar({ resources }: SpecBarProps) {
         <div className="gap-3 flex items-center">
           <Image
             alt="compute instance"
-            src={`/aut-${selectedResource.type.toLowerCase()}.svg`}
+            src={`/aut-${selectedResource.data.type.toLowerCase()}.svg`}
             width={25}
             height={25}
             className="rounded-xs"
           ></Image>
-          <h3 className="text-sm font-medium">
-            {getResourceType(selectedResource.type)}
+          <h3 className="text-xs font-medium">
+            {selectedResource?.data?.spec.label}
           </h3>
         </div>
-        {!isEditing && selectedResource.type === 'Compute' && (
+        {!isEditing && selectedResource.data.type === 'Compute' && (
           <StartEditButton
-            spec={selectedResource.spec as ComputeSpecType}
+            spec={selectedResource.data.spec as ComputeSpecType}
             type="Compute"
+            setNodes={setNodes}
           />
         )}
-        {!isEditing && selectedResource.type === 'Database' && (
+        {!isEditing && selectedResource.data.type === 'Database' && (
           <StartEditButton
-            spec={selectedResource.spec as DatabaseSpecType}
+            spec={selectedResource.data.spec as DatabaseSpecType}
             type="Database"
+            setNodes={setNodes}
           />
         )}
-        {!isEditing && selectedResource.type === 'BlockStorage' && (
+        {!isEditing && selectedResource.data.type === 'BlockStorage' && (
           <StartEditButton
-            spec={selectedResource.spec as BlockStorageSpecType}
+            spec={selectedResource.data.spec as BlockStorageSpecType}
             type="BlockStorage"
+            setNodes={setNodes}
           />
         )}
-        {!isEditing && selectedResource.type === 'ObjectStorage' && (
+        {!isEditing && selectedResource.data.type === 'ObjectStorage' && (
           <StartEditButton
-            spec={selectedResource.spec as ObjectStorageSpecType}
+            spec={selectedResource.data.spec as ObjectStorageSpecType}
             type="ObjectStorage"
+            setNodes={setNodes}
           />
         )}
-        {!isEditing && selectedResource.type === 'FireWall' && (
+        {!isEditing && selectedResource.data.type === 'FireWall' && (
           <StartEditButton
-            spec={selectedResource.spec as FirewallSpecType}
+            spec={selectedResource.data.spec as FirewallSpecType}
             type="FireWall"
+            setNodes={setNodes}
           />
         )}
       </div>
-      {selectedResource.type === 'Compute' && (
-        <ComputeSpec spec={selectedResource.spec as ComputeSpecType} />
+      {selectedResource.data.type === 'Compute' && (
+        <ComputeSpec spec={selectedResource.data.spec as ComputeSpecType} />
       )}
-      {selectedResource.type === 'Database' && (
-        <DatabaseSpec spec={selectedResource.spec as DatabaseSpecType} />
+      {selectedResource.data.type === 'Database' && (
+        <DatabaseSpec spec={selectedResource.data.spec as DatabaseSpecType} />
       )}
-      {selectedResource.type === 'BlockStorage' && (
+      {selectedResource.data.type === 'BlockStorage' && (
         <BlockStorageSpec
-          spec={selectedResource.spec as BlockStorageSpecType}
+          spec={selectedResource.data.spec as BlockStorageSpecType}
         />
       )}
-      {selectedResource.type === 'ObjectStorage' && (
+      {selectedResource.data.type === 'ObjectStorage' && (
         <ObjectStorageSpec
-          spec={selectedResource.spec as ObjectStorageSpecType}
+          spec={selectedResource.data.spec as ObjectStorageSpecType}
         />
       )}
-      {selectedResource.type === 'FireWall' && (
-        <FirewallSpec spec={selectedResource.spec as FirewallSpecType} />
+      {selectedResource.data.type === 'FireWall' && (
+        <FirewallSpec spec={selectedResource.data.spec as FirewallSpecType} />
       )}
     </div>
   ) : null;

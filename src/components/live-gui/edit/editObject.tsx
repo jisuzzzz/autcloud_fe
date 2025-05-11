@@ -3,6 +3,7 @@ import { InfoItem, SpecSection } from "../specBar"
 import { ObjectStorageSpecType } from "@/lib/projectDB"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
+import { eventBus } from "@/services/eventBus"
 
 interface ObectStorageSpecProps {
   spec: ObjectStorageSpecType
@@ -17,19 +18,22 @@ export default function EditObjectStorageSpec({spec, onEdit}: ObectStorageSpecPr
   const onSubmit = (data:ObjectStorageSpecType) => {
     if(onEdit) {
       onEdit(data)
+      eventBus.publish('objectSpecUpdated', data)
     }
   }
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex gap-3 items-center px-4 py-3 border-b justify-between">
-        <Image
-          alt="object storage"
-          src={"/aut-obj-storage.svg"}
-          width={25}
-          height={25}
-          className="rounded-xs"
-        ></Image>
-        <h3 className="text-sm font-medium">Object Storage</h3>
+      <div className="flex items-center px-4 py-3 border-b justify-between">
+        <div className="gap-3 flex items-center">
+          <Image
+            alt="object storage"
+            src={"/aut-objectstorage.svg"}
+            width={25}
+            height={25}
+            className="rounded-xs"
+          ></Image>
+          <h3 className="text-sm font-medium">Object Storage</h3>
+        </div>
         <Button type="submit" className="px-3 py-1 h-8 text-xs">
             Save Changes
         </Button>
