@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import Image from 'next/image'
 import { useOthers, useSelf } from '@liveblocks/react'
 import { ComputeSpecType, DatabaseSpecType, BlockStorageSpecType, ObjectStorageSpecType, FirewallSpecType } from '@/lib/projectDB'
+import { Handle, Position } from 'reactflow'
 
 const resourceIcons = {
   Compute: '/aut-compute.svg',
@@ -33,9 +34,6 @@ export default function ResourceNode({ id, data, selected=false }: NodeProps) {
     user.presence.selectedNodes.includes(id)
   )
   
-  // 핸들이 보여야 하는지 여부 결정
-  const showHandles = selected || isHovered;
-  
   return (
     <>
       <div 
@@ -51,8 +49,6 @@ export default function ResourceNode({ id, data, selected=false }: NodeProps) {
           ...(selected && {'--tw-ring-color': myColor}),
           pointerEvents: isOccupiedByOthers ? 'none' : 'auto'
         }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
       >
         <Image
           alt='resources-icons'
@@ -88,6 +84,28 @@ export default function ResourceNode({ id, data, selected=false }: NodeProps) {
         }
         return null
       })}
+    
+      <Handle 
+        type="target" 
+        position={Position.Bottom} 
+        style={{ 
+          opacity: 0,
+          pointerEvents: 'none'
+        }}
+        isConnectable={false}
+        id="bottom"
+      />
+      
+      <Handle 
+        type="source" 
+        position={Position.Top} 
+        style={{ 
+          opacity: 0,
+          pointerEvents: 'none'
+        }}
+        isConnectable={false}
+        id="top"
+      />
     </>
   )
 }

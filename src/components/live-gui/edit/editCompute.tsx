@@ -28,6 +28,17 @@ export default function EditComputeSpec({
     defaultValues: spec,
   })
 
+  const watchedValues = watch()
+  const [hasChanges, setHasChanges] = useState(false)
+
+  useEffect(() => {
+    const hasAnyChanges = Object.keys(spec).some(key => {
+      const field = key as keyof ComputeSpecType
+      return watchedValues[field] !== spec[field]
+    })
+    setHasChanges(hasAnyChanges)
+  }, [watchedValues, spec])
+
   const isValueChanged = (property: keyof ComputeSpecType) => {
     const currValue = watch(property)
     return currValue !== spec[property]
@@ -144,7 +155,11 @@ export default function EditComputeSpec({
           <Button type='button' onClick={onClose} className='px-3 py-1 h-[30px] rounded-sm text-xs bg-gray-50 hover:bg-violet-50 text-black border'>
             Cancel
           </Button>
-          <Button type="submit" className="px-3 py-1 h-[30px] rounded-sm text-xs bg-[#7868E6] border border-[#6035BE] hover:bg-[#8474FF]">
+          <Button 
+            type="submit" 
+            className="px-3 py-1 h-[30px] rounded-sm text-xs bg-[#7868E6] border border-[#6035BE] hover:bg-[#8474FF]"
+            disabled={!hasChanges}
+          >
             Save
           </Button>
         </div>

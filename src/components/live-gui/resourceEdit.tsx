@@ -3,14 +3,9 @@
 import { SquarePen } from 'lucide-react'
 import { useState } from 'react'
 import EditModal from './edit/editModal'
-import { 
-  ComputeSpecType, DatabaseSpecType,
-  BlockStorageSpecType, ObjectStorageSpecType, FirewallSpecType 
-} from "@/lib/projectDB"
+import { ResourceNodeType } from "@/lib/projectDB"
 import { Button } from '../ui/button'
-import { Node } from 'reactflow'
-
-type SpecType = ComputeSpecType | DatabaseSpecType | BlockStorageSpecType | ObjectStorageSpecType | FirewallSpecType
+import { Node, Edge } from 'reactflow'
 
 export function SaveEditButton({ formId }: { formId?: string}) {
   return (
@@ -23,7 +18,13 @@ export function SaveEditButton({ formId }: { formId?: string}) {
   )
 }
 
-export function StartEditButton({spec, type, setNodes}: {spec: SpecType, type:string, setNodes: (updater: (prev: Node[]) => Node[]) => void }) {
+interface StartEditButtonProps{
+  resource: ResourceNodeType
+  setNodes: (updater: (prev: Node[]) => Node[]) => void
+  setEdges: (updater: (prev: Edge[]) => Edge[]) => void 
+}
+
+export function StartEditButton({resource, setNodes, setEdges}: StartEditButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   return (
     <>
@@ -33,7 +34,12 @@ export function StartEditButton({spec, type, setNodes}: {spec: SpecType, type:st
         <SquarePen size={18} className="text-gray-500 hover:text-[#8171E8]" />
       </button>
       {isModalOpen && (
-        <EditModal spec={spec} onClose={() => setIsModalOpen(false)} type={type} setNodes={setNodes}/>
+        <EditModal 
+          resource={resource}
+          onClose={() => setIsModalOpen(false)}
+          setNodes={setNodes}
+          setEdges={setEdges}
+        />
       )}
     </>
   )

@@ -5,58 +5,65 @@ import SelectBox from "@/components/custom/selectBox"
 import { BlockStorageSpecType } from "@/lib/projectDB"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
-import { eventBus } from "@/services/eventBus"
 import { RegionsArray } from "@/lib/resourceOptions"
-import { cn } from "@/lib/utils"
 import { useYjsStore } from "@/lib/useYjsStore"
 import { Node, Edge } from "reactflow"
 import { Input } from "@/components/ui/input"
 import { useEffect, useState } from "react"
 
-interface BlockStorageSpecProps {
-  spec: BlockStorageSpecType
-  onEdit: (data: BlockStorageSpecType) => void
+interface AddNewBlockStorageProps {
+  onAdd: (data: BlockStorageSpecType) => void
   onClose: () => void
-  setEdges: (updater: (prev: Edge[]) => Edge[]) => void
 }
 
-export default function EditBlockStorageSpec({spec, onEdit, onClose, setEdges}:BlockStorageSpecProps) {
+export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageProps) {
   const {yDoc} = useYjsStore()
-  const [hasChanges, setHasChanges] = useState(false)
+  const [isFormValid, setIsFormValid] = useState(false)
   
   const yNodes = yDoc.getArray<Node>('nodes')
+  const yEdges = yDoc.getArray<Edge>('edges')
   const nodes = yNodes.toArray() as Node[]
+  const edges = yEdges.toArray() as Edge[]
 
-  const { register, handleSubmit, setValue, watch } = useForm<BlockStorageSpecType>({
-    defaultValues: spec
+  const defaultValues = {
+    id: '',
+    location: '',
+    type: "NVMe",
+    mount_id: "ewr-a23cda1547af4b",
+    attached_to: '',
+    size: "1GB",
+    label: '',
+    date_created: "05/12/2025 07:31:20"
+  }
+
+  const { register, handleSubmit, setValue, watch, formState } = useForm({
+    defaultValues,
+    mode: "onChange"
   })
-  
-  const watchedValues = watch()
+
+  const location = watch('location')
+  const label = watch('label')
+  const attached_to = watch('attached_to')
   
   useEffect(() => {
-    const hasAnyChange = Object.keys(spec).some(key => {
-      const field = key as keyof BlockStorageSpecType
-      return watchedValues[field] !== spec[field]
-    })
-    
-    setHasChanges(hasAnyChange)
-  }, [watchedValues, spec])
-  
-  const computeNodes = nodes.filter(node => 
-    node.data.type === 'Compute' &&
-    node.data.spec.status !== 'remove'
-  ).map(node => ({
-    value: node.id,
-    label: node.data.spec.label
-  }))
+    setIsFormValid(!!location && !!label && !!attached_to)
+  }, [location, label, attached_to])
+
+  const connectedComputeIds = edges.map(edge => edge.target)
+
+  const computeNodes = nodes
+    .filter(node => 
+      node.data.type === 'Compute' &&
+      node.data.spec.status !== 'remove' &&
+      !connectedComputeIds.includes(node.id)
+    )
+    .map(node => ({
+      value: node.id,
+      label: node.data.spec.label
+    }))
 
   const handleAttachChange = (computeId: string) => {
     setValue('attached_to', computeId)
-  }
-
-  const isValueChanged = (property: keyof BlockStorageSpecType) => {
-    const currValue = watch(property)
-    return currValue !== spec[property]
   }
 
   const regionOptions = RegionsArray.map(region => ({
@@ -73,26 +80,13 @@ export default function EditBlockStorageSpec({spec, onEdit, onClose, setEdges}:B
     
     setValue('location', regionWithCity)
   }
-  
+
   const onSubmit = (data:BlockStorageSpecType) => {
-    if(onEdit) {
-      onEdit(data)
-      
-      const computeId = data.attached_to
-      if(computeId) {
-        setEdges(prev => prev.map(edge => 
-          edge.target === spec.attached_to
-            ? {
-              ...edge,
-              target: computeId
-            }
-            : edge
-        ))
-      }
-      eventBus.publish('blockSpecUpdated', data)
+    if(onAdd){
+      onAdd(data)
     }
   }
-  
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex items-center px-4 py-3 border-b justify-between">
@@ -113,7 +107,7 @@ export default function EditBlockStorageSpec({spec, onEdit, onClose, setEdges}:B
           <Button 
             type="submit" 
             className="px-3 py-1 h-[30px] rounded-sm text-xs bg-[#7868E6] border border-[#6035BE] hover:bg-[#8474FF]"
-            disabled={!hasChanges}
+            disabled={!isFormValid}
           >
             Save
           </Button>
@@ -122,51 +116,62 @@ export default function EditBlockStorageSpec({spec, onEdit, onClose, setEdges}:B
 
       <SpecSection>
         <InfoItem label="ID">
-          {spec.id}
+          {defaultValues.id || "Auto-generated"}
         </InfoItem>
+
         <InfoItem label="Location">
-          <SelectBox 
-            option={regionOptions}
-            placeholder={spec.location || "Select region"}
-            className={cn("h-9 text-[13px] bg-[#F1F5F9] border-none rounded-sm w-full", 
-              isValueChanged('location') ? "text-blue-500 font-medium" : "")}
-            onChange={handleRegionChange}
-            showFlags={true}
-          />
+          <div className="flex flex-col w-full">
+            <SelectBox 
+              option={regionOptions}
+              placeholder={"Select region"}
+              className="h-9 text-[13px] bg-[#F1F5F9] border-none rounded-sm w-full" 
+              onChange={handleRegionChange}
+              showFlags={true}
+            />
+            {!location && <p className="text-xs text-blue-400 mt-1">* Required field</p>}
+          </div>
+          
         </InfoItem>
-        <InfoItem label="Type">{spec.type}</InfoItem>
+        </SpecSection>
+
+        <SpecSection>
+        <InfoItem label="Type">{defaultValues.type}</InfoItem>
 
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <h3 className="text-xs text-gray-500">{"Mount ID"}</h3>
             <InfoIcon label="?"/>
           </div>
-          <p className="text-[13px]">{spec.mount_id}</p>
+          <p className="text-[13px]">{defaultValues.mount_id}</p>
         </div>
 
         <div className="space-y-2">
           <h3 className="text-xs text-gray-500">{"Attatch to"}</h3>
           <SelectBox
             option={computeNodes}
-            placeholder={nodes.find(node => node.id === spec.attached_to)?.data.spec.label || "Select compute"}
-            className={cn("h-9 text-[13px] bg-[#F1F5F9] border-none rounded-sm w-full", 
-              isValueChanged('attached_to') ? "text-blue-500 font-medium" : "")}
+            placeholder={"Select compute"}
+            className="h-9 text-[13px] bg-[#F1F5F9] border-none rounded-sm w-full"
             onChange={handleAttachChange}
           />
+          {!attached_to && <p className="text-xs text-blue-400 mt-1">* Required field</p>}
           <p className="text-xs text-gray-500">on this page, GB = 1024^3 bytes</p>
         </div>
       </SpecSection>
 
       <SpecSection>
         <InfoItem label="Size">
-          <p className="text-[13px] text-[#8171E8]">{spec.size}</p>
+          <p className="text-[13px]">{defaultValues.size}</p>
         </InfoItem>
         <InfoItem label="Label">
-          <Input
-            className={cn("h-9 text-[13px] bg-[#F1F5F9] border-none rounded-sm", 
-              isValueChanged('label') ? "text-blue-500 font-medium" : "text-[#8171E8]")}
-            {...register('label')}
-          />
+          <div className="flex flex-col w-full">
+            <Input
+              placeholder="Input label"
+              className="h-9 text-[13px] bg-[#F1F5F9] border-none rounded-sm"
+              {...register('label', { required: true })}
+            />
+            {!label && <p className="text-xs text-blue-400 mt-1">* Required field</p>}
+          </div>
+
         </InfoItem>
       </SpecSection>
     </form>

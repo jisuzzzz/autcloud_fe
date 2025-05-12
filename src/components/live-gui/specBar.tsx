@@ -13,11 +13,12 @@ import {
   BlockStorageSpecType,
   ObjectStorageSpecType,
   FirewallSpecType,
+  ResourceNodeType,
 } from '@/lib/projectDB';
 import Image from 'next/image';
 import { StartEditButton } from './resourceEdit';
 import { useYjsStore } from '@/lib/useYjsStore';
-import { Node } from 'reactflow';
+import { Edge, Node } from 'reactflow';
 
 export function InfoIcon({ label }: { label: string }) {
   return (
@@ -67,11 +68,15 @@ export function SpecSection({
   );
 }
 
-export default function SpecBar({setNodes}:{setNodes: (updater: (prev: Node[]) => Node[]) => void }) {
+interface SpecBarProps {
+  setNodes: (updater: (prev: Node[]) => Node[]) => void 
+  setEdges: (updater: (prev: Edge[]) => Edge[]) => void
+}
+
+export default function SpecBar({setNodes, setEdges}: SpecBarProps) {
 
   const [selectedResource, setSelectedResource] = useState<Node | null>(null)
   const me = useSelf();
-  const [isEditing] = useState(false);
   const  {yDoc} = useYjsStore()
   
   useEffect(() => {
@@ -83,13 +88,10 @@ export default function SpecBar({setNodes}:{setNodes: (updater: (prev: Node[]) =
     if(selectedNodeId && specBarNodes) {
       const resource = specBarNodes.find((r) => r.id === selectedNodeId)
       setSelectedResource(resource || null)
-      // console.log(resource) 
     } else {
       setSelectedResource(null)
     }
   }, [me?.presence.selectedNodes])
-  // console.log(selectedResource)
-  
 
   return selectedResource ? (
     <div className="md:block hidden fixed top-[55px] right-0 bg-white border-l w-[256px] h-screen z-40">
@@ -106,41 +108,11 @@ export default function SpecBar({setNodes}:{setNodes: (updater: (prev: Node[]) =
             {selectedResource?.data?.spec.label}
           </h3>
         </div>
-        {!isEditing && selectedResource.data.type === 'Compute' && (
-          <StartEditButton
-            spec={selectedResource.data.spec as ComputeSpecType}
-            type="Compute"
-            setNodes={setNodes}
-          />
-        )}
-        {!isEditing && selectedResource.data.type === 'Database' && (
-          <StartEditButton
-            spec={selectedResource.data.spec as DatabaseSpecType}
-            type="Database"
-            setNodes={setNodes}
-          />
-        )}
-        {!isEditing && selectedResource.data.type === 'BlockStorage' && (
-          <StartEditButton
-            spec={selectedResource.data.spec as BlockStorageSpecType}
-            type="BlockStorage"
-            setNodes={setNodes}
-          />
-        )}
-        {!isEditing && selectedResource.data.type === 'ObjectStorage' && (
-          <StartEditButton
-            spec={selectedResource.data.spec as ObjectStorageSpecType}
-            type="ObjectStorage"
-            setNodes={setNodes}
-          />
-        )}
-        {!isEditing && selectedResource.data.type === 'FireWall' && (
-          <StartEditButton
-            spec={selectedResource.data.spec as FirewallSpecType}
-            type="FireWall"
-            setNodes={setNodes}
-          />
-        )}
+        <StartEditButton
+          resource={selectedResource as ResourceNodeType}
+          setNodes={setNodes}
+          setEdges={setEdges}
+        />
       </div>
       {selectedResource.data.type === 'Compute' && (
         <ComputeSpec spec={selectedResource.data.spec as ComputeSpecType} />

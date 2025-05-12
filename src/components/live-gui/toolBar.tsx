@@ -1,11 +1,9 @@
 'use client'
 import Image from "next/image"
-import { useYjsStore } from "@/lib/useYjsStore"
-import { Node } from 'reactflow'
-import { ResourceConfig } from "@/lib/projectDB"
+import { Connection, Node } from 'reactflow'
 import EditSummary from "./edit/editSummary"
 import { useState } from "react"
-import AddNewResourceModal from "./addResoucreModal"
+import AddNewResourceModal from "./add/addResoucreModal"
 
 interface Resource {
   type: 'Compute' | 'BlockStorage' | 'Database' | 'ObjectStorage' | 'FireWall'
@@ -14,9 +12,8 @@ interface Resource {
 }
 
 interface ToolBarProps {
-  userId: string | undefined
-  init_resources: ResourceConfig[]
   setNodes: (updater: (prev: Node[]) => Node[]) => void
+  onConnect: (connection: Connection) => void
 }
 
 const resources: Resource[] = [
@@ -27,13 +24,10 @@ const resources: Resource[] = [
   { type: 'FireWall', label: 'Firewall', icon: '/aut-firewall.svg' },
 ]
 
-export default function ToolBar({ userId, setNodes }: ToolBarProps) {
-  const { yDoc } = useYjsStore()
+export default function ToolBar({ setNodes, onConnect }: ToolBarProps) {
   const [selectedResourceType, setSelectedResourceType] = useState<{type: string, } | null>(null)
 
   const handleResourceClick = (resource: Resource) => {
-    if(!userId || !yDoc) return
-    
     setSelectedResourceType({ type: resource.type })
   }
 
@@ -68,10 +62,11 @@ export default function ToolBar({ userId, setNodes }: ToolBarProps) {
         </div>
         <EditSummary />
       {selectedResourceType && (
-        <AddNewResourceModal 
+        <AddNewResourceModal
           setNodes={setNodes}
           onClose={() => setSelectedResourceType(null)} 
           type={selectedResourceType.type} 
+          onConnect={onConnect}
         />
       )}
       </div>

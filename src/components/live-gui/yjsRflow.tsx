@@ -1,9 +1,9 @@
 'use client'
 import { useCallback, useEffect, useState } from 'react' 
 import ReactFlow, {
-   Background, useNodesState, useEdgesState, addEdge,
+  Background, useNodesState, useEdgesState, addEdge,
   Connection, Edge, Node, BackgroundVariant, ConnectionMode,
-  EdgeChange, NodeChange, MarkerType,
+  NodeChange, MarkerType,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import ResourceNode from './node'
@@ -14,7 +14,7 @@ import { useMyPresence, useSelf } from '@liveblocks/react'
 import ToolBar from './toolBar'
 import SpecBar from './specBar'
 import FlowHeader from './flowHeader'
-import { ResourceConfig, ProjectTemplate } from '@/lib/projectDB'
+import { ResourceConfig, ProjectTemplate, BlockStorageSpecType } from '@/lib/projectDB'
 import { LiveFlowService } from '@/services/liveflow'
 import Loading from '../custom/loading'
 
@@ -39,6 +39,31 @@ const convertToNodes = (resources: ResourceConfig[]): Node[] => {
   }))
 }
 
+const convertToEdges = (resources: ResourceConfig[]): Edge[] => {
+  const edges: Edge[] = []
+  resources.forEach(resource => {
+    if(resource.type === 'BlockStorage' && (resource.spec as BlockStorageSpecType).attached_to) {
+      
+      const newEdge: Edge = {
+        id: `e-${resource.id}-${Date.now()}`,
+        source: resource.id,
+        target: (resource.spec as BlockStorageSpecType).attached_to!,
+        sourceHandle: 'top',
+        targetHandle: 'bottom',
+        type: 'edge',
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          width: 10,
+          height: 10,
+        },
+        style: { strokeWidth: 2 }
+      }
+      edges.push(newEdge)
+    }
+  })
+  return edges
+}
+
 export function YjsReactFlow({ project }: YjsReactFlowProps) {
 
   const { initial_resources, name, id } = project
@@ -48,7 +73,7 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
   const [myPresence, setMyPresence] = useMyPresence()
 
   const [nodes, setNodes, onNodesChange] = useNodesState([])
-  const [edges, setEdges, onEdgesChange] = useEdgesState([])
+  const [edges, setEdges] = useEdgesState([])
 
   const [clipboard, setClipboard] = useState<{nodes: Node[]} | null>(null)
   const [occupiedNode, setoccupiedNode] = useState<Node[]>([])
@@ -63,10 +88,17 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
     if(yNodes.length===0){
       const initialNodes = convertToNodes(initial_resources)
       setNodes(initialNodes)
-      LiveFlowService.initNodes(initialNodes, [], yDoc)
+      const initialEdges = convertToEdges(initial_resources)
+      setEdges(initialEdges)
+
+      LiveFlowService.initNodes(initialNodes, initialEdges, yDoc)
     } else {
       const sharedNodes = yNodes.toArray() as Node[]
       setNodes(sharedNodes)
+      if(yEdges.length > 0) {
+        const sharedEdges = yEdges.toArray() as Edge[]
+        setEdges(sharedEdges)
+      }
     }
     // LiveFlowService.initNodes(initialNodes, [], yDoc)
     LiveFlowService.initUserActionHistory(user.id, yDoc)
@@ -121,28 +153,12 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
     setMyPresence({ selectedNodes: nodeIds })
   }, [setMyPresence])
 
-   // 엣지 변경 처리
-  const handleEdgesChange = useCallback((changes: EdgeChange[]) => {
-    onEdgesChange(changes)
-    
-    // 엣지 삭제 처리
-    const removeEdge = changes.find(change => change.type === 'remove')
-    if (removeEdge && removeEdge.id && yDoc && user?.id && user.info?.name) {
-      const yEdges = yDoc.getArray<Edge>('edges')
-      const edgeIndex = yEdges.toArray().findIndex((edge: Edge) => edge.id === removeEdge.id)
-      
-      if (edgeIndex !== -1) {
-        yEdges.delete(edgeIndex, 1)
-      }
-    }
-  }, [onEdgesChange, yDoc, user])
 
   const onConnect = useCallback((connection: Connection) => {
     if (!yDoc || !user?.id || !user.info?.name) return
     
-    // 새 엣지 생성
     const newEdge: Edge = {
-      id: `e-${connection.source}-${connection.target}-${Date.now()}`,
+      id: `e-${connection.source}-${Date.now()}`,
       source: connection.source!,
       target: connection.target!,
       sourceHandle: connection.sourceHandle,
@@ -156,15 +172,11 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
       style: { strokeWidth: 2 }
     }
     
-    // 로컬 상태 업데이트
     setEdges((eds) => addEdge(newEdge, eds))
-    
-    // // Yjs 문서에 엣지 추가
     const yEdges = yDoc.getArray<Edge>('edges')
     yEdges.push([newEdge])
-    
-    
-  }, [setEdges, yDoc, user]);
+        
+  }, [setEdges, yDoc, user])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -262,6 +274,8 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
           //   }
           //   setNodes(prev => [...prev, newGroupNode])
           //   break
+          case 'k':
+            LiveFlowService.initAllYDoc(yDoc)
         }
       }
     }
@@ -285,23 +299,26 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
         setNodes={setNodes}
       />
       <ToolBar 
-        userId={user?.id}
-        setNodes={setNodes} 
-        init_resources={initial_resources}
+        setNodes={setNodes}
+        onConnect={onConnect}
       />
-      <SpecBar setNodes={setNodes}/>
+      <SpecBar 
+        setNodes={setNodes} 
+        setEdges={setEdges}
+      />
       <ReactFlow
         nodes={nodes}
         edges={edges}
         onSelectionChange={handleSelectionChange}
         onNodesChange={handleNodesChange}
-        onEdgesChange={handleEdgesChange}
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         onConnect={onConnect}
         defaultViewport={{ x: 0, y: 0, zoom: 1 }}
         connectionMode={ConnectionMode.Loose}
         proOptions={{ hideAttribution: true }}
+        deleteKeyCode={null}
+        selectionKeyCode={null}
       >
         <Background 
           // color="F6F5FD"

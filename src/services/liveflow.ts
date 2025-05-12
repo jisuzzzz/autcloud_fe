@@ -165,10 +165,13 @@ export const LiveFlowService = {
   editNodeV2: (nodeId:string, changes: Record<string, string>, userId: string, userName:string, yDoc: Y.Doc) => {
     if (!yDoc) return
     const yNodes = yDoc.getArray<Node>('nodes')
+    const yEdges = yDoc.getArray<Edge>('edges')
     const projectHistory = yDoc.getMap<ProjectChanges>('projectHistory')
     
     const nodes = yNodes.toArray() as Node[]
+    const edges = yEdges.toArray() as Edge[]
     const prevNode = nodes.find(n => n.id === nodeId)
+
     if(!prevNode) return
     
     yDoc.transact(() => {
@@ -209,15 +212,29 @@ export const LiveFlowService = {
 
         const updatedNodes = nodes.map(node => {
           if(node.id === nodeId) {
-            const updatedSpec = {...node.data.spec, stauts: "edit"}
+            const updatedSpec = {...node.data.spec}
 
             Object.entries(changes).forEach(([property, newValue]) => {
               updatedSpec[property] = newValue
             })
-            return {...node, data:{...node.data, spec: updatedSpec}}
+            return {...node, data:{...node.data, status:"edit", spec: updatedSpec}}
           }
           return node
-        }) 
+        })
+        if(prevNode.data.type === 'BlockStorage' && 'attached_to' in changes) {
+          const newComputeId = changes['attached_to']
+          const prevEdge = edges.find(e => e.source === nodeId)
+          if(prevEdge) {
+            const edgeIndex = edges.findIndex(e => e.id === prevEdge.id)
+            console.log(edgeIndex)
+            const updatedEdge = {
+              ...prevEdge,
+              target: newComputeId
+            }
+            yEdges.delete(edgeIndex, 1)
+            yEdges.insert(edgeIndex, [updatedEdge])
+          }
+        }
 
         yNodes.delete(0, yNodes.length)
         yNodes.insert(0, updatedNodes)
@@ -233,7 +250,7 @@ export const LiveFlowService = {
     yDoc.transact(() => {
       // 해당 사용자의 스택을 가져오거나, 없으면 새로운 빈 스택을 생성
       const userStack = userActionHistory.get(userId) || { undoStack: [] }
-      
+
       userStack.undoStack.push(action) // 새로운 작업을 스택에 추가
       userActionHistory.set(userId, userStack) // 변경된 스택을 다시 저장
     })
@@ -320,4 +337,14 @@ export const LiveFlowService = {
     })
     return undoNodes
   },
+
+  initAllYDoc: (yDoc:Y.Doc) => {
+    const yNodes = yDoc.getArray<Node>('nodes')
+    const yEdges = yDoc.getArray<Edge>('edges')
+    const userActionHistory = yDoc.getMap<UserStack>('userActionHistory')
+    const projectHistory = yDoc.getMap<ProjectChanges>('projectHistory')
+    yNodes.delete(0, yNodes.length)
+    yEdges.delete(0, yEdges.length)
+    projectHistory.delete('nodes')
+  }
 }

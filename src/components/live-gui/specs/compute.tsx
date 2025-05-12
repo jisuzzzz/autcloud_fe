@@ -64,12 +64,12 @@ export default function ComputeSpec({ spec: initSpec }: ComputeSpecProps) {
 
       <SpecSection>
         <InfoItem label="Location">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <Image
               alt="region"
               src={regionInfo.flag}
-              width={25}
-              height={25}
+              width={23}
+              height={23}
             ></Image>
             <p className="text-[13px]">{spec.location}</p>
           </div>

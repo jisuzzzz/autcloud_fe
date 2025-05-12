@@ -2,7 +2,7 @@
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { InfoItem, SpecSection, InfoIcon } from './specBar'
+import { InfoItem, SpecSection, InfoIcon } from '../specBar'
 import { Copy } from 'lucide-react'
 import { ComputeSpecType } from '@/lib/projectDB'
 import { useForm } from 'react-hook-form'
@@ -10,14 +10,14 @@ import { Input } from '@/components/ui/input'
 import { ComputeOptions } from '@/lib/computeOptions'
 import { RegionsArray, OSArray } from '@/lib/resourceOptions'
 import SelectBox from '@/components/custom/selectBox'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface AddNewResourceProps {
   onAdd: (data: ComputeSpecType) => void
   onClose: () => void
 }
 
-export default function AddNewResource({onAdd, onClose}:AddNewResourceProps) {
+export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
   const { register, handleSubmit, setValue, watch }  = useForm({
     defaultValues: {
       location: '',
@@ -29,9 +29,10 @@ export default function AddNewResource({onAdd, onClose}:AddNewResourceProps) {
       bandwidth: '',
       status: 'running',
       ip_address: '64.176.217.21',
-      label: 'compute-1212',
+      label: '',
       auto_backups: false
-    }
+    },
+    mode: "onChange"
   })
 
   const [filteredComputeOptions, setFilteredComputeOptions] = useState<any[]>([])
@@ -39,6 +40,13 @@ export default function AddNewResource({onAdd, onClose}:AddNewResourceProps) {
   const location = watch('location')
   const computeId = watch('id')
   const os = watch('os')
+  const label = watch('label')
+
+  const [isFormValid, setIsFormValid] = useState(false)
+
+  useEffect(() => {
+    setIsFormValid(!!location && !!computeId && !!os && !!label)
+  }, [location, computeId, os, label])
 
   const [selectedSpec, setSelectedSpec] = useState({
     vcpu: '',
@@ -138,7 +146,11 @@ export default function AddNewResource({onAdd, onClose}:AddNewResourceProps) {
           <Button type='button' onClick={onClose} className='px-3 py-1 h-[30px] rounded-sm text-xs bg-gray-50 hover:bg-violet-50 text-black border'>
             Cancel
           </Button>
-          <Button type="submit" className="px-3 py-1 h-[30px] rounded-sm text-xs bg-[#7868E6] border border-[#6035BE] hover:bg-[#8474FF]">
+          <Button 
+            type="submit" 
+            className="px-3 py-1 h-[30px] rounded-sm text-xs bg-[#7868E6] border border-[#6035BE] hover:bg-[#8474FF]"
+            disabled={!isFormValid}
+          >
             Save
           </Button>
         </div>
@@ -146,17 +158,20 @@ export default function AddNewResource({onAdd, onClose}:AddNewResourceProps) {
 
       <SpecSection>
         <InfoItem label="Location">
-          <SelectBox 
-            option={regionOptions}
-            placeholder={"Select region"}
-            className="h-9 text-[13px] bg-[#F1F5F9] border-none rounded-sm w-full"
-            onChange={handleRegionChange}
-            showFlags={true}
-          />
+          <div className='flex flex-col w-full'>
+            <SelectBox 
+              option={regionOptions}
+              placeholder={"Select region"}
+              className="h-9 text-[13px] bg-[#F1F5F9] border-none rounded-sm w-full"
+              onChange={handleRegionChange}
+              showFlags={true}
+            />
+            {!location && <p className="text-xs text-blue-400 mt-1">* Required field</p>}
+          </div>
         </InfoItem>
 
         <InfoItem label='Compute ID'>
-          <div className='w-full' style={{ cursor: !watch('location') ? 'not-allowed' : 'default' }}>
+          <div className='flex flex-col w-full' style={{ cursor: !watch('location') ? 'not-allowed' : 'default' }}>
             <SelectBox 
               option={filteredComputeOptions.map(opt => ({
                 value: opt.id,
@@ -168,16 +183,20 @@ export default function AddNewResource({onAdd, onClose}:AddNewResourceProps) {
               )}
               onChange={handleComputeIdChange}
             />
+            {!computeId && <p className="text-xs text-blue-400 mt-1">* Required field</p>}
           </div>
         </InfoItem>
 
         <InfoItem label="OS">
-          <SelectBox 
-            option={OsOptions}
-            placeholder={"Select OS"}
-            className="h-9 text-[13px] bg-[#F1F5F9] border-none rounded-sm w-full"
-            onChange={handleOsChange}
-          />
+          <div className='flex flex-col w-full'>
+            <SelectBox 
+              option={OsOptions}
+              placeholder={"Select OS"}
+              className="h-9 text-[13px] bg-[#F1F5F9] border-none rounded-sm w-full"
+              onChange={handleOsChange}
+            />
+            {!os && <p className="text-xs text-blue-400 mt-1">* Required field</p>}
+          </div>
         </InfoItem>
 
         <InfoItem label="IP Address">
@@ -219,10 +238,14 @@ export default function AddNewResource({onAdd, onClose}:AddNewResourceProps) {
       )}
       <SpecSection>
         <InfoItem label="Label">
-          <Input
-            className={cn("h-9 text-[13px] bg-[#F1F5F9] border-none rounded-sm")}
-            {...register('label')}
-          />
+          <div className='flex flex-col w-full'>
+            <Input
+              placeholder='Input label'
+              className={cn("h-9 text-[13px] bg-[#F1F5F9] border-none rounded-sm")}
+              {...register('label')}
+            />
+            {!label && <p className="text-xs text-blue-400 mt-1">* Required field</p>}
+          </div>
         </InfoItem>
       </SpecSection>
     </form>

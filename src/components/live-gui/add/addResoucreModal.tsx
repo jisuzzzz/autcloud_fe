@@ -1,21 +1,23 @@
 'use client'
-import Modal from "../custom/modal"
+import Modal from "../../custom/modal"
 import { BlockStorageSpecType, ComputeSpecType, DatabaseSpecType, FirewallSpecType, ObjectStorageSpecType } from "@/lib/projectDB"
 import { useYjsStore } from '@/lib/useYjsStore'
 import { useSelf } from "@liveblocks/react"
 import { LiveFlowService } from "@/services/liveflow"
-import AddNewResource from "./addNewResource"
-import { Node } from "reactflow"
+import AddNewCompute from "./addCompute"
+import { Connection, Node } from "reactflow"
+import AddNewBlockStorage from "./addBlock"
 
 type SpecType = ComputeSpecType | DatabaseSpecType | BlockStorageSpecType | ObjectStorageSpecType | FirewallSpecType
 
 interface EditModalProps{
   onClose: () => void
   type: string
-  setNodes: (updater: (prev: Node[]) => Node[]) => void 
+  setNodes: (updater: (prev: Node[]) => Node[]) => void
+  onConnect: (connection: Connection) => void
 }
 
-export default function AddNewResourceModal({onClose, type, setNodes}: EditModalProps) {
+export default function AddNewResourceModal({onClose, type, setNodes, onConnect}: EditModalProps) {
   const {yDoc} = useYjsStore() 
   const me = useSelf()
 
@@ -40,6 +42,18 @@ export default function AddNewResourceModal({onClose, type, setNodes}: EditModal
     
     setNodes((prev: Node[]) => [...prev, newNode])
     LiveFlowService.addNode(newNode, me.id, me.info.name, yDoc)
+    
+    if(type === 'BlockStorage' && (addedSpec as BlockStorageSpecType).attached_to) {
+      const computeId = (addedSpec as BlockStorageSpecType).attached_to
+      const connection: Connection = {
+        source: newNode.id,
+        target: computeId,
+        sourceHandle: "top",
+        targetHandle: "bottom"
+      }
+      onConnect(connection)
+    }
+      
     LiveFlowService.pushToUndoStack(me.id, {
       type: 'add',
       nodes: [newNode],
@@ -51,28 +65,28 @@ export default function AddNewResourceModal({onClose, type, setNodes}: EditModal
     }, 200)
   }
 
-  // const renderEditComponent = () => {
-  //   switch(type) {
-  //     case 'Compute':
-  //       return <AddNewResource spec={spec as ComputeSpecType} onEdit={handleEdit} />
-  //     // case 'Database':
-  //     //   return <EditDatabaseSpec spec={spec as DatabaseSpecType} onEdit={handleEdit} />
-  //     // case 'BlockStorage':
-  //     //   return <EditBlockStorageSpec spec={spec as BlockStorageSpecType} onEdit={handleEdit} />
-  //     // case 'ObjectStorage':
-  //     //   return <EditObjectStorageSpec spec={spec as ObjectStorageSpecType} onEdit={handleEdit} />
-  //     // case 'FireWall':
-  //     //   return <EditFirewallSpec spec={spec as FirewallSpecType} onEdit={handleEdit} />
-  //   }
-  // }
+  const renderEditComponent = () => {
+    switch(type) {
+      case 'Compute':
+        return <AddNewCompute onAdd={handleAdd} onClose={onClose} />
+      // case 'Database':
+      //   return <EditDatabaseSpec spec={spec as DatabaseSpecType} onEdit={handleEdit} />
+      case 'BlockStorage':
+        return <AddNewBlockStorage onAdd={handleAdd} onClose={onClose} />
+      // case 'ObjectStorage':
+      //   return <EditObjectStorageSpec spec={spec as ObjectStorageSpecType} onEdit={handleEdit} />
+      // case 'FireWall':
+      //   return <EditFirewallSpec spec={spec as FirewallSpecType} onEdit={handleEdit} />
+    }
+  }
   
   return(
     <Modal
       className="fixed top-[70px] left-[268px]"
     >
       <div className="w-[400px] max-h-[calc(100vh-90px)] bg-white rounded-xs border overflow-y-auto">
-        {/* {renderEditComponent()} */}
-        <AddNewResource onAdd={handleAdd} onClose={onClose} />
+        {renderEditComponent()}
+        {/* <AddNewCompute onAdd={handleAdd} onClose={onClose} /> */}
       </div>
     </Modal>
   )

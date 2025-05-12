@@ -1,7 +1,7 @@
 'use client'
 import Modal from "../../custom/modal"
 import EditComputeSpec from "./editCompute"
-import { BlockStorageSpecType, ComputeSpecType, DatabaseSpecType, FirewallSpecType, ObjectStorageSpecType } from "@/lib/projectDB"
+import { BlockStorageSpecType, ComputeSpecType, DatabaseSpecType, FirewallSpecType, ObjectStorageSpecType, ResourceNodeType } from "@/lib/projectDB"
 import { useYjsStore } from '@/lib/useYjsStore'
 import { useSelf } from "@liveblocks/react"
 import { LiveFlowService } from "@/services/liveflow"
@@ -9,18 +9,18 @@ import EditDatabaseSpec from "./editDatabase"
 import EditBlockStorageSpec from "./editBlock"
 import EditObjectStorageSpec from "./editObject"
 import EditFirewallSpec from "./editFirewall"
-import { Node } from "reactflow"
+import { Node, Edge } from "reactflow"
 
 type SpecType = ComputeSpecType | DatabaseSpecType | BlockStorageSpecType | ObjectStorageSpecType | FirewallSpecType
 
 interface EditModalProps{
   onClose: () => void
-  spec: SpecType
-  type: string
+  resource: ResourceNodeType
   setNodes: (updater: (prev: Node[]) => Node[]) => void 
+  setEdges: (updater: (prev: Edge[]) => Edge[]) => void
 }
 
-export default function EditModal({onClose, spec, type, setNodes}: EditModalProps) {
+export default function EditModal({onClose, resource, setNodes, setEdges}: EditModalProps) {
   const {yDoc} = useYjsStore() 
   const me = useSelf()
 
@@ -52,7 +52,7 @@ export default function EditModal({onClose, spec, type, setNodes}: EditModalProp
             ...node.data,
             status: 'edit'
           },
-          selected:false
+          // selected:false
          }
          : node
       ))
@@ -70,17 +70,17 @@ export default function EditModal({onClose, spec, type, setNodes}: EditModalProp
   }
 
   const renderEditComponent = () => {
-    switch(type) {
+    switch(resource.data.type) {
       case 'Compute':
-        return <EditComputeSpec spec={spec as ComputeSpecType} onEdit={handleEdit} onClose={onClose} />
+        return <EditComputeSpec spec={resource.data.spec as ComputeSpecType} onEdit={handleEdit} onClose={onClose} />
       case 'Database':
-        return <EditDatabaseSpec spec={spec as DatabaseSpecType} onEdit={handleEdit} />
+        return <EditDatabaseSpec spec={resource.data.spec as DatabaseSpecType} onEdit={handleEdit} />
       case 'BlockStorage':
-        return <EditBlockStorageSpec spec={spec as BlockStorageSpecType} onEdit={handleEdit} />
+        return <EditBlockStorageSpec spec={resource.data.spec as BlockStorageSpecType} onEdit={handleEdit} onClose={onClose} setEdges={setEdges} />
       case 'ObjectStorage':
-        return <EditObjectStorageSpec spec={spec as ObjectStorageSpecType} onEdit={handleEdit} />
+        return <EditObjectStorageSpec spec={resource.data.spec as ObjectStorageSpecType} onEdit={handleEdit} />
       case 'FireWall':
-        return <EditFirewallSpec spec={spec as FirewallSpecType} onEdit={handleEdit} />
+        return <EditFirewallSpec spec={resource.data.spec as FirewallSpecType} onEdit={handleEdit} />
     }
   }
   
@@ -94,4 +94,3 @@ export default function EditModal({onClose, spec, type, setNodes}: EditModalProp
     </Modal>
   )
 }
-

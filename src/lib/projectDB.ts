@@ -9,6 +9,21 @@ type ResourceConfig = {
   spec: ComputeSpecType | DatabaseSpecType | BlockStorageSpecType | ObjectStorageSpecType | FirewallSpecType
 }
 
+type ResourceNodeType = {
+  id: string,
+  type: 'resource'
+  position: {
+    x: number,
+    y: number
+  },
+  status: 'add' | 'remove' | 'edit' | 'comfirm',
+  data: {
+    type: 'Compute' | 'Database' | 'BlockStorage' | 'ObjectStorage' | 'FireWall',
+    status: 'add' | 'remove' | 'edit' | 'comfirm',
+    spec: ComputeSpecType | DatabaseSpecType | BlockStorageSpecType | ObjectStorageSpecType | FirewallSpecType
+  }
+}
+
 type ProjectTemplate = {
   id: string,
   name: string,
@@ -97,7 +112,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         spec: {
           id: 'vc2-2c-2gb',
           status: "running",
-          location: "New Jersey",
+          location: "New Jersey (ewr)",
           ip_address: "64.176.217.21",
           vcpu: "1 vCPU",
           ram: "1024.00 MB",
@@ -115,7 +130,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         status: 'add',
         spec: {
           label: "Shopify-Asset-Storage",
-          location: "New Jersey",
+          location: "New Jersey (ewr)",
           tier: "Standard",
           storage_price: "$0.018/GB",
           transfer_price: "$0.018/GB"
@@ -128,10 +143,10 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         status: 'add',
         spec: {
           id: "999c0000-0000-0000-0000-0000000001",
-          location: "New Jersey",
+          location: "New Jersey (ewr)",
           type: "NVMe",
           mount_id: "ewr-a23cda1547af4b",
-          attached_to: "1024.00 MB Ubuntu 22.04 LTS",
+          attached_to: "compute-1",
           size: "1GB",
           label: "Shopify-Data-Volume",
           date_created: "04/15/2024 14:49:20"
@@ -150,7 +165,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           db_engine: "PostgreSQL",
           latest_backup: "2 hours ago",
           replica_nodes: false,
-          location: "New Jersey",
+          location: "New Jersey (ewr)",
           label: "Shopify-PostgreSQL-DB",
           tag: "production"
         }
@@ -515,6 +530,7 @@ export const DEFAULT_RESOURCES = {
 export { 
   type ProjectTemplate, 
   type ResourceConfig, 
+  type ResourceNodeType,
   type ComputeSpecType,
   type DatabaseSpecType,
   type BlockStorageSpecType,
