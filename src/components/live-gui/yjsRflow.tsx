@@ -48,15 +48,15 @@ const convertToEdges = (resources: ResourceConfig[]): Edge[] => {
         id: `e-${resource.id}-${Date.now()}`,
         source: resource.id,
         target: (resource.spec as BlockStorageSpecType).attached_to!,
-        sourceHandle: 'top',
-        targetHandle: 'bottom',
+        sourceHandle: 'right',
+        targetHandle: 'left',
         type: 'edge',
         markerEnd: {
-          type: MarkerType.ArrowClosed,
-          width: 10,
-          height: 10,
+          type: MarkerType.Arrow,
+          width: 20,
+          height: 20,
+          color: '#6E6E6E'
         },
-        style: { strokeWidth: 2 }
       }
       edges.push(newEdge)
     }
@@ -165,11 +165,11 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
       targetHandle: connection.targetHandle,
       type: 'edge',
       markerEnd: {
-        type: MarkerType.ArrowClosed,
-        width: 10,
-        height: 10,
+        type: MarkerType.Arrow,
+        width: 20,
+        height: 20,
+        color: '#6E6E6E'
       },
-      style: { strokeWidth: 2 }
     }
     
     setEdges((eds) => addEdge(newEdge, eds))

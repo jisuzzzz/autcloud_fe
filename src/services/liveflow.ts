@@ -226,7 +226,7 @@ export const LiveFlowService = {
           const prevEdge = edges.find(e => e.source === nodeId)
           if(prevEdge) {
             const edgeIndex = edges.findIndex(e => e.id === prevEdge.id)
-            console.log(edgeIndex)
+            // console.log(edgeIndex)
             const updatedEdge = {
               ...prevEdge,
               target: newComputeId

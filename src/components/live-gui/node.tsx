@@ -1,5 +1,4 @@
 'use client'
-import React, { useState } from 'react'
 import Image from 'next/image'
 import { useOthers, useSelf } from '@liveblocks/react'
 import { ComputeSpecType, DatabaseSpecType, BlockStorageSpecType, ObjectStorageSpecType, FirewallSpecType } from '@/lib/projectDB'
@@ -24,7 +23,6 @@ interface NodeProps {
 }
 
 export default function ResourceNode({ id, data, selected=false }: NodeProps) {
-  const [isHovered, setIsHovered] = useState(false);
   const users = useOthers()
   const me = useSelf()
   const myColor = me?.info?.color as string || '#FFCA28'
@@ -38,7 +36,7 @@ export default function ResourceNode({ id, data, selected=false }: NodeProps) {
     <>
       <div 
         className={`
-          w-15 h-15 p-2 relative
+          w-13 h-13 relative
           ${selected ? 'ring-2' : ''}
           ${data.status === 'add' ? 'shadow-[0_0_15px_rgba(34,197,94,0.7)]' : ''}
           ${data.status === 'remove' ? 'shadow-[0_0_15px_rgba(239,68,68,0.7)]' : ''}
@@ -56,7 +54,7 @@ export default function ResourceNode({ id, data, selected=false }: NodeProps) {
           fill
           className="object-contain rounded-xs"
         />
-        <div className="fixed top-[70px] w-[200px] text-xs font-medium text-gray-700 text-center mt-1">
+        <div className="fixed top-[60px] w-[200px] text-xs font-medium text-gray-700 text-center mt-1">
           {data.spec.label}
         </div>
       </div>
@@ -87,24 +85,24 @@ export default function ResourceNode({ id, data, selected=false }: NodeProps) {
     
       <Handle 
         type="target" 
-        position={Position.Bottom} 
+        position={Position.Left} 
         style={{ 
           opacity: 0,
           pointerEvents: 'none'
         }}
         isConnectable={false}
-        id="bottom"
+        id="left"
       />
       
       <Handle 
         type="source" 
-        position={Position.Top} 
+        position={Position.Right} 
         style={{ 
           opacity: 0,
           pointerEvents: 'none'
         }}
         isConnectable={false}
-        id="top"
+        id="right"
       />
     </>
   )

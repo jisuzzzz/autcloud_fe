@@ -74,11 +74,11 @@ export default function EditModal({onClose, resource, setNodes, setEdges}: EditM
       case 'Compute':
         return <EditComputeSpec spec={resource.data.spec as ComputeSpecType} onEdit={handleEdit} onClose={onClose} />
       case 'Database':
-        return <EditDatabaseSpec spec={resource.data.spec as DatabaseSpecType} onEdit={handleEdit} />
+        return <EditDatabaseSpec spec={resource.data.spec as DatabaseSpecType} onEdit={handleEdit} onClose={onClose} />
       case 'BlockStorage':
         return <EditBlockStorageSpec spec={resource.data.spec as BlockStorageSpecType} onEdit={handleEdit} onClose={onClose} setEdges={setEdges} />
       case 'ObjectStorage':
-        return <EditObjectStorageSpec spec={resource.data.spec as ObjectStorageSpecType} onEdit={handleEdit} />
+        return <EditObjectStorageSpec spec={resource.data.spec as ObjectStorageSpecType} onEdit={handleEdit}  onClose={onClose} />
       case 'FireWall':
         return <EditFirewallSpec spec={resource.data.spec as FirewallSpecType} onEdit={handleEdit} />
     }
@@ -88,7 +88,7 @@ export default function EditModal({onClose, resource, setNodes, setEdges}: EditM
     <Modal
       className="fixed top-[70px] right-[268px]"
     >
-      <div className="w-[400px] h-[calc(100vh-90px)] bg-white rounded-xs border overflow-y-auto">
+      <div className="w-[400px] max-h-[calc(100vh-90px)] bg-white rounded-xs border overflow-y-auto scrollbar-thin">
         {renderEditComponent()}
       </div>
     </Modal>

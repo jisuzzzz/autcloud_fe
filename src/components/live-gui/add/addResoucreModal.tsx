@@ -7,6 +7,8 @@ import { LiveFlowService } from "@/services/liveflow"
 import AddNewCompute from "./addCompute"
 import { Connection, Node } from "reactflow"
 import AddNewBlockStorage from "./addBlock"
+import AddNewObjectStorage from "./addObject"
+import AddNewDatabase from "./addDB"
 
 type SpecType = ComputeSpecType | DatabaseSpecType | BlockStorageSpecType | ObjectStorageSpecType | FirewallSpecType
 
@@ -48,8 +50,8 @@ export default function AddNewResourceModal({onClose, type, setNodes, onConnect}
       const connection: Connection = {
         source: newNode.id,
         target: computeId,
-        sourceHandle: "top",
-        targetHandle: "bottom"
+        sourceHandle: "right",
+        targetHandle: "left"
       }
       onConnect(connection)
     }
@@ -69,12 +71,12 @@ export default function AddNewResourceModal({onClose, type, setNodes, onConnect}
     switch(type) {
       case 'Compute':
         return <AddNewCompute onAdd={handleAdd} onClose={onClose} />
-      // case 'Database':
-      //   return <EditDatabaseSpec spec={spec as DatabaseSpecType} onEdit={handleEdit} />
+      case 'Database':
+        return <AddNewDatabase onAdd={handleAdd} onClose={onClose} />
       case 'BlockStorage':
         return <AddNewBlockStorage onAdd={handleAdd} onClose={onClose} />
-      // case 'ObjectStorage':
-      //   return <EditObjectStorageSpec spec={spec as ObjectStorageSpecType} onEdit={handleEdit} />
+      case 'ObjectStorage':
+        return <AddNewObjectStorage onAdd={handleAdd} onClose={onClose} />
       // case 'FireWall':
       //   return <EditFirewallSpec spec={spec as FirewallSpecType} onEdit={handleEdit} />
     }
@@ -84,7 +86,7 @@ export default function AddNewResourceModal({onClose, type, setNodes, onConnect}
     <Modal
       className="fixed top-[70px] left-[268px]"
     >
-      <div className="w-[400px] max-h-[calc(100vh-90px)] bg-white rounded-xs border overflow-y-auto">
+      <div className="w-[400px] max-h-[calc(100vh-90px)] bg-white rounded-xs border overflow-y-auto scrollbar-thin">
         {renderEditComponent()}
         {/* <AddNewCompute onAdd={handleAdd} onClose={onClose} /> */}
       </div>

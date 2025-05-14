@@ -32,35 +32,37 @@ type ProjectTemplate = {
 }
 
 type ComputeSpecType = {
-  id: string,
+  plan: string,
   status: string,
-  location: string,
+  region: string,
   ip_address: string,
   vcpu: string,
   ram: string,
-  storage: string,
+  disk: string,
   bandwidth: string,
   label: string,
   os: string,
   auto_backups: boolean
+  monthly_cost: string
 }
 
 type DatabaseSpecType = {
   status: string,
-  id: string,
-  node_plan: string,
-  cluster_created: string,
+  plan: string,
   db_engine: string,
   latest_backup: string,
-  replica_nodes: boolean,
-  location: string,
+  replica_nodes: string,
+  vcpu_count: string, 
+  ram: string, 
+  disk: string,
+  region: string,
   label: string,
-  tag: string
+  monthly_cost: string
 }
 
 type BlockStorageSpecType = {
   id: string,
-  location: string,
+  region: string,
   type: string,
   mount_id: string,
   attached_to: string,
@@ -70,9 +72,11 @@ type BlockStorageSpecType = {
 }
 
 type ObjectStorageSpecType = {
+  id: string,
+  plan: string,
   label: string,
-  location: string,
-  tier: string,
+  region: string,
+  price: string,
   storage_price: string,
   transfer_price: string
 }
@@ -102,7 +106,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
   {
     id: "9cd47912-c94a-451f-a1a2-ec5b2097c461",
     name: "Shopify+",
-    description: "AWS based e-commerce platform infrastructure design",
+    description: "e-commerce platform infrastructure design",
     initial_resources: [
       {
         id: "compute-1",
@@ -110,17 +114,18 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 500, y: 250 },
         status: 'add', 
         spec: {
-          id: 'vc2-2c-2gb',
+          plan: 'vc2-2c-2gb',
           status: "running",
-          location: "New Jersey (ewr)",
+          region: "New Jersey (ewr)",
           ip_address: "64.176.217.21",
-          vcpu: "1 vCPU",
-          ram: "1024.00 MB",
-          storage: "25 GB SSD",
-          bandwidth: "0.34 GB",
+          vcpu: "1",
+          ram: "1024.00",
+          disk: "25",
+          bandwidth: "0.34",
           label: "Shopify-Web-Server",
           os: "Ubuntu 22.04 x64",
-          auto_backups: false
+          auto_backups: false,
+          monthly_cost: "0"
         }
       },
       {
@@ -129,11 +134,13 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 350, y: 400 },
         status: 'add',
         spec: {
+          id: "2",
           label: "Shopify-Asset-Storage",
-          location: "New Jersey (ewr)",
-          tier: "Standard",
-          storage_price: "$0.018/GB",
-          transfer_price: "$0.018/GB"
+          region: "New Jersey (ewr)",
+          plan: "Standard",
+          price: "18.00",
+          storage_price: "0.018",
+          transfer_price: "0.018"
         }
       },
       {
@@ -143,11 +150,11 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         status: 'add',
         spec: {
           id: "999c0000-0000-0000-0000-0000000001",
-          location: "New Jersey (ewr)",
+          region: "New Jersey (ewr)",
           type: "NVMe",
           mount_id: "ewr-a23cda1547af4b",
           attached_to: "compute-1",
-          size: "1GB",
+          size: "1",
           label: "Shopify-Data-Volume",
           date_created: "04/15/2024 14:49:20"
         }
@@ -159,15 +166,16 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         status: 'add',
         spec: {
           status: "pending",
-          id: "999c0000-0000-0000-0000-0000000002",
-          node_plan: "vultur-dbaas-startup-cc-1-55-2",
-          cluster_created: "3 hours ago",
+          plan: "vultur-dbaas-startup-cc-1-55-2",
           db_engine: "PostgreSQL",
           latest_backup: "2 hours ago",
-          replica_nodes: false,
-          location: "New Jersey (ewr)",
+          vcpu_count: "1", 
+          ram: "1024", 
+          disk: "25",
+          replica_nodes: "1",
+          region: "New Jersey (ewr)",
           label: "Shopify-PostgreSQL-DB",
-          tag: "production"
+          monthly_cost: "0"
         }
       },
       {
@@ -181,153 +189,82 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
       }
     ]
   },
+
   {
-    id: "8fd32a45-b12c-4e8f-9d23-ff4a98b3d789",
-    name: "TensorHub",
-    description: "Cloud pipeline for machine learning model training and inference",
+    id: "8ab36845-d77c-482f-b9e3-5a4c31f89d52",
+    name: "Shopify+ HA",
+    description: "e-commerce platform infrastructure design with high availability",
     initial_resources: [
       {
         id: "compute-1",
         type: "Compute",
-        position: { x: 400, y: 200 },
-        status: 'add',
+        position: { x: 400, y: 150 },
+        status: 'add', 
         spec: {
-          id: 'vc2-2c-2gb',
+          plan: 'vc2-4c-8gb',
           status: "running",
-          location: "Silicon Valley",
-          ip_address: "64.176.217.22",
-          vcpu: "4 vCPU",
-          ram: "8192.00 MB",
-          storage: "100 GB SSD",
-          bandwidth: "4.00 GB",
-          label: "TensorHub-Training-Server",
+          region: "Chicago (ord)",
+          ip_address: "192.168.1.101",
+          vcpu: "4",
+          ram: "8192.00",
+          disk: "80",
+          bandwidth: "5.0",
+          label: "Shopify-Web-Server-Primary",
           os: "Ubuntu 22.04 x64",
-          auto_backups: true
+          auto_backups: true,
+          monthly_cost: "0"
         }
       },
       {
         id: "compute-2",
         type: "Compute",
-        position: { x: 600, y: 200 },
-        status: 'add',
+        position: { x: 600, y: 150 },
+        status: 'add', 
         spec: {
-          id: 'vc2-2c-2gb',
+          plan: 'vc2-4c-8gb',
           status: "running",
-          location: "Silicon Valley",
-          ip_address: "64.176.217.23",
-          vcpu: "4 vCPU",
-          ram: "8192.00 MB",
-          storage: "100 GB SSD",
-          bandwidth: "4.00 GB",
-          label: "TensorHub-Inference-Server",
+          region: "Chicago (ord)",
+          ip_address: "192.168.1.102",
+          vcpu: "4",
+          ram: "8192.00",
+          disk: "80",
+          bandwidth: "5.0",
+          label: "Shopify-Web-Server-Secondary",
           os: "Ubuntu 22.04 x64",
-          auto_backups: true
-        }
-      },
-      {
-        id: "storage-1",
-        type: "ObjectStorage",
-        position: { x: 400, y: 350 },
-        status: 'add',
-        spec: {
-          label: "TensorHub-Model-Storage",
-          location: "Silicon Valley",
-          tier: "Premium",
-          storage_price: "$0.023/GB",
-          transfer_price: "$0.023/GB"
+          auto_backups: true,
+          monthly_cost: "0"
         }
       },
       {
         id: "block-1",
         type: "BlockStorage",
-        position: { x: 600, y: 350 },
+        position: { x: 400, y: 300 },
         status: 'add',
         spec: {
-          id: "999c0000-0000-0000-0000-0000000003",
-          location: "Silicon Valley",
+          id: "bs-chi-001",
+          region: "Chicago (ord)",
           type: "NVMe",
-          mount_id: "sjc-b23cda1547af4b",
-          attached_to: "8192.00 MB Ubuntu 22.04 LTS",
-          size: "500GB",
-          label: "TensorHub-Dataset-Volume",
-          date_created: "04/15/2024 14:49:20"
+          mount_id: "ord-b47cda1547af9c",
+          attached_to: "compute-1",
+          size: "500",
+          label: "Shopify-Data-Primary",
+          date_created: "06/10/2024 09:12:45"
         }
       },
       {
-        id: "firewall-1",
-        type: "FireWall",
-        position: { x: 500, y: 50 },
-        status: 'add',
-        spec: {
-          label: "allow"
-        }
-      }
-    ]
-  },
-  {
-    id: "7ae91b23-d45f-4c12-b890-cd3456e78901",
-    name: "MicroFlow",
-    description: "Backend system diagram based on microservices architecture",
-    initial_resources: [
-      {
-        id: "firewall-1",
-        type: "FireWall",
-        position: { x: 500, y: 150 },
-        status: 'add',
-        spec: { label: "allow" }
-      },
-      {
-        id: "compute-1",
-        type: "Compute",
-        position: { x: 350, y: 300 },
-        status: 'add',
-        spec: {
-          id: 'vc2-2c-2gb',
-          status: "running",
-          location: "Dublin",
-          ip_address: "64.176.217.24",
-          vcpu: "2 vCPU",
-          ram: "4096.00 MB",
-          storage: "50 GB SSD",
-          bandwidth: "2.00 GB",
-          label: "MicroFlow-API-Gateway",
-          os: "Ubuntu 20.04 LTS",
-          auto_backups: false
-        }
-      },
-      {
-        id: "compute-2",
-        type: "Compute",
-        position: { x: 650, y: 300 },
-        status: 'add',
-        spec: {
-          id: 'vc2-2c-2gb',
-          status: "running",
-          location: "Dublin",
-          ip_address: "64.176.217.25",
-          vcpu: "2 vCPU",
-          ram: "4096.00 MB",
-          storage: "50 GB SSD",
-          bandwidth: "2.00 GB",
-          label: "MicroFlow-Auth-Service",
-          os: "Ubuntu 20.04 LTS",
-          auto_backups: false
-        }
-      },
-      {
-        id: "block-1",
+        id: "block-2",
         type: "BlockStorage",
-        position: { x: 350, y: 450 },
+        position: { x: 600, y: 300 },
         status: 'add',
         spec: {
-          id: "999c0000-0000-0000-0000-0000000004",
-          location: "Dublin",
+          id: "bs-chi-002",
+          region: "Chicago (ord)",
           type: "NVMe",
-          mount_id: "dub-c23cda1547af4b",
-          attached_to: "4096.00 MB Ubuntu 20.04 LTS",
-          size: "100GB",
-          label: "MicroFlow-Config-Volume",
-          date_created: "04/15/2024 14:49:20"
+          mount_id: "ord-c58eda1896af3d",
+          attached_to: "compute-2",
+          size: "500",
+          label: "Shopify-Data-Secondary",
+          date_created: "06/10/2024 09:15:32"
         }
       },
       {
@@ -337,128 +274,148 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         status: 'add',
         spec: {
           status: "running",
-          id: "999c0000-0000-0000-0000-0000000005",
-          node_plan: "vultur-dbaas-business-cc-2-80-4",
-          cluster_created: "5 hours ago",
+          plan: "vultur-dbaas-business-cc-4-16-4",
           db_engine: "PostgreSQL",
-          latest_backup: "1 hour ago",
-          replica_nodes: true,
-          location: "Dublin",
-          label: "MicroFlow-User-DB",
-          tag: "staging"
+          latest_backup: "3 hours ago",
+          vcpu_count: "1", 
+          ram: "1024", 
+          disk: "25",
+          replica_nodes: "2",
+          region: "Chicago (ord)",
+          label: "Shopify-PostgreSQL-Cluster",
+          monthly_cost: "0"
+        }
+      },
+      {
+        id: "firewall-1",
+        type: "FireWall",
+        position: { x: 500, y: 50 },
+        status: 'add',
+        spec: {
+          label: "HA-Protection-Layer"
         }
       },
       {
         id: "storage-1",
         type: "ObjectStorage",
-        position: { x: 650, y: 450 },
+        position: { x: 300, y: 450 },
         status: 'add',
         spec: {
-          label: "MicroFlow-Logs-Storage",
-          location: "Dublin",
-          tier: "Standard",
-          storage_price: "$0.020/GB",
-          transfer_price: "$0.020/GB"
+          label: "Shopify-Asset-Storage-HA",
+          region: "Chicago (ord)",
+          plan: "Performance",
+          price: "50.00",
+          storage_price: "0.023",
+          transfer_price: "0.020"
         }
       }
     ]
-
   },
+  
   {
-    id: "5ab34c67-f12b-4d56-e789-de1234f56789",
-    name: "GameCore",
-    description: "Real-time game server infrastructure configuration",
+    id: "5cd92f34-a17b-429d-8e35-9bf72c680d13",
+    name: "Shopify+ Microservices",
+    description: "e-commerce platform infrastructure design with microservices architecture",
     initial_resources: [
-      {
-        id: "firewall-1",
-        type: "FireWall",
-        position: { x: 500, y: 100 },
-        status: 'add',
-        spec: { label: "allow" }
-      },
       {
         id: "compute-1",
         type: "Compute",
-        position: { x: 400, y: 250 },
-        status: 'add',
+        position: { x: 400, y: 200 },
+        status: 'add', 
         spec: {
-          id: 'vc2-2c-2gb',
+          plan: 'vc2-2c-4gb',
           status: "running",
-          location: "Tokyo",
-          ip_address: "64.176.217.26",
-          vcpu: "8 vCPU",
-          ram: "16384.00 MB",
-          storage: "200 GB SSD",
-          bandwidth: "6.00 GB",
-          label: "GameCore-Match-Server",
-          os: "Amazon Linux 2",
-          auto_backups: true
+          region: "Seattle (sea)",
+          ip_address: "10.0.1.101",
+          vcpu: "2",
+          ram: "4096.00",
+          disk: "50",
+          bandwidth: "3.0",
+          label: "Shopify-API-Gateway",
+          os: "Ubuntu 22.04 x64",
+          auto_backups: true,
+          monthly_cost: "0"
         }
       },
       {
         id: "compute-2",
         type: "Compute",
-        position: { x: 600, y: 250 },
-        status: 'add',
+        position: { x: 600, y: 200 },
+        status: 'add', 
         spec: {
-          id: 'vc2-2c-2gb',
+          plan: 'vc2-2c-4gb',
           status: "running",
-          location: "Tokyo",
-          ip_address: "64.176.217.27",
-          vcpu: "8 vCPU",
-          ram: "16384.00 MB",
-          storage: "200 GB SSD",
-          bandwidth: "6.00 GB",
-          label: "GameCore-User-Server",
-          os: "Amazon Linux 2",
-          auto_backups: true
+          region: "Seattle (sea)",
+          ip_address: "10.0.1.102",
+          vcpu: "2",
+          ram: "4096.00",
+          disk: "50",
+          bandwidth: "3.0",
+          label: "Shopify-Auth-Service",
+          os: "Ubuntu 22.04 x64",
+          auto_backups: true,
+          monthly_cost: "0"
         }
       },
       {
         id: "db-1",
         type: "Database",
-        position: { x: 400, y: 400 },
+        position: { x: 400, y: 380 },
         status: 'add',
         spec: {
           status: "running",
-          id: "999c0000-0000-0000-0000-0000000006",
-          node_plan: "vultur-dbaas-enterprise-cc-4-160-8",
-          cluster_created: "2 hours ago",
+          plan: "vultur-dbaas-business-cc-2-8-2",
           db_engine: "PostgreSQL",
-          latest_backup: "30 mins ago",
-          replica_nodes: true,
-          location: "Tokyo",
-          label: "GameCore-Player-DB",
-          tag: "production"
+          latest_backup: "1 hour ago",
+          vcpu_count: "1", 
+          ram: "1024", 
+          disk: "25",
+          replica_nodes: "1",
+          region: "Seattle (sea)",
+          label: "Shopify-Product-DB",
+          monthly_cost: "0"
         }
       },
       {
-        id: "block-1",
-        type: "BlockStorage",
-        position: { x: 500, y: 400 },
+        id: "db-2",
+        type: "Database",
+        position: { x: 600, y: 380 },
         status: 'add',
         spec: {
-          id: "999c0000-0000-0000-0000-0000000007",
-          location: "Tokyo",
-          type: "NVMe",
-          mount_id: "nrt-d23cda1547af4b",
-          attached_to: "16384.00 MB Amazon Linux 2",
-          size: "1TB",
-          label: "GameCore-Assets-Volume",
-          date_created: "04/15/2024 14:49:20"
+          status: "running",
+          plan: "vultur-dbaas-business-cc-2-8-2",
+          db_engine: "PostgreSQL",
+          latest_backup: "1 hour ago",
+          vcpu_count: "1", 
+          ram: "1024", 
+          disk: "25",
+          replica_nodes: "1",
+          region: "Seattle (sea)",
+          label: "Shopify-Order-DB",
+          monthly_cost: "0"
         }
       },
       {
         id: "storage-1",
         type: "ObjectStorage",
-        position: { x: 600, y: 400 },
+        position: { x: 500, y: 550 },
         status: 'add',
         spec: {
-          label: "GameCore-Media-Storage",
-          location: "Tokyo",
-          tier: "Premium",
-          storage_price: "$0.025/GB",
-          transfer_price: "$0.025/GB"
+          label: "Shopify-Media-Storage",
+          region: "Seattle (sea)",
+          plan: "Premium",
+          price: "36.00",
+          storage_price: "0.020",
+          transfer_price: "0.019"
+        }
+      },
+      {
+        id: "firewall-1",
+        type: "FireWall",
+        position: { x: 500, y: 100 },
+        status: 'add',
+        spec: {
+          label: "API-Gateway-Protection"
         }
       }
     ]
@@ -477,55 +434,6 @@ export function getProjects() {
     description: project.description
   }));
 }
-
-// 리소스별 기본값
-export const DEFAULT_RESOURCES = {
-  Compute: {
-    id: '',
-    status: '',
-    location: '',
-    ip_address: '64.176.217.21',
-    vcpu: '',
-    ram: '',
-    storage: '',
-    bandwidth: '',
-    label: '',
-    os: '',
-    auto_backups: false
-  },
-  Database: {
-    id: '',
-    status: '',
-    node_plan: '',
-    cluster_created: '',
-    db_engine: '',
-    latest_backup: '',
-    replica_nodes: false,
-    location: '',
-    label: '',
-    tag: ''
-  },
-  BlockStorage: {
-    id: '',
-    location: '',
-    type: '',
-    mount_id: '',
-    attached_to: '',
-    size: '',
-    label: '',
-    date_created: ''
-  },
-  ObjectStorage: {
-    label: '',
-    location: '',
-    tier: '',
-    storage_price: '',
-    transfer_price: ''
-  },
-  FireWall: {
-    label: ''
-  }
-};
 
 export { 
   type ProjectTemplate, 

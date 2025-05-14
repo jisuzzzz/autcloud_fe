@@ -71,7 +71,7 @@ export default function EditBlockStorageSpec({spec, onEdit, onClose, setEdges}:B
       `${selectedRegion.city} (${region})` : 
       region
     
-    setValue('location', regionWithCity)
+    setValue('region', regionWithCity)
   }
   
   const onSubmit = (data:BlockStorageSpecType) => {
@@ -95,16 +95,16 @@ export default function EditBlockStorageSpec({spec, onEdit, onClose, setEdges}:B
   
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex items-center px-4 py-3 border-b justify-between">
+      <div className="flex items-center px-4 py-2 border-b justify-between">
         <div className="gap-3 flex items-center">
           <Image
             alt="block storage"
             src={"/aut-blockstorage.svg"}
-            width={25}
-            height={25}
+            width={23.5}
+            height={23.5}
             className="rounded-xs"
           ></Image>
-          <h3 className="text-sm font-medium">Block Storage</h3>
+          <h3 className="text-xs font-medium">Block Storage</h3>
         </div>
         <div className='flex items-center gap-3'>
           <Button type='button' onClick={onClose} className='px-3 py-1 h-[30px] rounded-sm text-xs bg-gray-50 hover:bg-violet-50 text-black border'>
@@ -121,49 +121,49 @@ export default function EditBlockStorageSpec({spec, onEdit, onClose, setEdges}:B
       </div>
 
       <SpecSection>
-        <InfoItem label="ID">
-          {spec.id}
-        </InfoItem>
-        <InfoItem label="Location">
+        <InfoItem label="Region">
           <SelectBox 
             option={regionOptions}
-            placeholder={spec.location || "Select region"}
-            className={cn("h-9 text-[13px] bg-[#F1F5F9] border-none rounded-sm w-full", 
-              isValueChanged('location') ? "text-blue-500 font-medium" : "")}
+            placeholder={spec.region || "Select region"}
+            className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full", 
+              isValueChanged('region') ? "text-blue-500 font-medium" : "")}
             onChange={handleRegionChange}
             showFlags={true}
           />
         </InfoItem>
-        <InfoItem label="Type">{spec.type}</InfoItem>
-
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <h3 className="text-xs text-gray-500">{"Mount ID"}</h3>
-            <InfoIcon label="?"/>
-          </div>
-          <p className="text-[13px]">{spec.mount_id}</p>
-        </div>
 
         <div className="space-y-2">
           <h3 className="text-xs text-gray-500">{"Attatch to"}</h3>
           <SelectBox
             option={computeNodes}
             placeholder={nodes.find(node => node.id === spec.attached_to)?.data.spec.label || "Select compute"}
-            className={cn("h-9 text-[13px] bg-[#F1F5F9] border-none rounded-sm w-full", 
+            className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full", 
               isValueChanged('attached_to') ? "text-blue-500 font-medium" : "")}
             onChange={handleAttachChange}
           />
           <p className="text-xs text-gray-500">on this page, GB = 1024^3 bytes</p>
         </div>
       </SpecSection>
+        
+      <SpecSection>
+        <InfoItem label="Type">{spec.type}</InfoItem>
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <h3 className="text-xs text-gray-500">{"Mount ID"}</h3>
+            <InfoIcon label="?"/>
+          </div>
+          <p className="text-xs">{spec.mount_id}</p>
+        </div>
+
+        <InfoItem label="Size">
+          <p className="text-xs text-[#8171E8]">{`${spec.size} GB`}</p>
+        </InfoItem>
+      </SpecSection>
 
       <SpecSection>
-        <InfoItem label="Size">
-          <p className="text-[13px] text-[#8171E8]">{spec.size}</p>
-        </InfoItem>
         <InfoItem label="Label">
           <Input
-            className={cn("h-9 text-[13px] bg-[#F1F5F9] border-none rounded-sm", 
+            className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm", 
               isValueChanged('label') ? "text-blue-500 font-medium" : "text-[#8171E8]")}
             {...register('label')}
           />

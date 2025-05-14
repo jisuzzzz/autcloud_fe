@@ -1,15 +1,20 @@
 import Image from "next/image"
 import { InfoItem, SpecSection } from "../specBar"
 import { ObjectStorageSpecType } from "@/lib/projectDB"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { eventBus } from "@/services/eventBus"
+import { RegionsArray } from "@/lib/resourceOptions"
 
 interface ObectStorageSpecProps {
   spec: ObjectStorageSpecType
 }
 
-export default function ObjectStorageSpec({spec}: ObectStorageSpecProps) {
-  const [specState, setSpec] = useState(spec)
+export default function ObjectStorageSpec({spec: localSpec}: ObectStorageSpecProps) {
+  const [spec, setSpec] = useState(localSpec)
+  useEffect(() => {
+    setSpec(localSpec)
+  }, [localSpec])
+  
   useEffect(() => {
     // 이벤트 구독
     const unsubscribe = eventBus.subscribe('objectSpecUpdated', (updatedSpec) => {
@@ -19,37 +24,48 @@ export default function ObjectStorageSpec({spec}: ObectStorageSpecProps) {
     // 컴포넌트 언마운트시 구독 해제
     return () => unsubscribe();
   }, [])
+  const regionInfo = useMemo(() => {
+
+    let regionId = spec.region
+    const regionCodeMatch = spec.region.match(/\(([^)]+)\)/)
+    if (regionCodeMatch) {
+      regionId = regionCodeMatch[1]
+    }
+    
+    const region = RegionsArray.find(r => r.id === regionId)
+    return {
+      flag: region?.flag || '/flag-icn.svg',
+    };
+  }, [spec.region])
+
   return (
     <>
       <SpecSection>
-        <h2 className="font-semibold text-[13px]">Storage Information</h2>
-        <InfoItem label="Label">
-          <p className="text-[13px] text-[#8171E8]">{spec.label}</p>
-        </InfoItem>
-        <InfoItem label="Location">
-          <div className="flex items-center gap-3">
+        <InfoItem label="Region">
+          <div className="flex items-center gap-2">
             <Image
               alt="region"
-              src={"/flag-icn.svg"}
-              width={25}
-              height={25}
+              src={regionInfo.flag}
+              width={21}
+              height={21}
             ></Image>
-            <p className="text-[13px]">{spec.location}</p>
+            <p className="text-xs">{spec.region}</p>
           </div>
         </InfoItem>
-      </SpecSection>
-
-      <SpecSection>
-        <InfoItem label="Tier">
-          {spec.tier}
+        <InfoItem label="Plan">
+          <p className="text-xs">{spec.plan}</p>
+        </InfoItem>
+        <InfoItem label="Price">
+          <p className="text-xs">${spec.price}</p>
+          <p className="text-[11px] text-gray-400">per Month</p>
         </InfoItem>
         <InfoItem label="Storage Price">
-          <p className="text-[13px]">{spec.storage_price}</p>
-          <p className="text-[13px] text-gray-400">over 1000GB</p>
+          <p className="text-xs">{`$${spec.storage_price}/GB`}</p>
+          <p className="text-[11px] text-gray-400">over 1000GB</p>
         </InfoItem>
         <InfoItem label="Transfer Price">
-          <p className="text-[13px]">{spec.transfer_price}</p>
-          <p className="text-[13px] text-gray-400">over 1000GB</p>
+          <p className="text-xs">{`$${spec.transfer_price}/GB`}</p>
+          <p className="text-[11px] text-gray-400">over 1000GB</p>
         </InfoItem>
       </SpecSection>
     </>

@@ -34,8 +34,8 @@ export default function ComputeSpec({ spec: initSpec }: ComputeSpecProps) {
   // 지역 ID에서 국기 이미지 경로 매핑
   const regionInfo = useMemo(() => {
 
-    let regionId = spec.location;
-    const regionCodeMatch = spec.location.match(/\(([^)]+)\)/);
+    let regionId = spec.region;
+    const regionCodeMatch = spec.region.match(/\(([^)]+)\)/);
     if (regionCodeMatch) {
       regionId = regionCodeMatch[1];
     }
@@ -44,7 +44,7 @@ export default function ComputeSpec({ spec: initSpec }: ComputeSpecProps) {
     return {
       flag: region?.flag || '/flag-icn.svg',
     };
-  }, [spec.location]);
+  }, [spec.region]);
   
   return (
     <>
@@ -63,44 +63,45 @@ export default function ComputeSpec({ spec: initSpec }: ComputeSpecProps) {
       </div>
 
       <SpecSection>
-        <InfoItem label="Location">
+        <InfoItem label="Region">
           <div className="flex items-center gap-2">
             <Image
               alt="region"
               src={regionInfo.flag}
-              width={23}
-              height={23}
+              width={21}
+              height={21}
             ></Image>
-            <p className="text-[13px]">{spec.location}</p>
+            <p className="text-xs">{spec.region}</p>
           </div>
         </InfoItem>
         
-        <InfoItem label='Compute ID'>{spec.id}</InfoItem>
+        <InfoItem label='Plan'>{spec.plan}</InfoItem>
         <InfoItem label="OS">{spec.os}</InfoItem>
         <InfoItem label="IP Adress">
           <div className="flex w-full justify-between items-center">
-            <p className="text-[13px]">{spec.ip_address}</p>
+            <p className="text-xs">{spec.ip_address}</p>
             <Copy size={18} className="text-gray-500 hover:text-[#8171E8]" />
           </div>
         </InfoItem>
       </SpecSection>
 
       <SpecSection>
-        <InfoItem label="vCPU/s">{spec.vcpu}</InfoItem>
-        <InfoItem label="RAM">{spec.ram}</InfoItem>
-        <InfoItem label="Storage">{spec.storage}</InfoItem>
+        <InfoItem label="vCPU/s">{`${spec.vcpu} vCPU`}</InfoItem>
+        <InfoItem label="RAM">{`${spec.ram} MB`}</InfoItem>
+        <InfoItem label="Disk">{`${spec.disk} GB`}</InfoItem>
         <InfoItem label="Bandwidht">
-          <p className="text-[13px] text-[#8171E8]">{spec.bandwidth}</p>
+          <p className="text-xs text-[#8171E8]">{`${spec.bandwidth} GB`}</p>
           <InfoIcon label="?" />
         </InfoItem>
+        <InfoItem label="Monthly Cost">{`$${spec.monthly_cost} per Month`}</InfoItem>
       </SpecSection>
 
       <SpecSection>
         <InfoItem label="Auto Backups">
           {spec.auto_backups ? (
-            <p className="text-[13px] text-green-600">Enabled</p>
+            <p className="text-xs text-green-600">Enabled</p>
           ) : (
-            <p className="text-[13px] text-red-600">Not Enabled</p>
+            <p className="text-xs text-red-600">Not Enabled</p>
           )}
           <InfoIcon label="!" />
         </InfoItem>

@@ -1,46 +1,52 @@
+'use client'
 import Image from "next/image"
-import { cn } from "@/lib/utils"
-import { Input } from "@/components/ui/input"
-import SelectBox from "@/components/custom/selectBox"
-import { RegionsArray } from "@/lib/resourceOptions"
-import { ObjectStorageOptions } from "@/lib/objectStorageOptions"
 import { InfoItem, SpecSection } from "../specBar"
+import SelectBox from "@/components/custom/selectBox"
 import { ObjectStorageSpecType } from "@/lib/projectDB"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
-import { eventBus } from "@/services/eventBus"
-import { useState, useEffect } from "react"
+import { RegionsArray } from "@/lib/resourceOptions"
+import { Input } from "@/components/ui/input"
+import { useEffect, useState } from "react"
+import { ObjectStorageOptions } from "@/lib/objectStorageOptions"
+import { cn } from "@/lib/utils"
 
-interface ObectStorageSpecProps {
-  spec: ObjectStorageSpecType
-  onEdit: (data: ObjectStorageSpecType) => void
+interface AddNewObjectStorageProps {
+  onAdd: (data: ObjectStorageSpecType) => void
   onClose: () => void
 }
 
-export default function EditObjectStorageSpec({spec, onClose, onEdit}: ObectStorageSpecProps) {
-  const { register, handleSubmit, setValue, watch } = useForm<ObjectStorageSpecType>({
-    defaultValues: spec
+export default function AddNewObjectStorage({onClose, onAdd}: AddNewObjectStorageProps) {
+
+  const [filteredObjectOptions, setFilteredObjectOptions] = useState<any[]>([])
+  const [isFormValid, setIsFormValid] = useState(false)
+
+  const defaultValues = {
+    id: "",
+    label: "",
+    region: "",
+    plan: "",
+    price: "",
+    storage_price: "0.018/GB",
+    transfer_price: "0.018/GB"
+  }
+
+  const [selectedPrice, setSelectedPrice] = useState({
+    price: '',
   })
 
-  const watchedValues = watch()
-  const [hasChanges, setHasChanges] = useState(false)
-  const [filteredObjectOptions, setFilteredObjectOptions] = useState<any[]>([])
-  const [selectedPrice, setSelectedPrice] = useState({
-    price: spec.price,
+  const { register, handleSubmit, setValue, watch } = useForm({
+    defaultValues,
+    mode: "onChange"
   })
+
+  const region = watch('region')
+  const label = watch('label')
+  const plan = watch('plan')
 
   useEffect(() => {
-    const hasAnyChanges = Object.keys(spec).some(key => {
-      const field = key as keyof ObjectStorageSpecType
-      return watchedValues[field] !== spec[field]
-    })
-    setHasChanges(hasAnyChanges)
-  }, [watchedValues, spec])
-
-  const isValueChanged = (property: keyof ObjectStorageSpecType) => {
-    const currValue = watch(property)
-    return currValue !== spec[property]
-  }
+    setIsFormValid(!!region && !!label && !!plan)
+  }, [region, label, plan])
 
   const regionOptions = RegionsArray.map(region => ({
     value: region.id,
@@ -87,24 +93,24 @@ export default function EditObjectStorageSpec({spec, onClose, onEdit}: ObectStor
     }
   }
   
-  const onSubmit = (data:ObjectStorageSpecType) => {
-    if(onEdit) {
-      onEdit(data)
-      eventBus.publish('objectSpecUpdated', data)
+  const onSubmit = (data: ObjectStorageSpecType) => {
+    if(onAdd) {
+      onAdd(data)
     }
   }
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex items-center px-4 py-2 border-b justify-between">
         <div className="gap-3 flex items-center">
           <Image
-            alt="object storage"
+            alt="block storage"
             src={"/aut-objectstorage.svg"}
             width={23.5}
             height={23.5}
             className="rounded-xs"
           ></Image>
-          <h3 className="text-sm font-medium">Object Storage</h3>
+          <h3 className="text-xs font-medium">Object Storage</h3>
         </div>
         <div className='flex items-center gap-3'>
           <Button type='button' onClick={onClose} className='px-3 py-1 h-[30px] rounded-sm text-xs bg-gray-50 hover:bg-violet-50 text-black border'>
@@ -113,64 +119,72 @@ export default function EditObjectStorageSpec({spec, onClose, onEdit}: ObectStor
           <Button 
             type="submit" 
             className="px-3 py-1 h-[30px] rounded-sm text-xs bg-[#7868E6] border border-[#6035BE] hover:bg-[#8474FF]"
-            disabled={!hasChanges}
+            disabled={!isFormValid}
           >
             Save
           </Button>
         </div>
       </div>
-
       <SpecSection>
         <InfoItem label="Region">
-          <SelectBox 
-            option={regionOptions}
-            placeholder={spec.region || "Select region"}
-            className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full", 
-              isValueChanged('region') ? "text-blue-500 font-medium" : "")}
-            onChange={handleRegionChange}
-            showFlags={true}
-          />
-        </InfoItem>
-        <InfoItem label="Plan">
-          <SelectBox 
-            option={filteredObjectOptions.map(opt => ({
-              value: opt.id,
-              label: opt.plan
-            }))}
-            placeholder={spec.plan || "Select compute type"}
-            className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full", 
-              isValueChanged('region') ? "text-blue-500 font-medium" : "")}
-            onChange={handlePlanChange}
-          />
-        </InfoItem>
-      </SpecSection>
-
-      <SpecSection>
-        <InfoItem label="price">
-          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm gap-2", 
-            isValueChanged('price') ? "text-blue-500 font-medium" : "")}>
-            ${selectedPrice.price}
-            <p className="text-[11px] text-gray-400">per Month</p>
+          <div className="flex flex-col w-full">
+            <SelectBox 
+              option={regionOptions}
+              placeholder={"Select region"}
+              className="h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full" 
+              onChange={handleRegionChange}
+              showFlags={true}
+            />
+            {!region && <p className="text-[11px] text-blue-400 mt-1">* Required field</p>}
           </div>
         </InfoItem>
+        <InfoItem label="Plan">
+          <div className='flex flex-col w-full' style={{ cursor: !watch('region') ? 'not-allowed' : 'default' }}>
+            <SelectBox 
+              option={filteredObjectOptions.map(opt => ({
+                value: opt.id,
+                label: opt.plan
+              }))}
+              placeholder={"Select compute type"}
+              className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full",
+                !watch('region') ? "cursor-not-allowed pointer-events-none" : ""
+              )}
+              onChange={handlePlanChange}
+            />
+            {!plan && <p className="text-[11px] text-blue-400 mt-1">* Required field</p>}
+          </div>
+        </InfoItem>
+        {region && plan && (
+            <>
+              <InfoItem label="Price">
+                <div className="h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm gap-2">
+                  ${selectedPrice.price}
+                  <p className="text-[11px] text-gray-400">per Month</p>
+                </div>
+              </InfoItem>
+            </>
+        )}
         <InfoItem label="Storage Price">
           <div className="h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm gap-2">
-            ${spec.storage_price}
+            ${defaultValues.storage_price}
             <p className="text-[11px] text-gray-400">over 1000GB</p>
           </div>
         </InfoItem>
         <InfoItem label="Transfer Price">
           <div className="h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm gap-2">
-            ${spec.transfer_price}
+            ${defaultValues.transfer_price}
             <p className="text-[11px] text-gray-400">over 1000GB</p>
           </div>
         </InfoItem>
         <InfoItem label="Label">
-          <Input
-            className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm", 
-              isValueChanged('label') ? "text-blue-500 font-medium" : "text-[#8171E8]")}
-            {...register('label')}
-          />
+          <div className="flex flex-col w-full">
+            <Input
+              placeholder="Input label"
+              className="h-9 text-xs bg-[#F1F5F9] border-none rounded-sm"
+              {...register('label', { required: true })}
+            />
+            {!label && <p className="text-[11px] text-blue-400 mt-1">* Required field</p>}
+          </div>
         </InfoItem>
       </SpecSection>
     </form>

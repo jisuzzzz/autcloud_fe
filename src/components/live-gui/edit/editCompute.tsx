@@ -49,8 +49,9 @@ export default function EditComputeSpec({
   const [selectedSpec, setSelectedSpec] = useState({
     vcpu: spec.vcpu,
     ram: spec.ram,
-    storage: spec.storage,
+    disk: spec.disk,
     bandwidth: spec.bandwidth,
+    monthly_cost: spec.monthly_cost
   })
 
   const regionOptions = RegionsArray.map(region => ({
@@ -64,14 +65,14 @@ export default function EditComputeSpec({
     label: os.name
   }))
 
-  
+
   const filterComputeOptions = (region: string) => {
     if (region) {
       const filtered = ComputeOptions.filter(option => 
-        option.locations.includes(region)
+        option.regions.includes(region)
       ).map(option => ({
-        id: option.id,
-        location: region,
+        plan: option.plan,
+        region: region,
         vcpu: option.vcpu_count,
         ram: option.ram,
         disk: option.disk,
@@ -86,9 +87,9 @@ export default function EditComputeSpec({
   }
 
   useEffect(() => {
-    if (spec.location) {
-      const regionCodeMatch = spec.location.match(/\(([^)]+)\)/)
-      const regionCode = regionCodeMatch ? regionCodeMatch[1] : spec.location
+    if (spec.region) {
+      const regionCodeMatch = spec.region.match(/\(([^)]+)\)/)
+      const regionCode = regionCodeMatch ? regionCodeMatch[1] : spec.region
       
       filterComputeOptions(regionCode)
     }
@@ -100,7 +101,7 @@ export default function EditComputeSpec({
       `${selectedRegion.city} (${region})` : 
       region
     
-    setValue('location', regionWithCity)
+    setValue('region', regionWithCity)
     filterComputeOptions(region)
   }
 
@@ -111,21 +112,23 @@ export default function EditComputeSpec({
     }
   }
 
-  const handleComputeIdChange = (id: string) => {
-    const selected = filteredComputeOptions.find(opt => opt.id === id)
+  const handleComputePlanChange = (plan: string) => {
+    const selected = filteredComputeOptions.find(opt => opt.plan === plan)
     if (selected) {
-      setValue('id', id)
+      setValue('plan', plan)
 
-      setValue('vcpu', `${selected.vcpu} vCPU`)
-      setValue('ram', `${selected.ram} MB`)
-      setValue('storage', `${selected.disk} GB SSD`)
-      setValue('bandwidth', `${selected.bandwidth} Mbps`)
+      setValue('vcpu', selected.vcpu)
+      setValue('ram', selected.ram)
+      setValue('disk', selected.disk)
+      setValue('bandwidth', selected.bandwidth)
+      setValue('monthly_cost', selected.monthly_cost)
 
       setSelectedSpec({
-        vcpu: `${selected.vcpu} vCPU`,
-        ram: `${selected.ram} MB`,
-        storage: `${selected.disk} GB SSD`,
-        bandwidth: `${selected.bandwidth} Mbps`,
+        vcpu: selected.vcpu,
+        ram: selected.ram,
+        disk: selected.disk,
+        bandwidth: selected.bandwidth,
+        monthly_cost: selected.monthly_cost,
       })
     }
   }
@@ -140,16 +143,16 @@ export default function EditComputeSpec({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex justify-between items-center px-4 py-3 border-b">
+      <div className="flex justify-between items-center px-4 py-2 border-b">
         <div className="gap-3 flex items-center">
           <Image
             alt="compute instance"
             src={'/aut-compute.svg'}
-            width={25}
-            height={25}
+            width={23.5}
+            height={23.5}
             className="rounded-xs"
           ></Image>
-          <h3 className="text-sm font-medium">Instance</h3>
+          <h3 className="text-xs font-medium">Instance</h3>
         </div>
         <div className='flex items-center gap-3'>
           <Button type='button' onClick={onClose} className='px-3 py-1 h-[30px] rounded-sm text-xs bg-gray-50 hover:bg-violet-50 text-black border'>
@@ -179,28 +182,28 @@ export default function EditComputeSpec({
       </div>
 
       <SpecSection>
-        <InfoItem label="Location">
+        <InfoItem label="Region">
           <SelectBox 
             option={regionOptions}
-            placeholder={spec.location || "Select region"}
-            className={cn("h-9 text-[13px] bg-[#F1F5F9] border-none rounded-sm w-full", 
-              isValueChanged('location') ? "text-blue-500 font-medium" : "")}
+            placeholder={spec.region || "Select region"}
+            className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full", 
+              isValueChanged('region') ? "text-blue-500 font-medium" : "")}
             onChange={handleRegionChange}
             showFlags={true}
           />
         </InfoItem>
 
-        <InfoItem label='Compute ID'>
+        <InfoItem label='Plan'>
           <SelectBox 
             option={filteredComputeOptions.map(opt => ({
-              value: opt.id,
-              label: opt.id
+              value: opt.plan,
+              label: opt.plan
             }))}
-            placeholder={spec.id || "Select compute type"}
-            className={cn("h-9 text-[13px] bg-[#F1F5F9] border-none rounded-sm w-full", 
-              isValueChanged('id') ? "text-blue-500 font-medium" : ""
+            placeholder={spec.plan || "Select compute type"}
+            className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full", 
+              isValueChanged('plan') ? "text-blue-500 font-medium" : ""
             )}
-            onChange={handleComputeIdChange}
+            onChange={handleComputePlanChange}
           />
         </InfoItem>
 
@@ -208,7 +211,7 @@ export default function EditComputeSpec({
           <SelectBox 
             option={OsOptions}
             placeholder={spec.os}
-            className={cn("h-9 text-[13px] bg-[#F1F5F9] border-none rounded-sm w-full", 
+            className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full", 
               isValueChanged('os') ? "text-blue-500 font-medium" : "")}
             onChange={handleOsChange}
           />
@@ -216,7 +219,7 @@ export default function EditComputeSpec({
 
         <InfoItem label="IP Address">
           <div className="flex w-full justify-between items-center">
-            <p className="text-[13px]">{spec.ip_address}</p>
+            <p className="text-xs">{spec.ip_address}</p>
             <Copy size={18} className="text-gray-500" />
           </div>
         </InfoItem>
@@ -224,30 +227,36 @@ export default function EditComputeSpec({
 
       <SpecSection>
         <InfoItem label="vCPU/s">
-          <div className={cn("h-9 w-full flex items-center px-3 text-[13px] bg-[#F1F5F9] border-none rounded-sm", 
+          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm", 
             isValueChanged('vcpu') ? "text-blue-500 font-medium" : "")}>
-            {selectedSpec.vcpu}
+            {`${spec.vcpu} vCPU`}
           </div>
         </InfoItem>
         <InfoItem label="RAM">
-          <div className={cn("h-9 w-full flex items-center px-3 text-[13px] bg-[#F1F5F9] border-none rounded-sm", 
+          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm", 
             isValueChanged('ram') ? "text-blue-500 font-medium" : "")}>
-            {selectedSpec.ram}
+            {`${spec.ram} MB`}
           </div>
         </InfoItem>
-        <InfoItem label="Storage">
-          <div className={cn("h-9 w-full flex items-center px-3 text-[13px] bg-[#F1F5F9] border-none rounded-sm", 
-            isValueChanged('storage') ? "text-blue-500 font-medium" : "")}>
-            {selectedSpec.storage}
+        <InfoItem label="Disk">
+          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm", 
+            isValueChanged('disk') ? "text-blue-500 font-medium" : "")}>
+            {`${spec.disk} GB`}
           </div>
         </InfoItem>
         <InfoItem label="Bandwidth">
-          <div className={cn("h-9 w-full flex items-center px-3 text-[13px] bg-[#F1F5F9] border-none rounded-sm", 
+          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm", 
             isValueChanged('bandwidth') ? "text-blue-500 font-medium" : "")}>
-            {selectedSpec.bandwidth}
+            {`${spec.bandwidth} GB`}
             <div className='ml-2'>
               <InfoIcon  label="?" />
             </div>
+          </div>
+        </InfoItem>
+        <InfoItem label="Monthly Cost">
+          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm", 
+            isValueChanged('monthly_cost') ? "text-blue-500 font-medium" : "")}>
+            {`$${spec.monthly_cost} per Month`}
           </div>
         </InfoItem>
       </SpecSection>
@@ -255,7 +264,7 @@ export default function EditComputeSpec({
       <SpecSection>
         <InfoItem label="Label">
           <Input
-            className={cn("h-9 text-[13px] bg-[#F1F5F9] border-none rounded-sm", 
+            className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm", 
               isValueChanged('label') ? "text-blue-500 font-medium" : "text-[#8171E8]")}
             {...register('label')}
           />
@@ -263,9 +272,9 @@ export default function EditComputeSpec({
 
         <InfoItem label="Auto Backups">
           {spec.auto_backups ? (
-            <p className="text-[13px] text-green-600">Enabled</p>
+            <p className="text-xs text-green-600">Enabled</p>
           ) : (
-            <p className="text-[13px] text-red-600">Not Enabled</p>
+            <p className="text-xs text-red-600">Not Enabled</p>
           )}
           <InfoIcon label="!" />
         </InfoItem>

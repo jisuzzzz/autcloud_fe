@@ -42,7 +42,7 @@ export function InfoItem({
       <h3 className="text-xs text-gray-500">{label}</h3>
       <div className="flex items-center gap-2">
         {typeof children === 'string' ? (
-          <p className="text-[13px]">{children}</p>
+          <p className="text-xs">{children}</p>
         ) : (
           children
         )}

@@ -1,17 +1,23 @@
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { InfoItem, SpecSection, InfoIcon } from '../specBar';
+import { InfoItem, SpecSection } from '../specBar';
 import { DatabaseSpecType } from '@/lib/projectDB';
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { eventBus } from "@/services/eventBus"
+import { RegionsArray } from '@/lib/resourceOptions';
 
 interface DatabaseSpecProps {
   spec: DatabaseSpecType;
 }
 
-export default function DatabaseSpec({ spec }: DatabaseSpecProps) {
-  const [specState, setSpec] = useState(spec)
+export default function DatabaseSpec({ spec:localSpec }: DatabaseSpecProps) {
+  const [spec, setSpec] = useState(localSpec)
+
+  useEffect(() => {
+    setSpec(localSpec)
+  }, [localSpec])
+
   useEffect(() => {
     // 이벤트 구독
     const unsubscribe = eventBus.subscribe('dbSpecUpdated', (updatedSpec) => {
@@ -21,6 +27,22 @@ export default function DatabaseSpec({ spec }: DatabaseSpecProps) {
     // 컴포넌트 언마운트시 구독 해제
     return () => unsubscribe();
   }, [])
+
+  // 지역 ID에서 국기 이미지 경로 매핑
+  const regionInfo = useMemo(() => {
+
+    let regionId = spec.region;
+    const regionCodeMatch = spec.region.match(/\(([^)]+)\)/);
+    if (regionCodeMatch) {
+      regionId = regionCodeMatch[1];
+    }
+    
+    const region = RegionsArray.find(r => r.id === regionId);
+    return {
+      flag: region?.flag || '/flag-icn.svg',
+    };
+  }, [spec.region]);
+
   return (
     <>
       <div className="flex justify-between items-center px-4 py-2.5 border-b">
@@ -37,35 +59,33 @@ export default function DatabaseSpec({ spec }: DatabaseSpecProps) {
       </div>
 
       <SpecSection>
-        <InfoItem label="ID">{spec.id}</InfoItem>
-        <InfoItem label="Node-Plan">{spec.node_plan}</InfoItem>
-        <InfoItem label="Cluster Created">{spec.cluster_created}</InfoItem>
-      </SpecSection>
-
-      <SpecSection>
-        <InfoItem label="DB Engine">{spec.db_engine}</InfoItem>
-        <InfoItem label="Latest Backup">{spec.latest_backup}</InfoItem>
-        <InfoItem label="Replica Nodes">
-          {spec.replica_nodes ? 'Yes' : 'No'}
-        </InfoItem>
-        <InfoItem label="Location">
+      <InfoItem label="Region">
           <div className="flex items-center gap-3">
             <Image
               alt="region"
-              src={'/flag-icn.svg'}
-              width={25}
-              height={25}
+              src={regionInfo.flag}
+              width={21}
+              height={21}
             ></Image>
-            <p className="text-[13px]">{spec.location}</p>
+            <p className="text-xs">{spec.region}</p>
           </div>
         </InfoItem>
-        <InfoItem label="Label">
-          <p className="text-[13px] text-[#8171E8]">{spec.label}</p>
+        <InfoItem label="ID">{spec.plan}</InfoItem>
+        <InfoItem label="DB Engine">{spec.db_engine}</InfoItem>
+      </SpecSection>
+
+      <SpecSection>
+        <InfoItem label="vCPU/s">{`${spec.vcpu_count} vCPU`}</InfoItem>
+        <InfoItem label="RAM">{`${spec.ram} MB`}</InfoItem>
+        <InfoItem label="Disk">{`${spec.disk} GB`}</InfoItem>
+        <InfoItem label="Replica Nodes">
+          {`${spec.replica_nodes} Node`}
         </InfoItem>
-        <InfoItem label="Tag">
-          <p className="text-[13px] text-[#8171E8]">{spec.tag}</p>
-          <InfoIcon label="?" />
-        </InfoItem>
+        <InfoItem label="Monthly Cost">{`$${spec.monthly_cost} per Month`}</InfoItem>
+        
+      </SpecSection>
+      <SpecSection>
+        <InfoItem label="Latest Backup">{spec.latest_backup}</InfoItem>
       </SpecSection>
     </>
   );

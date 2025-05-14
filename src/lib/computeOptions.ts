@@ -2,8 +2,8 @@
 
 // Interface for compute specifications
 export interface ComputeSpec {
-  id: string
-  locations: string[]
+  plan: string
+  regions: string[]
   vcpu_count: number
   ram: number
   disk: number
@@ -15,8 +15,8 @@ export interface ComputeSpec {
 // Array of compute options
 export const ComputeOptions: ComputeSpec[] = [
   {
-    id: 'vc2-1c-0.5gb-free',
-    locations: ['sea'],
+    plan: 'vc2-1c-0.5gb-free',
+    regions: ['sea'],
     vcpu_count: 1,
     ram: 512,
     disk: 10,
@@ -25,8 +25,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'SSD'
   },
   {
-    id: 'vc2-1c-0.5gb-v6',
-    locations: ['ewr'],
+    plan: 'vc2-1c-0.5gb-v6',
+    regions: ['ewr'],
     vcpu_count: 1,
     ram: 512,
     disk: 10,
@@ -35,8 +35,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'SSD'
   },
   {
-    id: 'vc2-1c-0.5gb',
-    locations: ['ewr'],
+    plan: 'vc2-1c-0.5gb',
+    regions: ['ewr'],
     vcpu_count: 1,
     ram: 512,
     disk: 10,
@@ -45,8 +45,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'SSD'
   },
   {
-    id: 'vc2-1c-1gb',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vc2-1c-1gb',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 1,
     ram: 1024,
     disk: 25,
@@ -55,8 +55,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'SSD'
   },
   {
-    id: 'vc2-1c-1gb-sc1',
-    locations: ['sao'],
+    plan: 'vc2-1c-1gb-sc1',
+    regions: ['sao'],
     vcpu_count: 1,
     ram: 1024,
     disk: 25,
@@ -65,8 +65,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'SSD'
   },
   {
-    id: 'vc2-1c-2gb',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vc2-1c-2gb',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 1,
     ram: 2048,
     disk: 55,
@@ -75,8 +75,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'SSD'
   },
   {
-    id: 'vc2-1c-2gb-sc1',
-    locations: ['sao'],
+    plan: 'vc2-1c-2gb-sc1',
+    regions: ['sao'],
     vcpu_count: 1,
     ram: 2048,
     disk: 55,
@@ -85,8 +85,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'SSD'
   },
   {
-    id: 'vc2-2c-2gb',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vc2-2c-2gb',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 2,
     ram: 2048,
     disk: 65,
@@ -95,8 +95,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'SSD'
   },
   {
-    id: 'vc2-2c-2gb-sc1',
-    locations: ['sao'],
+    plan: 'vc2-2c-2gb-sc1',
+    regions: ['sao'],
     vcpu_count: 2,
     ram: 2048,
     disk: 65,
@@ -105,8 +105,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'SSD'
   },
   {
-    id: 'vc2-2c-4gb',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vc2-2c-4gb',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 2,
     ram: 4096,
     disk: 80,
@@ -115,8 +115,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'SSD'
   },
   {
-    id: 'vc2-2c-4gb-sc1',
-    locations: ['sao'],
+    plan: 'vc2-2c-4gb-sc1',
+    regions: ['sao'],
     vcpu_count: 2,
     ram: 4096,
     disk: 80,
@@ -125,8 +125,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'SSD'
   },
   {
-    id: 'vc2-4c-8gb',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vc2-4c-8gb',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 4,
     ram: 8192,
     disk: 160,
@@ -135,8 +135,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'SSD'
   },
   {
-    id: 'vc2-4c-8gb-sc1',
-    locations: ['sao'],
+    plan: 'vc2-4c-8gb-sc1',
+    regions: ['sao'],
     vcpu_count: 4,
     ram: 8192,
     disk: 160,
@@ -145,8 +145,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'SSD'
   },
   {
-    id: 'vc2-6c-16gb',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vc2-6c-16gb',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 6,
     ram: 16384,
     disk: 320,
@@ -155,8 +155,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'SSD'
   },
   {
-    id: 'vc2-6c-16gb-sc1',
-    locations: ['sao'],
+    plan: 'vc2-6c-16gb-sc1',
+    regions: ['sao'],
     vcpu_count: 6,
     ram: 16384,
     disk: 320,
@@ -165,8 +165,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'SSD'
   },
   {
-    id: 'vc2-8c-32gb',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vc2-8c-32gb',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 8,
     ram: 32768,
     disk: 640,
@@ -175,8 +175,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'SSD'
   },
   {
-    id: 'vc2-8c-32gb-sc1',
-    locations: ['sao'],
+    plan: 'vc2-8c-32gb-sc1',
+    regions: ['sao'],
     vcpu_count: 8,
     ram: 32768,
     disk: 640,
@@ -185,8 +185,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'SSD'
   },
   {
-    id: 'vc2-16c-64gb',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vc2-16c-64gb',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 16,
     ram: 65536,
     disk: 1280,
@@ -195,8 +195,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'SSD'
   },
   {
-    id: 'vc2-16c-64gb-sc1',
-    locations: ['sao'],
+    plan: 'vc2-16c-64gb-sc1',
+    regions: ['sao'],
     vcpu_count: 16,
     ram: 65536,
     disk: 1280,
@@ -205,8 +205,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'SSD'
   },
   {
-    id: 'vc2-24c-96gb',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vc2-24c-96gb',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 24,
     ram: 98304,
     disk: 1600,
@@ -215,8 +215,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'SSD'
   },
   {
-    id: 'vc2-24c-96gb-sc1',
-    locations: ['sao'],
+    plan: 'vc2-24c-96gb-sc1',
+    regions: ['sao'],
     vcpu_count: 24,
     ram: 98304,
     disk: 1600,
@@ -225,8 +225,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'SSD'
   },
   {
-    id: 'vhf-1c-1gb',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhf-1c-1gb',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 1,
     ram: 1024,
     disk: 32,
@@ -235,8 +235,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'HIGHFREQUENCY'
   },
   {
-    id: 'vhf-1c-1gb-sc1',
-    locations: ['sao'],
+    plan: 'vhf-1c-1gb-sc1',
+    regions: ['sao'],
     vcpu_count: 1,
     ram: 1024,
     disk: 32,
@@ -245,8 +245,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'HIGHFREQUENCY'
   },
   {
-    id: 'vhf-1c-2gb',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhf-1c-2gb',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 1,
     ram: 2048,
     disk: 64,
@@ -255,8 +255,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'HIGHFREQUENCY'
   },
   {
-    id: 'vhf-1c-2gb-sc1',
-    locations: ['sao'],
+    plan: 'vhf-1c-2gb-sc1',
+    regions: ['sao'],
     vcpu_count: 1,
     ram: 2048,
     disk: 64,
@@ -265,8 +265,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'HIGHFREQUENCY'
   },
   {
-    id: 'vhf-2c-2gb',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhf-2c-2gb',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 2,
     ram: 2048,
     disk: 80,
@@ -275,8 +275,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'HIGHFREQUENCY'
   },
   {
-    id: 'vhf-2c-2gb-sc1',
-    locations: ['sao'],
+    plan: 'vhf-2c-2gb-sc1',
+    regions: ['sao'],
     vcpu_count: 2,
     ram: 2048,
     disk: 80,
@@ -285,8 +285,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'HIGHFREQUENCY'
   },
   {
-    id: 'vhf-2c-4gb',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhf-2c-4gb',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 2,
     ram: 4096,
     disk: 128,
@@ -295,8 +295,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'HIGHFREQUENCY'
   },
   {
-    id: 'vhf-2c-4gb-sc1',
-    locations: ['sao'],
+    plan: 'vhf-2c-4gb-sc1',
+    regions: ['sao'],
     vcpu_count: 2,
     ram: 4096,
     disk: 128,
@@ -305,8 +305,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'HIGHFREQUENCY'
   },
   {
-    id: 'vhf-3c-8gb',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhf-3c-8gb',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 3,
     ram: 8192,
     disk: 256,
@@ -315,8 +315,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'HIGHFREQUENCY'
   },
   {
-    id: 'vhf-3c-8gb-sc1',
-    locations: ['sao'],
+    plan: 'vhf-3c-8gb-sc1',
+    regions: ['sao'],
     vcpu_count: 3,
     ram: 8192,
     disk: 256,
@@ -325,8 +325,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'HIGHFREQUENCY'
   },
   {
-    id: 'vhf-4c-16gb',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhf-4c-16gb',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 4,
     ram: 16384,
     disk: 384,
@@ -335,8 +335,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'HIGHFREQUENCY'
   },
   {
-    id: 'vhf-4c-16gb-sc1',
-    locations: ['sao'],
+    plan: 'vhf-4c-16gb-sc1',
+    regions: ['sao'],
     vcpu_count: 4,
     ram: 16384,
     disk: 384,
@@ -345,8 +345,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'HIGHFREQUENCY'
   },
   {
-    id: 'vhf-6c-24gb',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhf-6c-24gb',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 6,
     ram: 24576,
     disk: 448,
@@ -355,8 +355,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'HIGHFREQUENCY'
   },
   {
-    id: 'vhf-6c-24gb-sc1',
-    locations: ['sao'],
+    plan: 'vhf-6c-24gb-sc1',
+    regions: ['sao'],
     vcpu_count: 6,
     ram: 24576,
     disk: 448,
@@ -365,8 +365,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'HIGHFREQUENCY'
   },
   {
-    id: 'vhf-8c-32gb',
-    locations: ['ewr', 'lhr', 'sjc', 'icn', 'sgp', 'mel'],
+    plan: 'vhf-8c-32gb',
+    regions: ['ewr', 'lhr', 'sjc', 'icn', 'sgp', 'mel'],
     vcpu_count: 8,
     ram: 32768,
     disk: 512,
@@ -375,8 +375,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'HIGHFREQUENCY'
   },
   {
-    id: 'vhf-8c-32gb-sc1',
-    locations: ['sao'],
+    plan: 'vhf-8c-32gb-sc1',
+    regions: ['sao'],
     vcpu_count: 8,
     ram: 32768,
     disk: 512,
@@ -385,8 +385,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'HIGHFREQUENCY'
   },
   {
-    id: 'vhf-12c-48gb',
-    locations: ['ewr', 'lhr', 'sjc', 'icn', 'sgp', 'mel'],
+    plan: 'vhf-12c-48gb',
+    regions: ['ewr', 'lhr', 'sjc', 'icn', 'sgp', 'mel'],
     vcpu_count: 12,
     ram: 49152,
     disk: 768,
@@ -395,8 +395,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'HIGHFREQUENCY'
   },
   {
-    id: 'vhf-12c-48gb-sc1',
-    locations: ['sao'],
+    plan: 'vhf-12c-48gb-sc1',
+    regions: ['sao'],
     vcpu_count: 12,
     ram: 49152,
     disk: 768,
@@ -405,8 +405,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'HIGHFREQUENCY'
   },
   {
-    id: 'vhf-16c-58gb',
-    locations: ['ewr', 'lhr', 'sjc', 'icn', 'sgp', 'mel'],
+    plan: 'vhf-16c-58gb',
+    regions: ['ewr', 'lhr', 'sjc', 'icn', 'sgp', 'mel'],
     vcpu_count: 16,
     ram: 59392,
     disk: 1024,
@@ -415,8 +415,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'HIGHFREQUENCY'
   },
   {
-    id: 'vhf-16c-58gb-sc1',
-    locations: ['sao'],
+    plan: 'vhf-16c-58gb-sc1',
+    regions: ['sao'],
     vcpu_count: 16,
     ram: 59392,
     disk: 1024,
@@ -425,8 +425,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'HIGHFREQUENCY'
   },
   {
-    id: 'vhp-1c-1gb-amd',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhp-1c-1gb-amd',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 1,
     ram: 1024,
     disk: 25,
@@ -435,8 +435,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'AMDHIGHPERF'
   },
   {
-    id: 'vhp-1c-1gb-amd-sc1',
-    locations: ['sao'],
+    plan: 'vhp-1c-1gb-amd-sc1',
+    regions: ['sao'],
     vcpu_count: 1,
     ram: 1024,
     disk: 25,
@@ -445,8 +445,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'AMDHIGHPERF'
   },
   {
-    id: 'vhp-1c-2gb-amd',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhp-1c-2gb-amd',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 1,
     ram: 2048,
     disk: 50,
@@ -455,8 +455,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'AMDHIGHPERF'
   },
   {
-    id: 'vhp-1c-2gb-amd-sc1',
-    locations: ['sao'],
+    plan: 'vhp-1c-2gb-amd-sc1',
+    regions: ['sao'],
     vcpu_count: 1,
     ram: 2048,
     disk: 50,
@@ -465,8 +465,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'AMDHIGHPERF'
   },
   {
-    id: 'vhp-2c-2gb-amd',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhp-2c-2gb-amd',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 2,
     ram: 2048,
     disk: 60,
@@ -475,8 +475,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'AMDHIGHPERF'
   },
   {
-    id: 'vhp-2c-2gb-amd-sc1',
-    locations: ['sao'],
+    plan: 'vhp-2c-2gb-amd-sc1',
+    regions: ['sao'],
     vcpu_count: 2,
     ram: 2048,
     disk: 60,
@@ -485,8 +485,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'AMDHIGHPERF'
   },
   {
-    id: 'vhp-2c-4gb-amd',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhp-2c-4gb-amd',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 2,
     ram: 4096,
     disk: 100,
@@ -495,8 +495,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'AMDHIGHPERF'
   },
   {
-    id: 'vhp-2c-4gb-amd-sc1',
-    locations: ['sao'],
+    plan: 'vhp-2c-4gb-amd-sc1',
+    regions: ['sao'],
     vcpu_count: 2,
     ram: 4096,
     disk: 100,
@@ -505,8 +505,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'AMDHIGHPERF'
   },
   {
-    id: 'vhp-4c-8gb-amd',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhp-4c-8gb-amd',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 4,
     ram: 8192,
     disk: 180,
@@ -515,8 +515,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'AMDHIGHPERF'
   },
   {
-    id: 'vhp-4c-8gb-amd-sc1',
-    locations: ['sao'],
+    plan: 'vhp-4c-8gb-amd-sc1',
+    regions: ['sao'],
     vcpu_count: 4,
     ram: 8192,
     disk: 180,
@@ -525,8 +525,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'AMDHIGHPERF'
   },
   {
-    id: 'vhp-4c-12gb-amd',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhp-4c-12gb-amd',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 4,
     ram: 12288,
     disk: 260,
@@ -535,8 +535,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'AMDHIGHPERF'
   },
   {
-    id: 'vhp-4c-12gb-amd-sc1',
-    locations: ['sao'],
+    plan: 'vhp-4c-12gb-amd-sc1',
+    regions: ['sao'],
     vcpu_count: 4,
     ram: 12288,
     disk: 260,
@@ -545,8 +545,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'AMDHIGHPERF'
   },
   {
-    id: 'vhp-8c-16gb-amd',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhp-8c-16gb-amd',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 8,
     ram: 16384,
     disk: 350,
@@ -555,8 +555,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'AMDHIGHPERF'
   },
   {
-    id: 'vhp-8c-16gb-amd-sc1',
-    locations: ['sao'],
+    plan: 'vhp-8c-16gb-amd-sc1',
+    regions: ['sao'],
     vcpu_count: 8,
     ram: 16384,
     disk: 350,
@@ -565,8 +565,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'AMDHIGHPERF'
   },
   {
-    id: 'vhp-12c-24gb-amd',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhp-12c-24gb-amd',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 12,
     ram: 24576,
     disk: 500,
@@ -575,8 +575,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'AMDHIGHPERF'
   },
   {
-    id: 'vhp-12c-24gb-amd-sc1',
-    locations: ['sao'],
+    plan: 'vhp-12c-24gb-amd-sc1',
+    regions: ['sao'],
     vcpu_count: 12,
     ram: 24576,
     disk: 500,
@@ -585,8 +585,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'AMDHIGHPERF'
   },
   {
-    id: 'vhp-1c-1gb-intel',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhp-1c-1gb-intel',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 1,
     ram: 1024,
     disk: 25,
@@ -595,8 +595,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'INTELHIGHPERF'
   },
   {
-    id: 'vhp-1c-1gb-intel-sc1',
-    locations: ['sao'],
+    plan: 'vhp-1c-1gb-intel-sc1',
+    regions: ['sao'],
     vcpu_count: 1,
     ram: 1024,
     disk: 25,
@@ -605,8 +605,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'INTELHIGHPERF'
   },
   {
-    id: 'vhp-1c-2gb-intel',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhp-1c-2gb-intel',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 1,
     ram: 2048,
     disk: 50,
@@ -615,8 +615,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'INTELHIGHPERF'
   },
   {
-    id: 'vhp-1c-2gb-intel-sc1',
-    locations: ['sao'],
+    plan: 'vhp-1c-2gb-intel-sc1',
+    regions: ['sao'],
     vcpu_count: 1,
     ram: 2048,
     disk: 50,
@@ -625,8 +625,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'INTELHIGHPERF'
   },
   {
-    id: 'vhp-2c-2gb-intel',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhp-2c-2gb-intel',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 2,
     ram: 2048,
     disk: 60,
@@ -635,8 +635,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'INTELHIGHPERF'
   },
   {
-    id: 'vhp-2c-2gb-intel-sc1',
-    locations: ['sao'],
+    plan: 'vhp-2c-2gb-intel-sc1',
+    regions: ['sao'],
     vcpu_count: 2,
     ram: 2048,
     disk: 60,
@@ -645,8 +645,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'INTELHIGHPERF'
   },
   {
-    id: 'vhp-2c-4gb-intel',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhp-2c-4gb-intel',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 2,
     ram: 4096,
     disk: 100,
@@ -655,8 +655,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'INTELHIGHPERF'
   },
   {
-    id: 'vhp-2c-4gb-intel-sc1',
-    locations: ['sao'],
+    plan: 'vhp-2c-4gb-intel-sc1',
+    regions: ['sao'],
     vcpu_count: 2,
     ram: 4096,
     disk: 100,
@@ -665,8 +665,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'INTELHIGHPERF'
   },
   {
-    id: 'vhp-4c-8gb-intel',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhp-4c-8gb-intel',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 4,
     ram: 8192,
     disk: 180,
@@ -675,8 +675,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'INTELHIGHPERF'
   },
   {
-    id: 'vhp-4c-8gb-intel-sc1',
-    locations: ['sao'],
+    plan: 'vhp-4c-8gb-intel-sc1',
+    regions: ['sao'],
     vcpu_count: 4,
     ram: 8192,
     disk: 180,
@@ -685,8 +685,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'INTELHIGHPERF'
   },
   {
-    id: 'vhp-4c-12gb-intel',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhp-4c-12gb-intel',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 4,
     ram: 12288,
     disk: 260,
@@ -695,8 +695,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'INTELHIGHPERF'
   },
   {
-    id: 'vhp-4c-12gb-intel-sc1',
-    locations: ['sao'],
+    plan: 'vhp-4c-12gb-intel-sc1',
+    regions: ['sao'],
     vcpu_count: 4,
     ram: 12288,
     disk: 260,
@@ -705,8 +705,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'INTELHIGHPERF'
   },
   {
-    id: 'vhp-8c-16gb-intel',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhp-8c-16gb-intel',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 8,
     ram: 16384,
     disk: 350,
@@ -715,8 +715,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'INTELHIGHPERF'
   },
   {
-    id: 'vhp-8c-16gb-intel-sc1',
-    locations: ['sao'],
+    plan: 'vhp-8c-16gb-intel-sc1',
+    regions: ['sao'],
     vcpu_count: 8,
     ram: 16384,
     disk: 350,
@@ -725,8 +725,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'INTELHIGHPERF'
   },
   {
-    id: 'vhp-12c-24gb-intel',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'vhp-12c-24gb-intel',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 12,
     ram: 24576,
     disk: 500,
@@ -735,8 +735,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'INTELHIGHPERF'
   },
   {
-    id: 'vhp-12c-24gb-intel-sc1',
-    locations: ['sao'],
+    plan: 'vhp-12c-24gb-intel-sc1',
+    regions: ['sao'],
     vcpu_count: 12,
     ram: 24576,
     disk: 500,
@@ -745,8 +745,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'INTELHIGHPERF'
   },
   {
-    id: 'voc-c-1c-2gb-25s-amd',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'voc-c-1c-2gb-25s-amd',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 1,
     ram: 2048,
     disk: 25,
@@ -755,8 +755,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-c-1c-2gb-25s-amd-sc1',
-    locations: ['sao'],
+    plan: 'voc-c-1c-2gb-25s-amd-sc1',
+    regions: ['sao'],
     vcpu_count: 1,
     ram: 2048,
     disk: 25,
@@ -765,8 +765,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-g-1c-4gb-30s-amd',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'voc-g-1c-4gb-30s-amd',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 1,
     ram: 4096,
     disk: 30,
@@ -775,8 +775,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-g-1c-4gb-30s-amd-sc1',
-    locations: ['sao'],
+    plan: 'voc-g-1c-4gb-30s-amd-sc1',
+    regions: ['sao'],
     vcpu_count: 1,
     ram: 4096,
     disk: 30,
@@ -785,8 +785,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-m-1c-8gb-50s-amd',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'voc-m-1c-8gb-50s-amd',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 1,
     ram: 8192,
     disk: 50,
@@ -795,8 +795,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-m-1c-8gb-50s-amd-sc1',
-    locations: ['sao'],
+    plan: 'voc-m-1c-8gb-50s-amd-sc1',
+    regions: ['sao'],
     vcpu_count: 1,
     ram: 8192,
     disk: 50,
@@ -805,8 +805,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-c-2c-4gb-50s-amd',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'voc-c-2c-4gb-50s-amd',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 2,
     ram: 4096,
     disk: 50,
@@ -815,8 +815,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-g-2c-8gb-50s-amd',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'voc-g-2c-8gb-50s-amd',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 2,
     ram: 8192,
     disk: 50,
@@ -825,8 +825,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-c-2c-4gb-50s-amd-sc1',
-    locations: ['sao'],
+    plan: 'voc-c-2c-4gb-50s-amd-sc1',
+    regions: ['sao'],
     vcpu_count: 2,
     ram: 4096,
     disk: 50,
@@ -835,8 +835,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-g-2c-8gb-50s-amd-sc1',
-    locations: ['sao'],
+    plan: 'voc-g-2c-8gb-50s-amd-sc1',
+    regions: ['sao'],
     vcpu_count: 2,
     ram: 8192,
     disk: 50,
@@ -845,8 +845,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-c-2c-4gb-75s-amd',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'voc-c-2c-4gb-75s-amd',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 2,
     ram: 4096,
     disk: 75,
@@ -855,8 +855,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-c-2c-4gb-75s-amd-sc1',
-    locations: ['sao'],
+    plan: 'voc-c-2c-4gb-75s-amd-sc1',
+    regions: ['sao'],
     vcpu_count: 2,
     ram: 4096,
     disk: 75,
@@ -865,8 +865,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-c-4c-8gb-75s-amd',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'voc-c-4c-8gb-75s-amd',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 4,
     ram: 8192,
     disk: 75,
@@ -875,8 +875,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-c-4c-8gb-75s-amd-sc1',
-    locations: ['sao'],
+    plan: 'voc-c-4c-8gb-75s-amd-sc1',
+    regions: ['sao'],
     vcpu_count: 4,
     ram: 8192,
     disk: 75,
@@ -885,8 +885,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-g-4c-16gb-80s-amd',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'voc-g-4c-16gb-80s-amd',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 4,
     ram: 16384,
     disk: 80,
@@ -895,8 +895,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-g-4c-16gb-80s-amd-sc1',
-    locations: ['sao'],
+    plan: 'voc-g-4c-16gb-80s-amd-sc1',
+    regions: ['sao'],
     vcpu_count: 4,
     ram: 16384,
     disk: 80,
@@ -905,8 +905,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-m-2c-16gb-100s-amd',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'voc-m-2c-16gb-100s-amd',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 2,
     ram: 16384,
     disk: 100,
@@ -915,8 +915,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-m-2c-16gb-100s-amd-sc1',
-    locations: ['sao'],
+    plan: 'voc-m-2c-16gb-100s-amd-sc1',
+    regions: ['sao'],
     vcpu_count: 2,
     ram: 16384,
     disk: 100,
@@ -925,8 +925,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-s-1c-8gb-150s-amd',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'voc-s-1c-8gb-150s-amd',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 1,
     ram: 8192,
     disk: 150,
@@ -935,8 +935,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-s-1c-8gb-150s-amd-sc1',
-    locations: ['sao'],
+    plan: 'voc-s-1c-8gb-150s-amd-sc1',
+    regions: ['sao'],
     vcpu_count: 1,
     ram: 8192,
     disk: 150,
@@ -945,8 +945,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-c-4c-8gb-150s-amd',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'voc-c-4c-8gb-150s-amd',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 4,
     ram: 8192,
     disk: 150,
@@ -955,8 +955,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-c-4c-8gb-150s-amd-sc1',
-    locations: ['sao'],
+    plan: 'voc-c-4c-8gb-150s-amd-sc1',
+    regions: ['sao'],
     vcpu_count: 4,
     ram: 8192,
     disk: 150,
@@ -965,8 +965,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-c-8c-16gb-150s-amd',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'voc-c-8c-16gb-150s-amd',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 8,
     ram: 16384,
     disk: 150,
@@ -975,8 +975,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-c-8c-16gb-150s-amd-sc1',
-    locations: ['sao'],
+    plan: 'voc-c-8c-16gb-150s-amd-sc1',
+    regions: ['sao'],
     vcpu_count: 8,
     ram: 16384,
     disk: 150,
@@ -985,8 +985,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-g-8c-32gb-160s-amd',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'voc-g-8c-32gb-160s-amd',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 8,
     ram: 32768,
     disk: 160,
@@ -995,8 +995,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-g-8c-32gb-160s-amd-sc1',
-    locations: ['sao'],
+    plan: 'voc-g-8c-32gb-160s-amd-sc1',
+    regions: ['sao'],
     vcpu_count: 8,
     ram: 32768,
     disk: 160,
@@ -1005,8 +1005,8 @@ export const ComputeOptions: ComputeSpec[] = [
     disk_type: 'DEDICATEDOPTIMIZED'
   },
   {
-    id: 'voc-m-2c-16gb-200s-amd',
-    locations: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
+    plan: 'voc-m-2c-16gb-200s-amd',
+    regions: ['ewr', 'ams', 'lhr', 'sjc', 'icn', 'sgp', 'mel', 'scl'],
     vcpu_count: 2,
     ram: 16384,
     disk: 200,

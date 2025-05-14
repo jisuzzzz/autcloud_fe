@@ -1,59 +1,56 @@
-'use client'
-import Image from 'next/image'
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
-import { InfoItem, SpecSection, InfoIcon } from '../specBar'
-import { Copy } from 'lucide-react'
-import { ComputeSpecType } from '@/lib/projectDB'
-import { useForm } from 'react-hook-form'
-import { Input } from '@/components/ui/input'
-import { ComputeOptions } from '@/lib/computeOptions'
-import { RegionsArray, OSArray } from '@/lib/resourceOptions'
-import SelectBox from '@/components/custom/selectBox'
-import { useState, useEffect } from 'react'
+import Image from 'next/image';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { InfoItem, SpecSection } from '../specBar';
+import { DatabaseSpecType } from '@/lib/projectDB';
+import { useForm } from 'react-hook-form';
+import SelectBox from '@/components/custom/selectBox';
+import { DatabasePlans } from '@/lib/dbOptions';
+import { RegionsArray } from '@/lib/resourceOptions';
+import { useState, useEffect } from 'react';
+import { Input } from '@/components/ui/input';
 
-interface AddNewResourceProps {
-  onAdd: (data: ComputeSpecType) => void
-  onClose: () => void
+interface DatabaseSpecProps {
+  onAdd: (data: DatabaseSpecType) => void;
+  onClose: () => void;
 }
 
-export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
-  const { register, handleSubmit, setValue, watch }  = useForm({
+export default function AddNewDatabase({ onAdd, onClose }: DatabaseSpecProps) {
+  const { register, handleSubmit, setValue, watch } = useForm<DatabaseSpecType>({
     defaultValues: {
-      region: '',
-      plan: '',
-      os: '',
-      vcpu: '',
-      ram: '',
-      disk: '',
-      bandwidth: '',
-      status: 'running',
-      ip_address: '64.176.217.21',
-      label: '',
-      auto_backups: false,
-      monthly_cost: '',
-    },
-    mode: "onChange"
-  })
+      status: "pending",
+      plan: "",
+      db_engine: "",
+      latest_backup: "2 hours ago",
+      vcpu_count: "", 
+      ram: "", 
+      disk: "",
+      replica_nodes: "",
+      region: "",
+      label: "",
+      monthly_cost:""
+    }
+  });
 
-  const [filteredComputeOptions, setFilteredComputeOptions] = useState<any[]>([])
+  const [filteredDBOptions, setFilteredDBOptions] = useState<any[]>([])
 
   const region = watch('region')
-  const computePlan = watch('plan')
-  const os = watch('os')
+  const dbPlan = watch('plan')
+  const engine = watch('db_engine')
   const label = watch('label')
 
   const [isFormValid, setIsFormValid] = useState(false)
 
   useEffect(() => {
-    setIsFormValid(!!region && !!computePlan && !!os && !!label)
-  }, [region, computePlan, os, label])
+    setIsFormValid(!!region && !!dbPlan && !!engine && !!label)
+  }, [region, dbPlan, engine, label])
 
   const [selectedSpec, setSelectedSpec] = useState({
-    vcpu: '',
+    engines: ['mysql', 'pg'],
+    vcpu_count: '',
     ram: '',
     disk: '',
-    bandwidth: '',
+    replica_nodes: '',
     monthly_cost: ''
   })
 
@@ -63,28 +60,24 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
     flag: region.flag
   }))
 
-  const OsOptions = OSArray.map(os => ({
-    value: String(os.id),
-    label: os.name
-  }))
-
-  const filterComputeOptions = (region: string) => {
+  const filterDBOptions = (region: string) => {
     if (region) {
-      const filtered = ComputeOptions.filter(option => 
+      const filtered = DatabasePlans.filter(option => 
         option.regions.includes(region)
       ).map(option => ({
         plan: option.plan,
         region: region,
-        vcpu: option.vcpu_count,
-        ram: option.ram,
-        disk: option.disk,
-        bandwidth: option.bandwidth,
+        engine: option.supported_engines,
+        vcpu: option.spec.vcpu_count,
+        ram: option.spec.ram,
+        disk: option.spec.disk,
         monthly_cost: option.monthly_cost,
-        disk_type: option.disk_type
+        replica_nodes: option.numbers_of_node
       }))
-      setFilteredComputeOptions(filtered)
+      
+      setFilteredDBOptions(filtered)
     } else {
-      setFilteredComputeOptions([])
+      setFilteredDBOptions([])
     }
   }
 
@@ -95,56 +88,51 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
       region
     
     setValue('region', regionWithCity)
-    filterComputeOptions(region)
+    filterDBOptions(region)
   }
 
-  const handleOsChange = (osValue: string) => {
-    const selectedOs = OSArray.find(os => String(os.id) === osValue);
-    if (selectedOs) {
-      setValue('os', selectedOs.name);
-    }
-  }
-
-  const handleComputePlanChange = (plan: string) => {
-    const selected = filteredComputeOptions.find(opt => opt.plan === plan)
+  const handleDBPlanChange = (plan: string) => {
+    const selected = filteredDBOptions.find(opt => opt.plan === plan)
     if (selected) {
       setValue('plan', plan)
-
-      setValue('vcpu', selected.vcpu)
+      setValue('vcpu_count', selected.vcpu)
       setValue('ram', selected.ram)
       setValue('disk', selected.disk)
-      setValue('bandwidth', selected.bandwidth)
+      setValue('replica_nodes', selected.replica_nodes)
       setValue('monthly_cost', selected.monthly_cost)
 
       setSelectedSpec({
-        vcpu: selected.vcpu,
+        engines: selected.engine,
+        vcpu_count: selected.vcpu,
         ram: selected.ram,
         disk: selected.disk,
-        bandwidth: selected.bandwidth,
-        monthly_cost: selected.monthly_cost,
+        replica_nodes: selected.replica_nodes,
+        monthly_cost: selected.monthly_cost
       })
     }
   }
 
-  const onSubmit = (data: ComputeSpecType) => {
-    if (onAdd) {
-      onAdd(data)
-    }
+  const handleEngineChange = (engine: string) => {
+    setValue('db_engine', engine)
   }
 
-
+  const onSubmit = (data: DatabaseSpecType) => {
+    if (onAdd) {
+      onAdd(data);
+    }
+  };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex justify-between items-center px-4 py-2 border-b">
-        <div className="gap-3 flex items-center">
+      <div className="flex items-center px-4 py-2 border-b justify-between">
+        <div className='gap-3 flex items-center'>
           <Image
-            alt="compute instance"
-            src={'/aut-compute.svg'}
+            alt="managed database"
+            src={'/aut-database.svg'}
             width={23.5}
             height={23.5}
             className="rounded-xs"
           ></Image>
-          <h3 className="text-xs font-medium">Instance</h3>
+          <h3 className="text-xs font-medium">Managed Database</h3>
         </div>
         <div className='flex items-center gap-3'>
           <Button type='button' onClick={onClose} className='px-3 py-1 h-[30px] rounded-sm text-xs bg-gray-50 hover:bg-violet-50 text-black border'>
@@ -161,8 +149,8 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
       </div>
 
       <SpecSection>
-        <InfoItem label="region">
-          <div className='flex flex-col w-full'>
+        <InfoItem label="Region">
+          <div className='flex flex-col w-full'>  
             <SelectBox 
               option={regionOptions}
               placeholder={"Select region"}
@@ -173,11 +161,10 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
             {!region && <p className="text-[11px] text-blue-400 mt-1">* Required field</p>}
           </div>
         </InfoItem>
-
         <InfoItem label='Plan'>
           <div className='flex flex-col w-full' style={{ cursor: !watch('region') ? 'not-allowed' : 'default' }}>
             <SelectBox 
-              option={filteredComputeOptions.map(opt => ({
+              option={filteredDBOptions.map(opt => ({
                 value: opt.plan,
                 label: opt.plan
               }))}
@@ -185,38 +172,33 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
               className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full",
                 !watch('region') ? "cursor-not-allowed pointer-events-none" : ""
               )}
-              onChange={handleComputePlanChange}
+              onChange={handleDBPlanChange}
             />
-            {!computePlan && <p className="text-[11px] text-blue-400 mt-1">* Required field</p>}
+            {!dbPlan && <p className="text-[11px] text-blue-400 mt-1">* Required field</p>}
           </div>
         </InfoItem>
-
-        <InfoItem label="OS">
+        <InfoItem label="DB Engine">
           <div className='flex flex-col w-full'>
             <SelectBox 
-              option={OsOptions}
-              placeholder={"Select OS"}
+              option={selectedSpec.engines.map(engine => ({
+                value: engine,
+                label: engine === 'pg' ? 'PostgreSQL' : engine === 'mysql' ? 'MySQL' : engine
+              }))}
+              placeholder={"Select database engine"}
               className="h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full"
-              onChange={handleOsChange}
+              onChange={handleEngineChange}
             />
-            {!os && <p className="text-[11px] text-blue-400 mt-1">* Required field</p>}
-          </div>
-        </InfoItem>
-
-        <InfoItem label="IP Address">
-          <div className="flex w-full justify-between items-center">
-            <p className="text-xs">{"64.176.217.21"}</p>
-            <Copy size={18} className="text-gray-500" />
+            {!engine && <p className="text-[11px] text-blue-400 mt-1">* Required field</p>}
           </div>
         </InfoItem>
       </SpecSection>
-        
-      {region && computePlan && os && (
+
+      {region && dbPlan && engine &&(
         <>
           <SpecSection>
             <InfoItem label="vCPU/s">
               <div className="h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm">
-                {`${selectedSpec.vcpu} vCPU`}
+                {`${selectedSpec.vcpu_count} vCPU`}
               </div>
             </InfoItem>
             <InfoItem label="RAM">
@@ -229,17 +211,14 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
                 {`${selectedSpec.disk} GB`}
               </div>
             </InfoItem>
-            <InfoItem label="Bandwidth">
-              <div className="h-9 w-full flex items-center px-3 text-xs text-[#8171E8] bg-[#F1F5F9] border-none rounded-sm">
-                {`${selectedSpec.bandwidth} GB`}
-                <div className='ml-2'>
-                  <InfoIcon label="?" />
-                </div>
+            <InfoItem label="Replica Nodes">
+              <div className="h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm">
+                {`${selectedSpec.replica_nodes} Node`}
               </div>
             </InfoItem>
             <InfoItem label="Monthly Cost">
               <div className="h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm">
-                {`$${selectedSpec.monthly_cost} per Month`}
+                {`$${selectedSpec.replica_nodes} per Month`}
               </div>
             </InfoItem>
           </SpecSection>
@@ -258,5 +237,5 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
         </InfoItem>
       </SpecSection>
     </form>
-  )
+  );
 }

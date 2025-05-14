@@ -27,7 +27,7 @@ export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageP
 
   const defaultValues = {
     id: '',
-    location: '',
+    region: '',
     type: "NVMe",
     mount_id: "ewr-a23cda1547af4b",
     attached_to: '',
@@ -36,18 +36,18 @@ export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageP
     date_created: "05/12/2025 07:31:20"
   }
 
-  const { register, handleSubmit, setValue, watch, formState } = useForm({
+  const { register, handleSubmit, setValue, watch } = useForm({
     defaultValues,
     mode: "onChange"
   })
 
-  const location = watch('location')
+  const region = watch('region')
   const label = watch('label')
   const attached_to = watch('attached_to')
   
   useEffect(() => {
-    setIsFormValid(!!location && !!label && !!attached_to)
-  }, [location, label, attached_to])
+    setIsFormValid(!!region && !!label && !!attached_to)
+  }, [region, label, attached_to])
 
   const connectedComputeIds = edges.map(edge => edge.target)
 
@@ -78,7 +78,7 @@ export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageP
       `${selectedRegion.city} (${region})` : 
       region
     
-    setValue('location', regionWithCity)
+    setValue('region', regionWithCity)
   }
 
   const onSubmit = (data:BlockStorageSpecType) => {
@@ -89,16 +89,16 @@ export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageP
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="flex items-center px-4 py-3 border-b justify-between">
+      <div className="flex items-center px-4 py-2 border-b justify-between">
         <div className="gap-3 flex items-center">
           <Image
             alt="block storage"
             src={"/aut-blockstorage.svg"}
-            width={25}
-            height={25}
+            width={23.5}
+            height={23.5}
             className="rounded-xs"
           ></Image>
-          <h3 className="text-sm font-medium">Block Storage</h3>
+          <h3 className="text-xs font-medium">Block Storage</h3>
         </div>
         <div className='flex items-center gap-3'>
           <Button type='button' onClick={onClose} className='px-3 py-1 h-[30px] rounded-sm text-xs bg-gray-50 hover:bg-violet-50 text-black border'>
@@ -115,23 +115,30 @@ export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageP
       </div>
 
       <SpecSection>
-        <InfoItem label="ID">
-          {defaultValues.id || "Auto-generated"}
-        </InfoItem>
-
-        <InfoItem label="Location">
+        <InfoItem label="Region">
           <div className="flex flex-col w-full">
             <SelectBox 
               option={regionOptions}
               placeholder={"Select region"}
-              className="h-9 text-[13px] bg-[#F1F5F9] border-none rounded-sm w-full" 
+              className="h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full" 
               onChange={handleRegionChange}
               showFlags={true}
             />
-            {!location && <p className="text-xs text-blue-400 mt-1">* Required field</p>}
+            {!region && <p className="text-[11px] text-blue-400 mt-1">* Required field</p>}
           </div>
           
         </InfoItem>
+        <div className="space-y-2">
+          <h3 className="text-xs text-gray-500">{"Attatch to"}</h3>
+          <SelectBox
+            option={computeNodes}
+            placeholder={"Select compute"}
+            className="h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full"
+            onChange={handleAttachChange}
+          />
+          {!attached_to && <p className="text-xs text-blue-400 mt-1">* Required field</p>}
+          <p className="text-[11px] text-gray-500">on this page, GB = 1024^3 bytes</p>
+        </div>
         </SpecSection>
 
         <SpecSection>
@@ -142,34 +149,23 @@ export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageP
             <h3 className="text-xs text-gray-500">{"Mount ID"}</h3>
             <InfoIcon label="?"/>
           </div>
-          <p className="text-[13px]">{defaultValues.mount_id}</p>
+          <p className="text-xs">{defaultValues.mount_id}</p>
         </div>
+        <InfoItem label="Size">
+          <p className="text-xs">{defaultValues.size}</p>
+        </InfoItem>
 
-        <div className="space-y-2">
-          <h3 className="text-xs text-gray-500">{"Attatch to"}</h3>
-          <SelectBox
-            option={computeNodes}
-            placeholder={"Select compute"}
-            className="h-9 text-[13px] bg-[#F1F5F9] border-none rounded-sm w-full"
-            onChange={handleAttachChange}
-          />
-          {!attached_to && <p className="text-xs text-blue-400 mt-1">* Required field</p>}
-          <p className="text-xs text-gray-500">on this page, GB = 1024^3 bytes</p>
-        </div>
       </SpecSection>
 
       <SpecSection>
-        <InfoItem label="Size">
-          <p className="text-[13px]">{defaultValues.size}</p>
-        </InfoItem>
         <InfoItem label="Label">
           <div className="flex flex-col w-full">
             <Input
               placeholder="Input label"
-              className="h-9 text-[13px] bg-[#F1F5F9] border-none rounded-sm"
+              className="h-9 text-xs bg-[#F1F5F9] border-none rounded-sm"
               {...register('label', { required: true })}
             />
-            {!label && <p className="text-xs text-blue-400 mt-1">* Required field</p>}
+            {!label && <p className="text-[11px] text-blue-400 mt-1">* Required field</p>}
           </div>
 
         </InfoItem>

@@ -27,9 +27,9 @@ export default function EditLogModal({resourceHistory, onClose}: EditLogModalPro
     <Modal
       className="fixed top-[70px] left-[268px]"
     >
-      <div className="w-[450px] max-h-[85vh] bg-white rounded-md border shadow-lg overflow-hidden">
+      <div className="w-[430px] max-h-[90vh] bg-white rounded-md border shadow-lg overflow-hidden">
         <div className="sticky top-0 p-4 border-b bg-white z-10 flex justify-between items-center">
-          <h2 className="text-[13px] font-semibold">Detailed Change Log</h2>
+          <h2 className="text-xs font-semibold">Detailed Change Log</h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
@@ -37,7 +37,7 @@ export default function EditLogModal({resourceHistory, onClose}: EditLogModalPro
           </button>
         </div>
         
-        <div className="flex flex-col p-4 space-y-3 text-[13px]">
+        <div className="flex flex-col p-4 space-y-3 text-xs">
           <div className="flex items-center">
             <p className="font-medium text-gray-700 w-[70px]">Label:</p>
             <p className="font-medium">{resourceHistory.label}</p>
@@ -58,38 +58,38 @@ export default function EditLogModal({resourceHistory, onClose}: EditLogModalPro
           </div>
         </div>
 
-        <div className="p-4 text-[13px]" style={{maxHeight: 'calc(85vh - 57px)'}}>
+        <div className="p-4 text-xs">
           <p className="font-semibold mb-3">Specification Changes:</p>
-          <div className="border rounded-md p-4 bg-[#FAFAFA] overflow-y-auto max-h-[350px]">
+          <div className="border rounded-md p-4 bg-[#FAFAFA] overflow-y-auto max-h-[calc(90vh-250px)]">
             <div className="space-y-4 custom-scollbar w-full">
               {Object.entries(resourceHistory.specChanges).map(([key, value]) => (
                 <div key={key} className="flex flex-col">
-                  <p className="capitalize font-medium text-[13px] text-gray-800 mb-2">{key.replace(/_/g, ' ')}:</p>
+                  <p className="capitalize font-medium text-xs text-gray-800 mb-2">{key.replace(/_/g, ' ')}:</p>
 
                   {value && typeof value === 'object' && ('prevValue' in value || 'currValue' in value) ? (
                     <div className="flex flex-col space-y-2 pl-5">
                       {value.prevValue !== null && (
                         <div className="flex items-center">
-                          <span className="text-red-600 mr-2 text-[13px] font-medium">-</span>
-                          <p className="text-red-600 text-[13px] bg-red-50 px-3 py-1.5 rounded-sm">{renderValue(value.prevValue)}</p>
+                          <span className="text-red-600 mr-2 text-xs font-medium">-</span>
+                          <p className="text-red-600 text-xs bg-red-50 px-3 py-1.5 rounded-sm">{renderValue(value.prevValue)}</p>
                         </div>
                       )}
                       {value.currValue !== null && (
                         <div className="flex items-center">
-                          <span className="text-green-600 mr-2 text-[13px] font-medium">+</span>
-                          <p className="text-green-600 text-[13px] bg-green-50 px-3 py-1.5 rounded-sm">{renderValue(value.currValue)}</p>
+                          <span className="text-green-600 mr-2 text-xs font-medium">+</span>
+                          <p className="text-green-600 text-xs bg-green-50 px-3 py-1.5 rounded-sm">{renderValue(value.currValue)}</p>
                         </div>
                       )}
                     </div>
                   ): (
                     <div className="flex mt-1 pl-5 items-center">
                       <span className={`${resourceHistory.status === "added" ? "text-green-600" : 
-                        resourceHistory.status === "removed" ? "text-red-600" : ""} mr-2 text-[13px] font-medium`}>
+                        resourceHistory.status === "removed" ? "text-red-600" : ""} mr-2 text-xs font-medium`}>
                         {resourceHistory.status === "added" ? "+" : 
                          resourceHistory.status === "removed" ? "-" : " "}
                       </span>
                       <p className={`${resourceHistory.status === "added" ? "text-green-600 bg-green-50" : 
-                        resourceHistory.status === "removed" ? "text-red-600 bg-red-50" : ""} text-[13px] px-3 py-1.5 rounded-sm`}>
+                        resourceHistory.status === "removed" ? "text-red-600 bg-red-50" : ""} text-xs px-3 py-1.5 rounded-sm`}>
                         {renderValue(value)}
                       </p>
                     </div>
@@ -100,23 +100,6 @@ export default function EditLogModal({resourceHistory, onClose}: EditLogModalPro
           </div>
         </div>
       </div>
-
-      <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: #f1f1f1;
-          border-radius: 3px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #c5c5c5;
-          border-radius: 3px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #a8a8a8;
-        }
-      `}</style>
     </Modal>
   )
 }

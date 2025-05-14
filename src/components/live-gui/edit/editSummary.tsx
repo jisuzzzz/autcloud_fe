@@ -28,7 +28,7 @@ export default function EditSummary() {
   }, [yDoc])
 
   return (
-    <div className="mt-13 px-2 py-2 space-y-2 overflow-y-auto max-h-[calc(100vh-50vh)] custom-scrollbar">
+    <div className="mt-13 px-2 py-2 space-y-2 overflow-y-auto max-h-[calc(100vh-50vh)] scrollbar-thin">
       {projectHistory && Object.entries(projectHistory).map(([nodeId, data]: [string, any]) => (
 
         <div key={nodeId} className="px-3 py-2 border rounded-md mb-3 text-xs bg-gray-50/70 hover:bg-violet-50 transition-colors duration-200 cursor-pointer"
@@ -66,10 +66,10 @@ export default function EditSummary() {
       )}
       
       {(!projectHistory || Object.keys(projectHistory).length === 0) && (
-        <p className="text-sm text-gray-500">No history available</p>
+        <p className="text-xs text-gray-500">No history available...</p>
       )}
 
-      <style jsx global>{`
+      {/* <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 6px;
         }
@@ -84,7 +84,7 @@ export default function EditSummary() {
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: #a8a8a8;
         }
-      `}</style>
+      `}</style> */}
     </div>
   )
 }
