@@ -28,9 +28,8 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const inputStyle =
-    'w-[300px] border border-gray-300 rounded px-4 py-2 placeholder-gray-400';
+    'w-full border border-gray-300 rounded-md px-4 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7868E6]';
 
-  // 세션 스토리지에서 값 복원
   useEffect(() => {
     const saved = sessionStorage.getItem('signup_form');
     if (saved) {
@@ -67,7 +66,6 @@ export default function SignupPage() {
 
     setForm(newForm);
 
-    // 형식 맞는 값만 저장
     const { name: n, email, phone, password, confirmPassword } = newForm;
     if (n && email && phone && password && confirmPassword) {
       sessionStorage.setItem(
@@ -142,33 +140,36 @@ export default function SignupPage() {
     form.password === form.confirmPassword;
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-[#F6F5FD] flex flex-col">
+      {/* 로그인 */}
       <div className="w-full flex justify-end items-center px-8 py-3 text-sm space-x-4">
-        <span className="text-gray-400 leading-none">
-          이미 계정이 있으신가요?
-        </span>
+        <span className="text-gray-500">이미 계정이 있으신가요?</span>
         <button
           onClick={() => router.push('/auth/signin')}
-          className="border border-gray-300 px-3 py-1 rounded text-sm"
+          className="border border-gray-300 px-3 py-1 rounded text-sm hover:bg-gray-100"
         >
           로그인
         </button>
       </div>
 
-      <div className="flex flex-col items-center justify-center px-4 min-h-[calc(100vh-80px)]">
-        <div className="w-[320px] mx-auto">
-          <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-gray-100 rounded-md flex items-center justify-center text-gray-400 font-semibold">
-              Logo
-            </div>
+      {/* 회원가입 폼 */}
+      <div className="flex flex-1 items-center justify-center px-4">
+        <div className="w-full max-w-sm bg-white p-10 mb-10 rounded-lg shadow-sm">
+          {/* 로고 */}
+          <div className="flex items-center space-x-2 mb-6">
+            <img
+              src="/aut-cloud-logo.svg"
+              alt="AutCloud logo"
+              className="w-8 h-8"
+            />
+            <h1 className="text-xl font-bold text-[#7868E6]">AutCloud</h1>
           </div>
 
-          <h2 className="text-center text-2xl font-medium mb-6">Sign up</h2>
+          {/* 제목 */}
+          <h2 className="text-lg font-bold text-black">Get started</h2>
+          <p className="text-sm text-gray-500 mb-6">Create a new account</p>
 
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-4 flex flex-col items-center"
-          >
+          <form onSubmit={handleSubmit} className="space-y-3 text-sm">
             <input
               type="text"
               name="name"
@@ -198,7 +199,8 @@ export default function SignupPage() {
               required
             />
 
-            <div className="relative w-[300px]">
+            {/* 비밀번호 */}
+            <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
                 name="password"
@@ -214,11 +216,12 @@ export default function SignupPage() {
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
               </button>
             </div>
 
-            <div className="relative w-[300px]">
+            {/* 비밀번호 확인 */}
+            <div className="relative">
               <input
                 type={showConfirmPassword ? 'text' : 'password'}
                 name="confirmPassword"
@@ -233,39 +236,43 @@ export default function SignupPage() {
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
-                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showConfirmPassword ? <Eye size={18} /> : <EyeOff size={18} />}
               </button>
             </div>
 
+            {/* 비밀번호 불일치 메시지 */}
             {form.password &&
               form.confirmPassword &&
               form.password !== form.confirmPassword && (
-                <p className="text-sm text-red-500 w-[300px]">
+                <p className="text-sm text-red-500">
                   비밀번호가 일치하지 않습니다.
                 </p>
               )}
 
-            <div className="flex items-center space-x-2 w-[300px]">
+            {/* 전체 동의 */}
+            <div className="flex items-center space-x-2">
               <input
                 type="checkbox"
                 name="agreeAll"
                 checked={form.agreeAll}
                 onChange={handleChange}
-                className="w-4 h-4 accent-black"
+                className="w-4 h-4 accent-[#7868E6]"
               />
               <label className="text-sm text-gray-800">
                 약관에 전체 동의 (선택 사항 포함)
               </label>
             </div>
 
+            {/* 약관 펼치기 */}
             <div
-              className="text-sm text-gray-800 cursor-pointer select-none flex justify-between items-center w-[300px]"
+              className="text-sm text-gray-800 cursor-pointer select-none flex justify-between items-center"
               onClick={toggleTerms}
             >
               <span>모두 보기</span>
               <span className="text-xs">{form.termsOpen ? '▲' : '▼'}</span>
             </div>
 
+            {/* 약관 항목 */}
             {form.termsOpen && (
               <div className="space-y-3 text-sm text-gray-700">
                 {[
@@ -308,7 +315,7 @@ export default function SignupPage() {
                               ] === val
                             }
                             onChange={handleChange}
-                            className="accent-black mr-1"
+                            className="accent-[#7868E6] mr-1"
                           />
                           {val === 'yes' ? '네' : '아니오'}
                         </label>
@@ -319,13 +326,14 @@ export default function SignupPage() {
               </div>
             )}
 
+            {/* 제출 버튼 */}
             <button
               type="submit"
               disabled={!isFilled || isLoading}
-              className={`w-[300px] flex items-center justify-center gap-2 text-white py-2 rounded ${
+              className={`w-full mt-5 flex items-center justify-center gap-2 text-white py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
                 isFilled && !isLoading
-                  ? 'bg-black hover:bg-gray-900'
-                  : 'bg-gray-400 cursor-not-allowed'
+                  ? 'bg-[#7868E6] hover:bg-[#6c5ad9]'
+                  : 'bg-gray-300 cursor-not-allowed'
               }`}
             >
               {isLoading ? (
