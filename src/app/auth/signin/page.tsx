@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 
 export default function SigninPage() {
   const router = useRouter();
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -32,9 +31,7 @@ export default function SigninPage() {
     try {
       const res = await fetch('/api/auth/signin', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
@@ -45,8 +42,8 @@ export default function SigninPage() {
         const data = await res.json();
         alert(`로그인 실패: ${data.error}`);
       }
-    } catch (error) {
-      console.error('Login error:', error);
+    } catch (err) {
+      console.error('Login error:', err);
       alert('서버 오류가 발생했습니다.');
     } finally {
       setIsLoading(false);
@@ -54,68 +51,56 @@ export default function SigninPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      {/* 상단 회원가입 안내 */}
-      <div className="w-full flex justify-end items-center px-8 py-3 text-sm space-x-4">
-        <span className="text-gray-400">회원이 아니신가요?</span>
-        <button
-          onClick={() => router.push('/auth/signup')}
-          className="border border-gray-300 px-3 py-1 rounded text-sm"
-        >
-          회원가입
-        </button>
-      </div>
+    <div className="min-h-screen flex items-center justify-center bg-[#F6F5FD] px-4">
+      <div className="w-full max-w-sm bg-white p-10 rounded-lg shadow-sm">
+        {/* 로고 */}
+        <div className="flex items-center space-x-2 mb-6">
+          <img
+            src="/aut-cloud-logo.svg"
+            alt="AutCloud logo"
+            className="w-8 h-8"
+          />
+          <h1 className="text-xl font-bold text-[#7868E6]">AutCloud</h1>
+        </div>
 
-      {/* 로그인 영역 */}
-      <div className="flex flex-col items-center justify-center px-4 min-h-[calc(100vh-80px)]">
-        <div className="w-[320px] mx-auto">
-          {/* 로고 */}
-          <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-gray-100 rounded-md flex items-center justify-center text-gray-400 font-semibold">
-              Logo
-            </div>
+        {/* 제목 */}
+        <h2 className="text-lg font-bold text-black">Welcome back</h2>
+        <p className="text-sm text-gray-500 mb-6">Sign in to your account</p>
+
+        {/* 로그인 폼 */}
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+            required
+            className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7868E6]"
+          />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            required
+            className="w-full border border-gray-300 rounded-md px-4 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7868E6]"
+          />
+          <div className="text-xs text-[#7868E6] underline cursor-pointer">
+            비밀번호 재설정
           </div>
 
-          <h2 className="text-center text-2xl font-medium mb-6">Sign in</h2>
-
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-4 flex flex-col items-center"
+          <button
+            type="submit"
+            disabled={!email || !password || isLoading}
+            className={`w-full mt-5 py-2 rounded-md text-white text-sm font-medium transition-colors duration-200 ${
+              email && password && !isLoading
+                ? 'bg-[#7868E6] hover:bg-[#6c5ad9]'
+                : 'bg-gray-300 cursor-not-allowed'
+            }`}
           >
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-[300px] border border-gray-300 rounded px-4 py-2 placeholder-gray-400"
-              required
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-[300px] border border-gray-300 rounded px-4 py-2 placeholder-gray-400"
-              required
-            />
-
-            <div className="w-[300px] text-left text-sm text-gray-600 underline cursor-pointer">
-              비밀번호 재설정
-            </div>
-
-            <button
-              type="submit"
-              className={`w-[300px] text-white py-2 rounded transition-colors duration-200 ${
-                email && password
-                  ? 'bg-black hover:bg-gray-900 cursor-pointer'
-                  : 'bg-gray-400 cursor-not-allowed'
-              }`}
-              disabled={!email || !password || isLoading}
-            >
-              {isLoading ? 'Signing in...' : 'Sign in'}
-            </button>
-          </form>
-        </div>
+            {isLoading ? 'Signing in...' : 'Sign In'}
+          </button>
+        </form>
       </div>
     </div>
   );
