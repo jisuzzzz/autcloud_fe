@@ -11,7 +11,7 @@ import EditObjectStorageSpec from "./editObject"
 import EditFirewallSpec from "./editFirewall"
 import { Node, Edge } from "reactflow"
 
-type SpecType = ComputeSpecType | DatabaseSpecType | BlockStorageSpecType | ObjectStorageSpecType | FirewallSpecType
+export type SpecType = ComputeSpecType | DatabaseSpecType | BlockStorageSpecType | ObjectStorageSpecType | FirewallSpecType
 
 interface EditModalProps{
   onClose: () => void
@@ -25,7 +25,7 @@ export default function EditModal({onClose, resource, setNodes, setEdges}: EditM
   const me = useSelf()
 
   const handleEdit = (updateSpec: SpecType) => {
-    console.log(updateSpec)
+
     if(!yDoc || !me?.id || !me.info?.name) return
     
     const selectedNodeId = (me?.presence.selectedNodes as string[])?.[0]
@@ -53,7 +53,6 @@ export default function EditModal({onClose, resource, setNodes, setEdges}: EditM
             ...node.data,
             status: 'edit'
           },
-          // selected:false
          }
          : node
       ))
@@ -64,6 +63,12 @@ export default function EditModal({onClose, resource, setNodes, setEdges}: EditM
         me.info.name,
         yDoc
       )
+
+      LiveFlowService.pushToUndoStack(me.id, {
+        nodeId: selectedNodeId,
+        type:"edit",
+        timestamp: Date.now() 
+      }, yDoc)
     }
     setTimeout(() => {
       onClose()
@@ -73,11 +78,11 @@ export default function EditModal({onClose, resource, setNodes, setEdges}: EditM
   const renderEditComponent = () => {
     switch(resource.data.type) {
       case 'Compute':
-        return <EditComputeSpec spec={resource.data.spec as ComputeSpecType} onEdit={handleEdit} onClose={onClose} />
+        return <EditComputeSpec spec={resource.data.spec as ComputeSpecType} onEdit={handleEdit} onClose={onClose} setEdges={setEdges} id={resource.id} />
       case 'Database':
         return <EditDatabaseSpec spec={resource.data.spec as DatabaseSpecType} onEdit={handleEdit} onClose={onClose} />
       case 'BlockStorage':
-        return <EditBlockStorageSpec spec={resource.data.spec as BlockStorageSpecType} onEdit={handleEdit} onClose={onClose} setEdges={setEdges} />
+        return <EditBlockStorageSpec spec={resource.data.spec as BlockStorageSpecType} onEdit={handleEdit} onClose={onClose} setEdges={setEdges} id={resource.id} />
       case 'ObjectStorage':
         return <EditObjectStorageSpec spec={resource.data.spec as ObjectStorageSpecType} onEdit={handleEdit}  onClose={onClose} />
       case 'FireWall':

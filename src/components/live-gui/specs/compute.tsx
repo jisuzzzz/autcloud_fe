@@ -97,6 +97,9 @@ export default function ComputeSpec({ spec: initSpec }: ComputeSpecProps) {
       </SpecSection>
 
       <SpecSection>
+        <InfoItem label='Firewall Group'>
+          {spec.group_id || "Set up a Firewall"}
+        </InfoItem>
         <InfoItem label="Auto Backups">
           {spec.auto_backups ? (
             <p className="text-xs text-green-600">Enabled</p>

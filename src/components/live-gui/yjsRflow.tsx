@@ -7,7 +7,6 @@ import ReactFlow, {
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import ResourceNode from './node'
-import GroupNode from './groupNode'
 import ArrowEdge from './edge'
 import { useYjsStore } from '@/lib/useYjsStore'
 import * as Y from 'yjs'
@@ -15,7 +14,7 @@ import { useMyPresence, useSelf } from '@liveblocks/react'
 import ToolBar from './toolBar'
 import SpecBar from './specBar'
 import FlowHeader from './flowHeader'
-import { ResourceConfig, ProjectTemplate, BlockStorageSpecType } from '@/lib/projectDB'
+import { ResourceConfig, ProjectTemplate, BlockStorageSpecType, ComputeSpecType } from '@/lib/projectDB'
 import { LiveFlowService } from '@/services/liveflow'
 import Loading from '../custom/loading'
 import { DndContext, DragEndEvent, useDroppable } from '@dnd-kit/core'
@@ -24,10 +23,7 @@ interface YjsReactFlowProps {
   project1: ProjectTemplate  
 }
 
-const nodeTypes = { 
-  resource: ResourceNode,
-  group: GroupNode 
-}
+const nodeTypes = { resource: ResourceNode }
 const edgeTypes = { edge: ArrowEdge }
 
 const convertToNodes = (resources: ResourceConfig[]): Node[] => {
@@ -55,6 +51,23 @@ const convertToEdges = (resources: ResourceConfig[]): Edge[] => {
         target: (resource.spec as BlockStorageSpecType).attached_to!,
         sourceHandle: 'right',
         targetHandle: 'left',
+        type: 'edge',
+        markerEnd: {
+          type: MarkerType.Arrow,
+          width: 20,
+          height: 20,
+          color: '#6E6E6E'
+        },
+      }
+      edges.push(newEdge)
+    }
+    if (resource.type === 'Compute' && (resource.spec as ComputeSpecType).group_id !== '') {
+      const newEdge: Edge = {
+        id: `e-${resource.id}-${Date.now()}`,
+        source: resource.id,
+        target: (resource.spec as ComputeSpecType).group_id!,
+        sourceHandle: 'top',
+        targetHandle: 'bottom',
         type: 'edge',
         markerEnd: {
           type: MarkerType.Arrow,

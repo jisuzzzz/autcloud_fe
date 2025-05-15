@@ -4,9 +4,11 @@ import { CommandList, CommandItem, ProjectChanges } from "@/lib/projectDB"
 import { CommandService } from "./command"
 
 interface UserAction {
-  type: 'add' | 'remove'
+  type: 'add' | 'remove' | 'edit'
   nodes?: Node[]
   edges?: Edge[]
+  nodeId?: string,
+  changes?: Record<string, string>
   timestamp: number
 }
 
@@ -88,6 +90,12 @@ export const LiveFlowService = {
     const projectHistroy = yDoc.getMap<ProjectChanges>('projectHistory')
 
     yDoc.transact(() => {
+      if(node.data.type === 'Compute') {
+        node.data.spec.group_id = ''
+      }
+      if(node.data.type === 'BlockStorage') {
+        node.data.spec.attached_to = ''
+      }
       yNodes.push([node])
 
       const changes = projectHistroy.get('nodes') || {}
@@ -328,6 +336,35 @@ export const LiveFlowService = {
               }
             })
 
+            yNodes.delete(0, yNodes.length)
+            yNodes.insert(0, updatedNodes)
+            undoNodes = updatedNodes
+          }
+          break
+        
+        case 'edit':
+          if (action.nodeId) {
+            const updatedNodes = currentNodes.map(node => {
+              if(node.id === action.nodeId) {
+                const specChanges = changes[node.id].specChanges
+                const revertedSpec = {...node.data.spec}
+
+                Object.entries(specChanges).forEach(([key, value]) => {
+                  revertedSpec[key] = value.prevValue
+                })
+                // const prevStatus = changes[node.id].status
+                delete changes[node.id]
+                return {
+                  ...node,
+                  data: {
+                    ...node.data,
+                    status: "add",
+                    spec: revertedSpec
+                  }
+                }
+              }
+              return node
+            })
             yNodes.delete(0, yNodes.length)
             yNodes.insert(0, updatedNodes)
             undoNodes = updatedNodes

@@ -11,6 +11,8 @@ import { ComputeOptions } from '@/lib/computeOptions'
 import { RegionsArray, OSArray } from '@/lib/resourceOptions'
 import SelectBox from '@/components/custom/selectBox'
 import { useState, useEffect } from 'react'
+import { useYjsStore } from '@/lib/useYjsStore'
+import { Node, Edge } from 'reactflow'
 
 interface AddNewResourceProps {
   onAdd: (data: ComputeSpecType) => void
@@ -18,6 +20,14 @@ interface AddNewResourceProps {
 }
 
 export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
+
+  const {yDoc} = useYjsStore()
+  
+  const yNodes = yDoc.getArray<Node>('nodes')
+  const yEdges = yDoc.getArray<Edge>('edges')
+  const nodes = yNodes.toArray() as Node[]
+  const edges = yEdges.toArray() as Edge[]
+
   const { register, handleSubmit, setValue, watch }  = useForm({
     defaultValues: {
       region: '',
@@ -33,6 +43,7 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
       label: '',
       auto_backups: false,
       monthly_cost: '',
+      group_id: '',
     },
     mode: "onChange"
   })
@@ -49,6 +60,19 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
   useEffect(() => {
     setIsFormValid(!!region && !!computePlan && !!os && !!label)
   }, [region, computePlan, os, label])
+
+  const firewallGroup = nodes
+    .filter(node => 
+      node.data.type === 'FireWall' &&
+      node.data.spec.staus !== 'remove' 
+    ).map(node => ({
+      value: node.id,
+      label: node.data.spec.label 
+    }))
+
+  const handleFirewallChange = (firewallId: string) => {
+    setValue('group_id', firewallId)
+  }
 
   const [selectedSpec, setSelectedSpec] = useState({
     vcpu: '',
@@ -248,6 +272,15 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
         </>
       )}
       <SpecSection>
+        <InfoItem label='Firewall'>
+          <SelectBox
+            option={firewallGroup}
+            placeholder='Select firewall group'
+            className="h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full"
+            onChange={handleFirewallChange}
+          >
+          </SelectBox>
+        </InfoItem>
         <InfoItem label="Label">
           <div className='flex flex-col w-full'>
             <Input

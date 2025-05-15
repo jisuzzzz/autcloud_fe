@@ -9,7 +9,7 @@ import { eventBus } from "@/services/eventBus"
 import { RegionsArray } from "@/lib/resourceOptions"
 import { cn } from "@/lib/utils"
 import { useYjsStore } from "@/lib/useYjsStore"
-import { Node, Edge } from "reactflow"
+import { Node, Edge, MarkerType } from "reactflow"
 import { Input } from "@/components/ui/input"
 import { useEffect, useState } from "react"
 
@@ -18,9 +18,10 @@ interface BlockStorageSpecProps {
   onEdit: (data: BlockStorageSpecType) => void
   onClose: () => void
   setEdges: (updater: (prev: Edge[]) => Edge[]) => void
+  id: string
 }
 
-export default function EditBlockStorageSpec({spec, onEdit, onClose, setEdges}:BlockStorageSpecProps) {
+export default function EditBlockStorageSpec({spec, onEdit, onClose, setEdges, id}:BlockStorageSpecProps) {
   const {yDoc} = useYjsStore()
   const [hasChanges, setHasChanges] = useState(false)
   
@@ -79,16 +80,36 @@ export default function EditBlockStorageSpec({spec, onEdit, onClose, setEdges}:B
       onEdit(data)
       
       const computeId = data.attached_to
-      if(computeId) {
-        setEdges(prev => prev.map(edge => 
-          edge.target === spec.attached_to
-            ? {
-              ...edge,
-              target: computeId
+      if(!computeId && (computeId === '')) return
+      setEdges(prev => {
+        const existingEdge = prev.find(edge => edge.target === spec.attached_to)
+        if(existingEdge) {
+          return prev.map(edge =>
+            edge.target === spec.attached_to
+              ? {...edge, target: computeId}
+              : edge
+          )
+        } else {
+          return [
+            ...prev,
+            {
+              id: `e-${id}-${Date.now()}`,
+              source: id,
+              target: computeId,
+              sourceHandle: 'right',
+              targetHandle: 'left',
+              type: 'edge',
+              markerEnd: {
+                type: MarkerType.Arrow,
+                width: 20,
+                height: 20,
+                color: '#6E6E6E'
+              },
             }
-            : edge
-        ))
-      }
+          ]
+        }
+      })
+      
       eventBus.publish('blockSpecUpdated', data)
     }
   }

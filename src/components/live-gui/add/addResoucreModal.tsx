@@ -56,6 +56,18 @@ export default function AddNewResourceModal({onClose, type, setNodes, onConnect}
       }
       onConnect(connection)
     }
+
+    if (type === 'Compute' && (addedSpec as ComputeSpecType).group_id !== '') {
+      const firewallId = (addedSpec as ComputeSpecType).group_id
+      if(!firewallId) return
+      const connection: Connection = {
+        source: newNode.id,
+        target: firewallId,
+        sourceHandle: "top",
+        targetHandle: "bottom"
+      }
+      onConnect(connection)
+    }
       
     LiveFlowService.pushToUndoStack(me.id, {
       type: 'add',

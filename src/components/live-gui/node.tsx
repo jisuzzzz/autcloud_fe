@@ -104,6 +104,29 @@ export default function ResourceNode({ id, data, selected=false }: NodeProps) {
         isConnectable={false}
         id="right"
       />
+
+      <Handle 
+        type="target" 
+        position={Position.Bottom} 
+        style={{ 
+          opacity: 0,
+          pointerEvents: 'none'
+        }}
+        isConnectable={false}
+        id="bottom"
+      />
+
+      <Handle 
+        type="source" 
+        position={Position.Top} 
+        style={{ 
+          opacity: 0,
+          pointerEvents: 'none'
+        }}
+        isConnectable={false}
+        id="top"
+      />
+
     </>
   )
 }

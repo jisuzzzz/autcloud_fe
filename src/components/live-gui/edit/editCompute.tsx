@@ -12,18 +12,30 @@ import { RegionsArray, OSArray } from '@/lib/resourceOptions'
 import SelectBox from '@/components/custom/selectBox'
 import { useState, useEffect } from 'react'
 import { eventBus } from '@/services/eventBus'
+import { useYjsStore } from '@/lib/useYjsStore'
+import { Node, Edge, MarkerType } from 'reactflow'
 
 interface EditComputeSpecProps {
   spec: ComputeSpecType
   onEdit: (data: ComputeSpecType) => void
   onClose: () => void
+  setEdges: (updater: (prev: Edge[]) => Edge[]) => void
+  id: string
 }
 
 export default function EditComputeSpec({
   spec,
   onEdit,
-  onClose
+  onClose,
+  setEdges,
+  id
 }: EditComputeSpecProps) {
+
+  const {yDoc} = useYjsStore()
+
+  const yNodes = yDoc.getArray<Node>('nodes')
+  const nodes = yNodes.toArray() as Node[]
+
   const { register, handleSubmit, setValue, watch } = useForm<ComputeSpecType>({
     defaultValues: spec,
   })
@@ -38,6 +50,20 @@ export default function EditComputeSpec({
     })
     setHasChanges(hasAnyChanges)
   }, [watchedValues, spec])
+
+  const firewallGroup = nodes
+    .filter(node => 
+      node.data.type === 'FireWall' &&
+      node.data.spec.staus !== 'remove' 
+    ).map(node => ({
+      value: node.id,
+      label: node.data.spec.label 
+  }))
+
+  const handleFirewallChange = (firewallId: string) => {
+    setValue('group_id', firewallId)
+  }
+
 
   const isValueChanged = (property: keyof ComputeSpecType) => {
     const currValue = watch(property)
@@ -121,7 +147,39 @@ export default function EditComputeSpec({
   const onSubmit = (data: ComputeSpecType) => {
     if (onEdit) {
       onEdit(data)
-      // 로컬 UI 업데이트를 위한 이벤트 발행
+      const firewallId = data.group_id
+      if((firewallId === '') || !firewallId) return
+      setEdges(prev => {
+        const existingEdge = prev.find(edge => edge.target === spec.group_id)
+
+        if (existingEdge) {
+          // 원래 엣지가 있으면 그거 업데이트
+          return prev.map(edge =>
+            edge.target === spec.group_id
+              ? { ...edge, target: firewallId }
+              : edge
+          )
+        } else {
+          // 엣지 없으면 새로 추가
+          return [
+            ...prev,
+            {
+              id: `e-${id}-${Date.now()}`,
+              source: id,
+              target: firewallId,
+              sourceHandle: 'top',
+              targetHandle: 'bottom',
+              type: 'edge',
+              markerEnd: {
+                type: MarkerType.Arrow,
+                width: 20,
+                height: 20,
+                color: '#6E6E6E'
+              },
+            },
+          ]
+        }
+      })
       eventBus.publish('computeSpecUpdated', data)
     }
   }
@@ -247,6 +305,15 @@ export default function EditComputeSpec({
       </SpecSection>
 
       <SpecSection>
+        <InfoItem label='Firewall'>
+          <SelectBox
+            option={firewallGroup}
+            placeholder={spec.group_id || 'Select firewall group'}
+            className="h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full"
+            onChange={handleFirewallChange}
+          >
+          </SelectBox>
+        </InfoItem>
         <InfoItem label="Label">
           <Input
             className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm", 
