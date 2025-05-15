@@ -147,20 +147,20 @@ export default function EditObjectStorageSpec({spec, onClose, onEdit}: ObectStor
 
       <SpecSection>
         <InfoItem label="price">
-          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm gap-2", 
+          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2", 
             isValueChanged('price') ? "text-blue-500 font-medium" : "")}>
             ${selectedPrice.price}
             <p className="text-[11px] text-gray-400">per Month</p>
           </div>
         </InfoItem>
         <InfoItem label="Storage Price">
-          <div className="h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm gap-2">
+          <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2">
             ${spec.storage_price}
             <p className="text-[11px] text-gray-400">over 1000GB</p>
           </div>
         </InfoItem>
         <InfoItem label="Transfer Price">
-          <div className="h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm gap-2">
+          <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2">
             ${spec.transfer_price}
             <p className="text-[11px] text-gray-400">over 1000GB</p>
           </div>
@@ -168,7 +168,7 @@ export default function EditObjectStorageSpec({spec, onClose, onEdit}: ObectStor
         <InfoItem label="Label">
           <Input
             className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm", 
-              isValueChanged('label') ? "text-blue-500 font-medium" : "text-[#8171E8]")}
+              isValueChanged('label') ? "text-blue-500 font-medium" : "")}
             {...register('label')}
           />
         </InfoItem>

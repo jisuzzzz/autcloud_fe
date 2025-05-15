@@ -206,31 +206,31 @@ export default function EditDatabaseSpec({ spec, onEdit, onClose }: DatabaseSpec
       </SpecSection>
       <SpecSection>
         <InfoItem label="vCPU/s">
-          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm", 
+          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('vcpu_count') ? "text-blue-500 font-medium" : "")}>
             {`${selectedSpec.vcpu_count} vCPU`}
           </div>
         </InfoItem>
         <InfoItem label="RAM">
-          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm", 
+          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('ram') ? "text-blue-500 font-medium" : "")}>
             {`${selectedSpec.ram} MB`}
           </div>
         </InfoItem>
         <InfoItem label="Disk">
-          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm", 
+          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('disk') ? "text-blue-500 font-medium" : "")}>
             {`${selectedSpec.disk} GB`}
           </div>
         </InfoItem>
         <InfoItem label="Replica Nodes">
-          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm", 
+          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('replica_nodes') ? "text-blue-500 font-medium" : "")}>
             {`${selectedSpec.replica_nodes} Node`}
           </div>
         </InfoItem>
         <InfoItem label="Monthly Cost">
-          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm", 
+          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('monthly_cost') ? "text-blue-500 font-medium" : "")}>
             {`$${selectedSpec.monthly_cost} per Month`}
           </div>
@@ -240,7 +240,7 @@ export default function EditDatabaseSpec({ spec, onEdit, onClose }: DatabaseSpec
         <InfoItem label="Label">
           <Input
             className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm", 
-              isValueChanged('label') ? "text-blue-500 font-medium" : "text-[#8171E8]")}
+              isValueChanged('label') ? "text-blue-500 font-medium" : "")}
             {...register('label')}
           />
         </InfoItem>

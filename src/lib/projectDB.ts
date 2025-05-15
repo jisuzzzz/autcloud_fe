@@ -41,9 +41,11 @@ type ComputeSpecType = {
   disk: string,
   bandwidth: string,
   label: string,
+  os_id: string,
   os: string,
-  auto_backups: boolean
-  monthly_cost: string
+  auto_backups: boolean,
+  monthly_cost: string,
+  group_id?: string
 }
 
 type DatabaseSpecType = {
@@ -83,6 +85,17 @@ type ObjectStorageSpecType = {
 
 type FirewallSpecType = {
   label: string
+  rules: FirewallRuleType[]
+}
+
+type FirewallRuleType = {
+  action?: string
+  port: string
+  ip_type: string
+  protocol: string
+  subnet: string
+  subnet_size: number
+  notes: string
 }
 
 type SpecValueType = string | number | boolean | null
@@ -101,6 +114,138 @@ type ProjectChanges = {
     }
   }
 }
+
+type CreateInstanceType = {
+  data: {
+    region: string,
+    plan: string,
+    label: string,
+    os_id: number,
+    backups: string,
+    hostname: string,
+  }
+}
+
+type UpdateInstanceType = {
+  data: {
+    id: string,
+    backups: string,
+    firewall_group_id: string,
+    os_id: number,
+    plan: string,
+    ddos_protection: boolean,
+    label: string
+  }
+}
+
+type DeleteInstanceType = {
+  data: {
+    id: string
+  }
+}
+
+type CreateManagedDatabaseType = {
+  data: {
+      database_engine: DatabaseEngineType,
+      database_engine_version: number
+      region: string,
+      plan: string,
+      label: string,
+  }
+}
+enum DatabaseEngineType {
+    mysql,
+    pg
+}
+
+type UpdateManagedDatabaseType = {
+  data: {
+    id: string,
+    plan: string,
+    label: string,
+  }
+}
+
+type DeleteManagedDatabaseType = {
+  data: {
+    id: string,
+  }
+}
+
+type CreateObjectStorageType = {
+  data: {
+      cluster_id: number,
+      tier_id: number,
+      label: string,
+  }
+}
+
+type UpdateObjectStorageType = {
+  data: {
+    id: string,
+    label: string,
+  }
+}
+
+type DeleteObjectStorageType = {
+  data: {
+    id: string,
+  }
+}
+
+type CreateBlockStorageType = {
+  data: {
+    region: string,
+    size_gb: number,
+    label: string,
+  }
+}
+
+type UpdateBlockStorageType = {
+  data: {
+    id: string,
+    region: string,
+    size_gb: number,
+    label: string,
+  }
+}
+
+type DeleteBlockStorageType = {
+  data: {
+    id: string,
+  }
+}
+
+type CreateFirewallGroupType = {
+  data: {
+    description: string
+  }
+}
+
+type UpdateFirewallGroupType = {
+  data: {
+    id: string,
+    description: string
+  }
+}
+
+type DeleteFirewallGroupType = {
+  data: {
+    id: string,
+  }
+}
+
+type CommandItem = {
+  command_name: string,
+  position?: { x: number,y: number },
+  data: CreateInstanceType | UpdateInstanceType | DeleteInstanceType |
+        CreateManagedDatabaseType | UpdateManagedDatabaseType | DeleteManagedDatabaseType |
+        CreateObjectStorageType | UpdateObjectStorageType | DeleteObjectStorageType |
+        CreateBlockStorageType | UpdateBlockStorageType | DeleteObjectStorageType |
+        CreateFirewallGroupType | UpdateFirewallGroupType | DeleteFirewallGroupType,
+}
+
+type CommandList = CommandItem[]
 
 const PROJECT_TEMPLATES: ProjectTemplate[] = [
   {
@@ -123,9 +268,11 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           disk: "25",
           bandwidth: "0.34",
           label: "Shopify-Web-Server",
-          os: "Ubuntu 22.04 x64",
+          os_id: "2571",
+          os: "Ubuntu 25.04 x64",
           auto_backups: false,
-          monthly_cost: "0"
+          monthly_cost: "0",
+          group_id: "firewall-1"
         }
       },
       {
@@ -184,7 +331,27 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 500, y: 100 },
         status: 'add',
         spec: {
-          label: "allow"
+            label: 'Allow HTTP',
+            rules: [
+            {
+              action: 'accept',
+              port: '80',
+              ip_type: 'v4',
+              protocol: 'tcp',
+              subnet: '0.0.0.0',
+              subnet_size: 0,
+              notes: 'Public HTTP access'
+            },
+            {
+              action: 'accept',
+              port: '80',
+              ip_type: 'v4',
+              protocol: 'tcp',
+              subnet: '0.0.0.0',
+              subnet_size: 0,
+              notes: 'Public HTTP access'
+            }
+          ]
         }
       }
     ]
@@ -210,7 +377,8 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           disk: "80",
           bandwidth: "5.0",
           label: "Shopify-Web-Server-Primary",
-          os: "Ubuntu 22.04 x64",
+          os_id: "2571",
+          os: "Ubuntu 25.04 x64",
           auto_backups: true,
           monthly_cost: "0"
         }
@@ -230,7 +398,8 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           disk: "80",
           bandwidth: "5.0",
           label: "Shopify-Web-Server-Secondary",
-          os: "Ubuntu 22.04 x64",
+          os_id: "2571",
+          os: "Ubuntu 25.04 x64",
           auto_backups: true,
           monthly_cost: "0"
         }
@@ -286,21 +455,22 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           monthly_cost: "0"
         }
       },
-      {
-        id: "firewall-1",
-        type: "FireWall",
-        position: { x: 500, y: 50 },
-        status: 'add',
-        spec: {
-          label: "HA-Protection-Layer"
-        }
-      },
+      // {
+      //   id: "firewall-1",
+      //   type: "FireWall",
+      //   position: { x: 500, y: 50 },
+      //   status: 'add',
+      //   spec: {
+      //     description: "HA-Protection-Layer"
+      //   }
+      // },
       {
         id: "storage-1",
         type: "ObjectStorage",
         position: { x: 300, y: 450 },
         status: 'add',
         spec: {
+          id: "2",
           label: "Shopify-Asset-Storage-HA",
           region: "Chicago (ord)",
           plan: "Performance",
@@ -332,7 +502,8 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           disk: "50",
           bandwidth: "3.0",
           label: "Shopify-API-Gateway",
-          os: "Ubuntu 22.04 x64",
+          os_id: "2571",
+          os: "Ubuntu 25.04 x64",
           auto_backups: true,
           monthly_cost: "0"
         }
@@ -352,7 +523,8 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           disk: "50",
           bandwidth: "3.0",
           label: "Shopify-Auth-Service",
-          os: "Ubuntu 22.04 x64",
+          os_id: "2571",
+          os: "Ubuntu 25.04 x64",
           auto_backups: true,
           monthly_cost: "0"
         }
@@ -401,6 +573,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 500, y: 550 },
         status: 'add',
         spec: {
+          id: "2",
           label: "Shopify-Media-Storage",
           region: "Seattle (sea)",
           plan: "Premium",
@@ -409,15 +582,15 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           transfer_price: "0.019"
         }
       },
-      {
-        id: "firewall-1",
-        type: "FireWall",
-        position: { x: 500, y: 100 },
-        status: 'add',
-        spec: {
-          label: "API-Gateway-Protection"
-        }
-      }
+      // {
+      //   id: "firewall-1",
+      //   type: "FireWall",
+      //   position: { x: 500, y: 100 },
+      //   status: 'add',
+      //   spec: {
+      //     description: "API-Gateway-Protection"
+      //   }
+      // }
     ]
   }
 ]
@@ -444,7 +617,25 @@ export {
   type BlockStorageSpecType,
   type ObjectStorageSpecType,
   type FirewallSpecType,
+  type FirewallRuleType,
   type SpecValueType,
   type NodeChangeStatus, 
   type ProjectChanges,
+  type CreateInstanceType,
+  type UpdateInstanceType,
+  type DeleteInstanceType,
+  type CreateManagedDatabaseType,
+  type UpdateManagedDatabaseType,
+  type DeleteManagedDatabaseType,
+  type CreateBlockStorageType,
+  type UpdateBlockStorageType,
+  type DeleteBlockStorageType,
+  type CreateObjectStorageType,
+  type UpdateObjectStorageType,
+  type DeleteObjectStorageType,
+  type CreateFirewallGroupType,
+  type UpdateFirewallGroupType,
+  type DeleteFirewallGroupType,
+  type CommandList,
+  type CommandItem
 }

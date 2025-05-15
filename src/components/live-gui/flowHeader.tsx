@@ -9,6 +9,8 @@ import { useSelf, useOthersMapped } from '@liveblocks/react';
 import Avatar from './avator';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useYjsStore } from '@/lib/useYjsStore';
+import { LiveFlowService } from '@/services/liveflow';
 
 interface HeaderProps {
   projectId: string;
@@ -49,21 +51,25 @@ export default function FlowHeader({
   projectName,
   setNodes,
 }: HeaderProps) {
+  const {yDoc} = useYjsStore()
+  const me = useSelf();
   const [isModalOpen, setIsModalOepn] = useState(false);
 
   const handleOpenModal = () => setIsModalOepn(true);
   const handleCloseModal = () => setIsModalOepn(false);
 
   const handleClickPuhblish = () => {
-    setNodes((prev: Node[]) =>
-      prev.map((node) => ({
-        ...node,
-        data: {
-          ...node.data,
-          isNew: false,
-        },
-      }))
-    );
+    LiveFlowService.CreateCommandList(yDoc, me?.id)
+
+    // setNodes((prev: Node[]) =>
+    //   prev.map((node) => ({
+    //     ...node,
+    //     data: {
+    //       ...node.data,
+    //       isNew: false,
+    //     },
+    //   }))
+    // );
   };
 
   return (

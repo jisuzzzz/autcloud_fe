@@ -13,7 +13,7 @@ export default async function ProjectIdPage({
   return (
     <Room projectId={param.projectId}>
       <YjsReactFlow 
-        project={project || {
+        project1={project || {
           id: param.projectId,
           name: "project_name",
           description: "project_description",

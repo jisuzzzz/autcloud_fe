@@ -28,7 +28,7 @@ export default function EditSummary() {
   }, [yDoc])
 
   return (
-    <div className="mt-13 px-2 py-2 space-y-2 overflow-y-auto max-h-[calc(100vh-50vh)] scrollbar-thin">
+    <div className="mt-13 px-2 py-2 space-y-2 overflow-y-auto max-h-[calc(100vh-410px)] scrollbar-thin">
       {projectHistory && Object.entries(projectHistory).map(([nodeId, data]: [string, any]) => (
 
         <div key={nodeId} className="px-3 py-2 border rounded-md mb-3 text-xs bg-gray-50/70 hover:bg-violet-50 transition-colors duration-200 cursor-pointer"
@@ -41,7 +41,7 @@ export default function EditSummary() {
             <span className="font-medium truncate max-w-[150px]">
               {data.label}
             </span>
-            <span className={`rounded-sm text-xs px-2 py-0.5 ${
+            <span className={`rounded-md text-xs px-2 py-0.5 ${
               data.status === 'added' ? 'bg-green-100 text-green-800' : 
               data.status === 'modified' ? 'bg-blue-100 text-blue-800' : 
               'bg-red-100 text-red-800'
@@ -68,23 +68,6 @@ export default function EditSummary() {
       {(!projectHistory || Object.keys(projectHistory).length === 0) && (
         <p className="text-xs text-gray-500">No history available...</p>
       )}
-
-      {/* <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: #f1f1f1;
-          border-radius: 3px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #c5c5c5;
-          border-radius: 3px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #a8a8a8;
-        }
-      `}</style> */}
     </div>
   )
 }

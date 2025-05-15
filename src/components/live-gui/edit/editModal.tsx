@@ -25,6 +25,7 @@ export default function EditModal({onClose, resource, setNodes, setEdges}: EditM
   const me = useSelf()
 
   const handleEdit = (updateSpec: SpecType) => {
+    console.log(updateSpec)
     if(!yDoc || !me?.id || !me.info?.name) return
     
     const selectedNodeId = (me?.presence.selectedNodes as string[])?.[0]
@@ -80,7 +81,7 @@ export default function EditModal({onClose, resource, setNodes, setEdges}: EditM
       case 'ObjectStorage':
         return <EditObjectStorageSpec spec={resource.data.spec as ObjectStorageSpecType} onEdit={handleEdit}  onClose={onClose} />
       case 'FireWall':
-        return <EditFirewallSpec spec={resource.data.spec as FirewallSpecType} onEdit={handleEdit} />
+        return <EditFirewallSpec spec={resource.data.spec as FirewallSpecType} onEdit={handleEdit} onClose={onClose}/>
     }
   }
   

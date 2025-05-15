@@ -197,27 +197,27 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseSpecProps) {
         <>
           <SpecSection>
             <InfoItem label="vCPU/s">
-              <div className="h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm">
+              <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm">
                 {`${selectedSpec.vcpu_count} vCPU`}
               </div>
             </InfoItem>
             <InfoItem label="RAM">
-              <div className="h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm">
+              <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm">
                 {`${selectedSpec.ram} MB`}
               </div>
             </InfoItem>
             <InfoItem label="Disk">
-              <div className="h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm">
+              <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm">
                 {`${selectedSpec.disk} GB`}
               </div>
             </InfoItem>
             <InfoItem label="Replica Nodes">
-              <div className="h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm">
+              <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm">
                 {`${selectedSpec.replica_nodes} Node`}
               </div>
             </InfoItem>
             <InfoItem label="Monthly Cost">
-              <div className="h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm">
+              <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm">
                 {`$${selectedSpec.replica_nodes} per Month`}
               </div>
             </InfoItem>

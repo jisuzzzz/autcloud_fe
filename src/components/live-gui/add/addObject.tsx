@@ -157,7 +157,7 @@ export default function AddNewObjectStorage({onClose, onAdd}: AddNewObjectStorag
         {region && plan && (
             <>
               <InfoItem label="Price">
-                <div className="h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm gap-2">
+                <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2">
                   ${selectedPrice.price}
                   <p className="text-[11px] text-gray-400">per Month</p>
                 </div>
@@ -165,13 +165,13 @@ export default function AddNewObjectStorage({onClose, onAdd}: AddNewObjectStorag
             </>
         )}
         <InfoItem label="Storage Price">
-          <div className="h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm gap-2">
+          <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2">
             ${defaultValues.storage_price}
             <p className="text-[11px] text-gray-400">over 1000GB</p>
           </div>
         </InfoItem>
         <InfoItem label="Transfer Price">
-          <div className="h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm gap-2">
+          <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2">
             ${defaultValues.transfer_price}
             <p className="text-[11px] text-gray-400">over 1000GB</p>
           </div>

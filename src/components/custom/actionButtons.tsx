@@ -4,7 +4,10 @@ import { ActionButton } from './actionButton';
 import { Plus, Ellipsis } from 'lucide-react';
 import CreateProjectModal from './createProjectModal';
 import MenuModal from './menuModal';
-import FirewallModal from './firewallModal';
+import AddNewwFirewallRule from '../live-gui/add/addFirewallRule';
+import { Button } from '../ui/button';
+import { FirewallRuleType } from '@/lib/projectDB';
+
 
 export function CreateButton() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -24,19 +27,26 @@ export function CreateButton() {
   )
 }
 
-export function AddActionButton() {
+interface addRuleProps {
+  onSave: (rule: FirewallRuleType) => void
+}
+
+export function AddRuleButton({onSave}: addRuleProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   return (
     <>
-      <button 
+      <Button 
+        type="button" 
+        size="sm" 
+        variant="ghost"
+        className="px-2.5 py-1 text-xs hover:bg-violet-50 border rounded-sm"
         onClick={() => setIsModalOpen(true)}
-        
       >
-        <Plus size={18} className="text-gray-500 hover:text-[#8171E8]" />
-      </button>
+        Add Rule
+      </Button>
       {isModalOpen && (
-        <FirewallModal onClose={() => setIsModalOpen(false)} />
+        <AddNewwFirewallRule onClose={() => setIsModalOpen(false)} onSave={onSave} />
       )}
     </>
   )

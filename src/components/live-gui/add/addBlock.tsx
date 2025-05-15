@@ -31,7 +31,7 @@ export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageP
     type: "NVMe",
     mount_id: "ewr-a23cda1547af4b",
     attached_to: '',
-    size: "1GB",
+    size: "1",
     label: '',
     date_created: "05/12/2025 07:31:20"
   }

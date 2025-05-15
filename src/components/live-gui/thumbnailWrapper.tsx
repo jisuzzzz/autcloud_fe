@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { ReactFlowProvider } from 'reactflow';
-import ProjectThumbnail from './\bthumbnail';
+import ProjectThumbnail from './thumbnail';
 import { ProjectTemplate } from '@/lib/projectDB';
 
 interface ProjectThumbnailWrapperProps {

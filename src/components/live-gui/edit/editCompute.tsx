@@ -46,14 +46,6 @@ export default function EditComputeSpec({
 
   const [filteredComputeOptions, setFilteredComputeOptions] = useState<any[]>([])
 
-  const [selectedSpec, setSelectedSpec] = useState({
-    vcpu: spec.vcpu,
-    ram: spec.ram,
-    disk: spec.disk,
-    bandwidth: spec.bandwidth,
-    monthly_cost: spec.monthly_cost
-  })
-
   const regionOptions = RegionsArray.map(region => ({
     value: region.id,
     label: `${region.city} (${region.id})`,
@@ -105,10 +97,11 @@ export default function EditComputeSpec({
     filterComputeOptions(region)
   }
 
-  const handleOsChange = (osValue: string) => {
-    const selectedOs = OSArray.find(os => String(os.id) === osValue);
+  const handleOsChange = (osId: string) => {
+    const selectedOs = OSArray.find(os => String(os.id) === osId)
     if (selectedOs) {
-      setValue('os', selectedOs.name);
+      setValue('os_id', String(selectedOs.id))
+      setValue('os', selectedOs.name)
     }
   }
 
@@ -122,14 +115,6 @@ export default function EditComputeSpec({
       setValue('disk', selected.disk)
       setValue('bandwidth', selected.bandwidth)
       setValue('monthly_cost', selected.monthly_cost)
-
-      setSelectedSpec({
-        vcpu: selected.vcpu,
-        ram: selected.ram,
-        disk: selected.disk,
-        bandwidth: selected.bandwidth,
-        monthly_cost: selected.monthly_cost,
-      })
     }
   }
 
@@ -227,25 +212,25 @@ export default function EditComputeSpec({
 
       <SpecSection>
         <InfoItem label="vCPU/s">
-          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm", 
+          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('vcpu') ? "text-blue-500 font-medium" : "")}>
             {`${spec.vcpu} vCPU`}
           </div>
         </InfoItem>
         <InfoItem label="RAM">
-          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm", 
+          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('ram') ? "text-blue-500 font-medium" : "")}>
             {`${spec.ram} MB`}
           </div>
         </InfoItem>
         <InfoItem label="Disk">
-          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm", 
+          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('disk') ? "text-blue-500 font-medium" : "")}>
             {`${spec.disk} GB`}
           </div>
         </InfoItem>
         <InfoItem label="Bandwidth">
-          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm", 
+          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('bandwidth') ? "text-blue-500 font-medium" : "")}>
             {`${spec.bandwidth} GB`}
             <div className='ml-2'>
@@ -254,7 +239,7 @@ export default function EditComputeSpec({
           </div>
         </InfoItem>
         <InfoItem label="Monthly Cost">
-          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm", 
+          <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('monthly_cost') ? "text-blue-500 font-medium" : "")}>
             {`$${spec.monthly_cost} per Month`}
           </div>
@@ -265,7 +250,7 @@ export default function EditComputeSpec({
         <InfoItem label="Label">
           <Input
             className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm", 
-              isValueChanged('label') ? "text-blue-500 font-medium" : "text-[#8171E8]")}
+              isValueChanged('label') ? "text-blue-500 font-medium" : "")}
             {...register('label')}
           />
         </InfoItem>

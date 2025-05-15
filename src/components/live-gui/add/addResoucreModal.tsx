@@ -9,6 +9,7 @@ import { Connection, Node } from "reactflow"
 import AddNewBlockStorage from "./addBlock"
 import AddNewObjectStorage from "./addObject"
 import AddNewDatabase from "./addDB"
+import AddNewFirewall from "./addFirewall"
 
 type SpecType = ComputeSpecType | DatabaseSpecType | BlockStorageSpecType | ObjectStorageSpecType | FirewallSpecType
 
@@ -77,8 +78,8 @@ export default function AddNewResourceModal({onClose, type, setNodes, onConnect}
         return <AddNewBlockStorage onAdd={handleAdd} onClose={onClose} />
       case 'ObjectStorage':
         return <AddNewObjectStorage onAdd={handleAdd} onClose={onClose} />
-      // case 'FireWall':
-      //   return <EditFirewallSpec spec={spec as FirewallSpecType} onEdit={handleEdit} />
+      case 'FireWall':
+        return <AddNewFirewall onAdd={handleAdd} onClose={onClose} />
     }
   }
   

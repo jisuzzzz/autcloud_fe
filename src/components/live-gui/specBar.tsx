@@ -61,7 +61,7 @@ export function SpecSection({
 }) {
   return (
     <div
-      className={cn('flex flex-col space-y-4 px-4 py-4 border-b', className)}
+      className={cn('flex flex-col space-y-2 px-4 py-4 border-b', className)}
     >
       {children}
     </div>
@@ -92,9 +92,10 @@ export default function SpecBar({setNodes, setEdges}: SpecBarProps) {
       setSelectedResource(null)
     }
   }, [me?.presence.selectedNodes])
+  //md:block hidden 
 
   return selectedResource ? (
-    <div className="md:block hidden fixed top-[55px] right-0 bg-white border-l w-[256px] h-screen z-40">
+    <div className="fixed top-[55px] right-0 bg-white border-l w-[256px] h-screen z-40">
       <div className="flex justify-between items-center px-4 py-3 border-b">
         <div className="gap-3 flex items-center">
           <Image

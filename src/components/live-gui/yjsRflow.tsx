@@ -3,10 +3,11 @@ import { useCallback, useEffect, useState } from 'react'
 import ReactFlow, {
   Background, useNodesState, useEdgesState, addEdge,
   Connection, Edge, Node, BackgroundVariant, ConnectionMode,
-  NodeChange, MarkerType,
+  NodeChange, MarkerType, useReactFlow
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import ResourceNode from './node'
+import GroupNode from './groupNode'
 import ArrowEdge from './edge'
 import { useYjsStore } from '@/lib/useYjsStore'
 import * as Y from 'yjs'
@@ -17,12 +18,16 @@ import FlowHeader from './flowHeader'
 import { ResourceConfig, ProjectTemplate, BlockStorageSpecType } from '@/lib/projectDB'
 import { LiveFlowService } from '@/services/liveflow'
 import Loading from '../custom/loading'
+import { DndContext, DragEndEvent, useDroppable } from '@dnd-kit/core'
 
 interface YjsReactFlowProps {
-  project: ProjectTemplate  
+  project1: ProjectTemplate  
 }
 
-const nodeTypes = { resource: ResourceNode }
+const nodeTypes = { 
+  resource: ResourceNode,
+  group: GroupNode 
+}
 const edgeTypes = { edge: ArrowEdge }
 
 const convertToNodes = (resources: ResourceConfig[]): Node[] => {
@@ -64,9 +69,9 @@ const convertToEdges = (resources: ResourceConfig[]): Edge[] => {
   return edges
 }
 
-export function YjsReactFlow({ project }: YjsReactFlowProps) {
+export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
 
-  const { initial_resources, name, id } = project
+  const { initial_resources, name, id } = project1
 
   const { yDoc, isConnected }  = useYjsStore()
   const user = useSelf()
@@ -78,6 +83,36 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
   const [clipboard, setClipboard] = useState<{nodes: Node[]} | null>(null)
   const [occupiedNode, setoccupiedNode] = useState<Node[]>([])
 
+  const { setNodeRef } = useDroppable({ id: 'flow-drop' })
+
+
+// const { project } = useReactFlow()
+
+// function handleDragEnd(event: DragEndEvent) {
+//   const { active, over } = event
+//   if (!over || over.id !== 'canvas-drop') return
+
+//   const resource = active.data.current
+
+//   const position = project({
+//     x: event.delta?.x ?? 200,
+//     y: event.delta?.y ?? 200
+//   })
+
+//   setNodes(prev => [
+//     ...prev,
+//     {
+//       id: `${resource.type}-${Date.now()}`,
+//       type: 'default',
+//       position,
+//       data: {
+//         label: resource.label,
+//         type: resource.type,
+//         spec: {}
+//       }
+//     }
+//   ])
+// }
   
   useEffect(() => {
     if (!yDoc || !user?.id || !isConnected) return
@@ -292,42 +327,44 @@ export function YjsReactFlow({ project }: YjsReactFlowProps) {
   }
 
   return (
-    <div className="h-[calc(100vh)] w-full">
-      <FlowHeader 
-        projectId={id}
-        projectName={name} 
-        setNodes={setNodes}
-      />
-      <ToolBar 
-        setNodes={setNodes}
-        onConnect={onConnect}
-      />
-      <SpecBar 
-        setNodes={setNodes} 
-        setEdges={setEdges}
-      />
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onSelectionChange={handleSelectionChange}
-        onNodesChange={handleNodesChange}
-        nodeTypes={nodeTypes}
-        edgeTypes={edgeTypes}
-        onConnect={onConnect}
-        defaultViewport={{ x: 0, y: 0, zoom: 1 }}
-        connectionMode={ConnectionMode.Loose}
-        proOptions={{ hideAttribution: true }}
-        deleteKeyCode={null}
-        selectionKeyCode={null}
-      >
-        <Background 
-          // color="F6F5FD"
-          gap={16}
-          size={1}
-          variant={BackgroundVariant.Dots}
-          
+    <DndContext>
+      <div ref={setNodeRef} className="h-[calc(100vh)] w-full">
+        <FlowHeader 
+          projectId={id}
+          projectName={name} 
+          setNodes={setNodes}
         />
-      </ReactFlow>
-  </div>
+        <ToolBar 
+          setNodes={setNodes}
+          onConnect={onConnect}
+        />
+        <SpecBar 
+          setNodes={setNodes} 
+          setEdges={setEdges}
+        />
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onSelectionChange={handleSelectionChange}
+          onNodesChange={handleNodesChange}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          onConnect={onConnect}
+          defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+          connectionMode={ConnectionMode.Loose}
+          proOptions={{ hideAttribution: true }}
+          deleteKeyCode={null}
+          selectionKeyCode={null}
+        >
+          <Background 
+            // color="F6F5FD"
+            gap={16}
+            size={1}
+            variant={BackgroundVariant.Dots}
+            
+          />
+        </ReactFlow>
+      </div>
+    </DndContext>
   );
 }

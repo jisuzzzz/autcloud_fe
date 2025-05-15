@@ -22,6 +22,7 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
     defaultValues: {
       region: '',
       plan: '',
+      os_id: '',
       os: '',
       vcpu: '',
       ram: '',
@@ -98,10 +99,11 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
     filterComputeOptions(region)
   }
 
-  const handleOsChange = (osValue: string) => {
-    const selectedOs = OSArray.find(os => String(os.id) === osValue);
+  const handleOsChange = (os_id: string) => {
+    const selectedOs = OSArray.find(os => String(os.id) === os_id);
     if (selectedOs) {
-      setValue('os', selectedOs.name);
+      setValue('os_id', String(selectedOs.id))
+      setValue('os', selectedOs.name)
     }
   }
 
@@ -215,22 +217,22 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
         <>
           <SpecSection>
             <InfoItem label="vCPU/s">
-              <div className="h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm">
+              <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm">
                 {`${selectedSpec.vcpu} vCPU`}
               </div>
             </InfoItem>
             <InfoItem label="RAM">
-              <div className="h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm">
+              <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm">
                 {`${selectedSpec.ram} MB`}
               </div>
             </InfoItem>
             <InfoItem label="Disk">
-              <div className="h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm">
+              <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm">
                 {`${selectedSpec.disk} GB`}
               </div>
             </InfoItem>
             <InfoItem label="Bandwidth">
-              <div className="h-9 w-full flex items-center px-3 text-xs text-[#8171E8] bg-[#F1F5F9] border-none rounded-sm">
+              <div className="h-9 w-full flex items-center px-3 text-xs text-[#8171E8] bg-white shadow-none border rounded-sm">
                 {`${selectedSpec.bandwidth} GB`}
                 <div className='ml-2'>
                   <InfoIcon label="?" />
@@ -238,7 +240,7 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
               </div>
             </InfoItem>
             <InfoItem label="Monthly Cost">
-              <div className="h-9 w-full flex items-center px-3 text-xs bg-[#F1F5F9] border-none rounded-sm">
+              <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm">
                 {`$${selectedSpec.monthly_cost} per Month`}
               </div>
             </InfoItem>

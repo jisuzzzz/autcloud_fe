@@ -1,6 +1,7 @@
 import { Node, Edge } from "reactflow"
 import * as Y from 'yjs'
-import { ProjectChanges } from "@/lib/projectDB"
+import { CommandList, CommandItem, ProjectChanges } from "@/lib/projectDB"
+import { CommandService } from "./command"
 
 interface UserAction {
   type: 'add' | 'remove'
@@ -14,6 +15,7 @@ interface UserStack {
 }
 
 const STACK_TIMEOUT = 1000*60*10
+
 
 export const LiveFlowService = {
 
@@ -346,5 +348,55 @@ export const LiveFlowService = {
     yNodes.delete(0, yNodes.length)
     yEdges.delete(0, yEdges.length)
     projectHistory.delete('nodes')
-  }
+  },
+
+  CreateCommandList: (yDoc: Y.Doc, userId?: string) => {
+    if(!yDoc) return
+    const yNodes = yDoc.getArray<Node>('nodes')
+
+    const commandList: CommandList = []
+    const commandMap: Record<string, 
+      Record<string, (node: Node, userId?: string) => CommandItem>> = {
+
+      Compute: {
+        add: (node, userId) => CommandService.createComputeCommand(node, userId!),
+        edit: (node) => CommandService.updateComputeCommand(node),
+        remove: (node) => CommandService.deleteComputeCommand(node),
+      },
+
+      Database: {
+        add: (node) => CommandService.createDBCommand(node),
+        edit: (node) => CommandService.updateDBCommand(node),
+        remove: (node) => CommandService.deleteDBCommand(node),
+      },
+
+      ObjectStorage: {
+        add: (node) => CommandService.createObjectCommand(node),
+        edit: (node) => CommandService.updateObjectCommand(node),
+        remove: (node) => CommandService.deleteObjectCommand(node),
+      },
+
+      BlockStorage: {
+        add: (node) => CommandService.createBlockCommand(node),
+        edit: (node) => CommandService.updateBlockCommand(node),
+        remove: (node) => CommandService.deleteBlockCommand(node),
+      }
+
+    }
+
+    yDoc.transact(() => {
+      const nodes = yNodes.toArray() as Node[]
+
+      nodes.forEach((node) => {
+        const { type, status } = node.data
+        const command = commandMap[type]?.[status]
+
+        if(command) {
+          commandList.push(command(node, userId))
+        }
+      })
+    })
+    // console.log(commandList)
+  },
+
 }

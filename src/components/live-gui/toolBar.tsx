@@ -4,6 +4,7 @@ import { Connection, Node } from 'reactflow'
 import EditSummary from "./edit/editSummary"
 import { useState } from "react"
 import AddNewResourceModal from "./add/addResoucreModal"
+import { useDraggable } from '@dnd-kit/core'
 
 interface Resource {
   type: 'Compute' | 'BlockStorage' | 'Database' | 'ObjectStorage' | 'FireWall'
@@ -23,6 +24,25 @@ const resources: Resource[] = [
   { type: 'ObjectStorage', label: 'ObjectStorage', icon: '/aut-objectstorage.svg' },
   { type: 'FireWall', label: 'Firewall', icon: '/aut-firewall.svg' },
 ]
+
+// function DraggableResource({ resource }: { resource: Resource }) {
+//   const { attributes, listeners, setNodeRef } = useDraggable({
+//     id: resource.type,
+//     data: resource
+//   })
+
+//   return (
+//     <div
+//       ref={setNodeRef}
+//       {...attributes}
+//       {...listeners}
+//       className="flex items-center gap-3 px-3 py-2 hover:bg-violet-50 rounded cursor-pointer"
+//     >
+//       <Image src={resource.icon} alt={resource.type} fill className="object-contain rounded-xs" />
+//       <span className="text-xs">{resource.label}</span>
+//     </div>
+//   )
+// }
 
 export default function ToolBar({ setNodes, onConnect }: ToolBarProps) {
   const [selectedResourceType, setSelectedResourceType] = useState<{type: string, } | null>(null)

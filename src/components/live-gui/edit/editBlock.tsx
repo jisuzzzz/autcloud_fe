@@ -164,7 +164,7 @@ export default function EditBlockStorageSpec({spec, onEdit, onClose, setEdges}:B
         <InfoItem label="Label">
           <Input
             className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm", 
-              isValueChanged('label') ? "text-blue-500 font-medium" : "text-[#8171E8]")}
+              isValueChanged('label') ? "text-blue-500 font-medium" : "")}
             {...register('label')}
           />
         </InfoItem>
