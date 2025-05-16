@@ -152,7 +152,7 @@ export default function DocsPage() {
                 {[
                   {
                     title: 'Small package',
-                    color: '#7195E3',
+                    color: '#6896E6',
                     specs: ['4 Cores', '16 GB', '16 GB'],
                     dots: 1,
                   },
@@ -164,14 +164,15 @@ export default function DocsPage() {
                   },
                   {
                     title: 'Large package',
-                    color: '#151032',
+                    color: '#120B42',
                     specs: ['48 Cores', '4x16 GB', '192 GB'],
                     dots: 3,
                   },
                 ].map((pkg, i) => (
                   <div
                     key={i}
-                    className={`bg-[${pkg.color}] text-white rounded-[16px] px-5 py-6`}
+                    style={{ backgroundColor: pkg.color }}
+                    className="text-white rounded-[16px] px-5 py-6"
                   >
                     <div className="bg-[rgba(217,217,217,0.3)] w-9 h-9 rounded-md mb-4 flex items-center justify-center gap-0.5">
                       {Array(pkg.dots)

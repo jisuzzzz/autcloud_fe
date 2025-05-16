@@ -7,20 +7,19 @@ import { Plus, Upload, Folder, Search, List, LayoutGrid } from 'lucide-react';
 import Header from '@/components/custom/header';
 import ProjectItem from '@/components/custom/projectItem';
 import SortDropdown from '@/components/custom/sortDropdown';
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getProjects } from '@/lib/projectDB';
-
 
 export default function ProjectPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const router = useRouter();
-  
-  const projects = getProjects()
+
+  const projects = getProjects();
   // console.log(projects)
   const handleCreateClick = () => {
     router.push('/project/create');
   };
-  // #F6F5FD
+
   return (
     <div className="flex min-h-screen bg-white">
       <div className="flex-1">
