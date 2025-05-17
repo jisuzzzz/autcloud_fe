@@ -90,12 +90,12 @@ export const LiveFlowService = {
     const projectHistroy = yDoc.getMap<ProjectChanges>('projectHistory')
 
     yDoc.transact(() => {
-      if(node.data.type === 'Compute') {
-        node.data.spec.group_id = ''
-      }
-      if(node.data.type === 'BlockStorage') {
-        node.data.spec.attached_to = ''
-      }
+      // if(node.data.type === 'Compute') {
+      //   node.data.spec.group_id = ''
+      // }
+      // if(node.data.type === 'BlockStorage') {
+      //   node.data.spec.attached_to = ''
+      // }
       yNodes.push([node])
 
       const changes = projectHistroy.get('nodes') || {}
@@ -236,7 +236,6 @@ export const LiveFlowService = {
           const prevEdge = edges.find(e => e.source === nodeId)
           if(prevEdge) {
             const edgeIndex = edges.findIndex(e => e.id === prevEdge.id)
-            // console.log(edgeIndex)
             const updatedEdge = {
               ...prevEdge,
               target: newComputeId
@@ -381,15 +380,19 @@ export const LiveFlowService = {
     const yNodes = yDoc.getArray<Node>('nodes')
     const yEdges = yDoc.getArray<Edge>('edges')
     const userActionHistory = yDoc.getMap<UserStack>('userActionHistory')
-    const projectHistory = yDoc.getMap<ProjectChanges>('projectHistory')
+    const projectHistory = yDoc.getMap<ProjectChanges>('projectHistory') 
     yNodes.delete(0, yNodes.length)
     yEdges.delete(0, yEdges.length)
+    for (const key of userActionHistory.keys()) {
+      userActionHistory.delete(key)
+    }
     projectHistory.delete('nodes')
   },
 
   CreateCommandList: (yDoc: Y.Doc, userId?: string) => {
     if(!yDoc) return
     const yNodes = yDoc.getArray<Node>('nodes')
+    const projectHistory = yDoc.getMap<ProjectChanges>('projectHistory')
 
     const commandList: CommandList = []
     const commandMap: Record<string, 
@@ -417,12 +420,18 @@ export const LiveFlowService = {
         add: (node) => CommandService.createBlockCommand(node),
         edit: (node) => CommandService.updateBlockCommand(node),
         remove: (node) => CommandService.deleteBlockCommand(node),
-      }
+      },
 
+      FireWall: {
+        add: (node) => CommandService.createFirewallCommand(node),
+        edit: (node) => CommandService.updateFirewallCommand(node),
+        remove: (node) => CommandService.deleteFirewallCommand(node),
+      },
     }
 
     yDoc.transact(() => {
       const nodes = yNodes.toArray() as Node[]
+      const changes = projectHistory.get('nodes') || {}
 
       nodes.forEach((node) => {
         const { type, status } = node.data
@@ -431,7 +440,27 @@ export const LiveFlowService = {
         if(command) {
           commandList.push(command(node, userId))
         }
+
+        if(node.data.type === 'BlockStorage') {
+          const prevAttachTo = changes[node.id].specChanges.attached_to.prevValue?.toString()
+          if(prevAttachTo) {
+            const firstAttach = CommandService.attachCommand(node,prevAttachTo)
+            commandList.push(firstAttach)
+            const detachCommand = CommandService.detachCommand(node)
+            commandList.push(detachCommand)
+          }
+          const currAttachTo = node.data.spec.attached_to
+          const attachCommand = CommandService.attachCommand(node, currAttachTo)
+          commandList.push(attachCommand)
+        }
+
+        if (node.data.type === 'FireWall' && node.data.spec.rules) {
+          const ruleCommands = CommandService.createRuleCommands(node)
+          commandList.push(...ruleCommands)
+        }
+
       })
+
     })
     // console.log(commandList)
   },

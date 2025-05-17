@@ -24,15 +24,13 @@ export default function EditDatabaseSpec({ spec, onEdit, onClose }: DatabaseSpec
   const [filteredDBOptions, setFilteredDBOptions] = useState<any[]>([])
 
   const [selectedSpec, setSelectedSpec] = useState({
-    engines: ['mysql', 'pg'],
     vcpu_count: spec.vcpu_count,
     ram: spec.ram,
     disk: spec.disk,
     replica_nodes: spec.replica_nodes,
     monthly_cost: spec.monthly_cost,
-    db_engine: spec.db_engine,
-    db_version: spec.db_engine === 'pg' ? '15' : '8',
   })
+  const db_engines = ['pg','mysql']
 
   const watchedValues = watch()
   const [hasChanges, setHasChanges] = useState(false)
@@ -102,25 +100,20 @@ export default function EditDatabaseSpec({ spec, onEdit, onClose }: DatabaseSpec
       setValue('disk', selected.disk)
       setValue('replica_nodes', selected.replica_nodes)
       setValue('monthly_cost', selected.monthly_cost)
-      setValue('db_engine', selected.engine)
-      setValue('db_version', selected.engine === 'pg' ? '15' : '8')
 
       setSelectedSpec({
-        engines: selected.engine,
         vcpu_count: selected.vcpu,
         ram: selected.ram,
         disk: selected.disk,
         replica_nodes: selected.replica_nodes,
         monthly_cost: selected.monthly_cost,
-        db_engine: selected.engine,
-        db_version: selected.engine === 'pg' ? '15' : '8',
       })
     }
   }
 
   const handleEngineChange = (engine: string) => {
     setValue('db_engine', engine)
-    setValue('db_version', engine === 'pg' ? '15' : '8')
+    setValue('db_version', engine.includes('pg') ? '15' : '8')
   }
 
   const onSubmit = (data: DatabaseSpecType) => {
@@ -194,11 +187,11 @@ export default function EditDatabaseSpec({ spec, onEdit, onClose }: DatabaseSpec
         </InfoItem>
         <InfoItem label="DB Engine">
           <SelectBox 
-            option={selectedSpec.engines.map(engine => ({
+            option={db_engines.map(engine => ({
               value: engine,
               label: engine === 'pg' ? 'PostgreSQL 15' : engine === 'mysql' ? 'MySQL 8' : engine
             }))}
-            placeholder={spec.db_engine + " " + spec.db_version || "Select database engine"}
+            placeholder={(spec.db_engine === 'pg' ? 'PostgreSQL' : 'MySQL' ) + " " + spec.db_version || "Select database engine"}
             className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full", 
               isValueChanged('db_engine') ? "text-blue-500 font-medium" : ""
             )}

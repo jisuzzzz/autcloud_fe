@@ -48,14 +48,13 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseSpecProps) {
   }, [region, dbPlan, engine, label])
 
   const [selectedSpec, setSelectedSpec] = useState({
-    engines: ['mysql', 'pg'],
     vcpu_count: '',
     ram: '',
     disk: '',
     replica_nodes: '',
     monthly_cost: '',
-    db_version: ''
   })
+  const db_engines = ['pg','mysql']
 
   const regionOptions = RegionsArray.map(region => ({
     value: region.id,
@@ -102,22 +101,20 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseSpecProps) {
       setValue('disk', selected.disk)
       setValue('replica_nodes', selected.replica_nodes)
       setValue('monthly_cost', selected.monthly_cost)
-      setValue('db_version', selected.engine === 'pg' ? '15' : '8')
 
       setSelectedSpec({
-        engines: selected.engine,
         vcpu_count: selected.vcpu,
         ram: selected.ram,
         disk: selected.disk,
         replica_nodes: selected.replica_nodes,
         monthly_cost: selected.monthly_cost,
-        db_version: selected.engine === 'pg' ? '15' : '8',
       })
     }
   }
 
   const handleEngineChange = (engine: string) => {
     setValue('db_engine', engine)
+    setValue('db_version', engine.includes('pg') ? '15' : '8')
   }
 
   const onSubmit = (data: DatabaseSpecType) => {
@@ -184,7 +181,7 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseSpecProps) {
         <InfoItem label="DB Engine">
           <div className='flex flex-col w-full'>
             <SelectBox 
-              option={selectedSpec.engines.map(engine => ({
+              option={db_engines.map(engine => ({
                 value: engine,
                 label: engine === 'pg' ? 'PostgreSQL 15' : engine === 'mysql' ? 'MySQL 8' : engine
               }))}

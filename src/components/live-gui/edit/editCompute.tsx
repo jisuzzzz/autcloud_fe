@@ -39,6 +39,14 @@ export default function EditComputeSpec({
     defaultValues: spec,
   })
 
+  const [selectedSpec, setSelectedSpec] = useState({
+    vcpu: spec.vcpu,
+    ram: spec.ram,
+    disk: spec.disk,
+    bandwidth: spec.bandwidth,
+    monthly_cost: spec.monthly_cost
+  })
+
   const watchedValues = watch()
   const [hasChanges, setHasChanges] = useState(false)
 
@@ -138,6 +146,14 @@ export default function EditComputeSpec({
       setValue('disk', selected.disk)
       setValue('bandwidth', selected.bandwidth)
       setValue('monthly_cost', selected.monthly_cost)
+
+      setSelectedSpec({
+        vcpu: selected.vcpu,
+        ram: selected.ram,
+        disk: selected.disk,
+        bandwidth: selected.bandwidth,
+        monthly_cost: selected.monthly_cost
+      })
     }
   }
 
@@ -268,25 +284,25 @@ export default function EditComputeSpec({
         <InfoItem label="vCPU/s">
           <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('vcpu') ? "text-blue-500 font-medium" : "")}>
-            {`${spec.vcpu} vCPU`}
+            {`${selectedSpec.vcpu} vCPU`}
           </div>
         </InfoItem>
         <InfoItem label="RAM">
           <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('ram') ? "text-blue-500 font-medium" : "")}>
-            {`${spec.ram} MB`}
+            {`${selectedSpec.ram} MB`}
           </div>
         </InfoItem>
         <InfoItem label="Disk">
           <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('disk') ? "text-blue-500 font-medium" : "")}>
-            {`${spec.disk} GB`}
+            {`${selectedSpec.disk} GB`}
           </div>
         </InfoItem>
         <InfoItem label="Bandwidth">
           <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('bandwidth') ? "text-blue-500 font-medium" : "")}>
-            {`${spec.bandwidth} GB`}
+            {`${selectedSpec.bandwidth} GB`}
             <div className='ml-2'>
               <InfoIcon  label="?" />
             </div>
@@ -295,7 +311,7 @@ export default function EditComputeSpec({
         <InfoItem label="Monthly Cost">
           <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('monthly_cost') ? "text-blue-500 font-medium" : "")}>
-            {`$${spec.monthly_cost} per Month`}
+            {`$${selectedSpec.monthly_cost} per Month`}
           </div>
         </InfoItem>
       </SpecSection>

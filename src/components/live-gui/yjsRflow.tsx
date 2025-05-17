@@ -242,19 +242,28 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
           case 'v':
             if(!clipboard || !clipboard.nodes[0]) return
             const toPaste = clipboard.nodes[0]
+
+            const nodeId = `${toPaste.id}-${Date.now()}`
+            const baseSpec = {
+              ...toPaste.data.spec,
+              label: `${toPaste.data.spec.label}-copy`,
+            }
+            if(toPaste.data.type === 'Compute') {
+              baseSpec.group_id = ''
+            }
+            if(toPaste.data.type === 'BlockStorage') {
+              baseSpec.attach_to = ''
+            }
             const newNode = {
-              ...toPaste,
-              id: `${toPaste.id}-${Date.now()}`,
+              id: nodeId,
+              type: "resource",
               position: {
                 x: toPaste.position.x + 50,
                 y: toPaste.position.y + 50,
               },
               data: { 
                 ...toPaste.data,
-                spec: {
-                  ...toPaste.data.spec,
-                  label: `${toPaste.data.spec.label}-copy`
-                },
+                spec: baseSpec,
                 status: 'add'
               },
               selected: false

@@ -96,6 +96,7 @@ type FirewallSpecType = {
 }
 
 type FirewallRuleType = {
+  rule_id: string
   action?: string
   port: string
   ip_type: string
@@ -242,6 +243,26 @@ type DeleteFirewallGroupType = {
   }
 }
 
+
+type CreateFirewallRule = {
+  data: {
+    fire_wall_group_id: string,
+    ip_type: string,
+    protocol: string,
+    port: string,
+    subent: string,
+    subnet_size: number,
+    notes: string
+  }
+}
+
+type DeleteFirewallRule = {
+  data: {
+    fire_wall_group_id: string,
+    fire_wall_rule_id: number
+  }
+}
+
 type CommandItem = {
   command_name: string,
   position?: { x: number,y: number },
@@ -249,7 +270,8 @@ type CommandItem = {
         CreateManagedDatabaseType | UpdateManagedDatabaseType | DeleteManagedDatabaseType |
         CreateObjectStorageType | UpdateObjectStorageType | DeleteObjectStorageType |
         CreateBlockStorageType | UpdateBlockStorageType | DeleteObjectStorageType |
-        CreateFirewallGroupType | UpdateFirewallGroupType | DeleteFirewallGroupType,
+        CreateFirewallGroupType | UpdateFirewallGroupType | DeleteFirewallGroupType |
+        CreateFirewallRule | DeleteFirewallRule
 }
 
 type CommandList = CommandItem[]
@@ -327,7 +349,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         spec: {
           status: "pending",
           plan: "vultur-dbaas-startup-cc-1-55-2",
-          db_engine: "PostgreSQL",
+          db_engine: "pg",
           db_version: "15",
           latest_backup: "2 hours ago",
           vcpu_count: "1", 
@@ -349,6 +371,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
             label: 'Allow HTTP',
             rules: [
             {
+              rule_id: "1",
               action: 'accept',
               port: '80',
               ip_type: 'v4',
@@ -358,6 +381,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
               notes: 'Public HTTP access'
             },
             {
+              rule_id: "1",
               action: 'accept',
               port: '80',
               ip_type: 'v4',
@@ -654,6 +678,8 @@ export {
   type CreateFirewallGroupType,
   type UpdateFirewallGroupType,
   type DeleteFirewallGroupType,
+  type CreateFirewallRule,
+  type DeleteFirewallRule,
   type CommandList,
   type CommandItem
 }

@@ -4,7 +4,9 @@ import {
   CreateManagedDatabaseType, UpdateManagedDatabaseType, DeleteManagedDatabaseType,
   CreateObjectStorageType, UpdateObjectStorageType, DeleteObjectStorageType,
   CreateBlockStorageType, UpdateBlockStorageType, DeleteBlockStorageType,
-  CreateFirewallGroupType, UpdateFirewallGroupType, DeleteFirewallGroupType
+  CreateFirewallGroupType, UpdateFirewallGroupType, DeleteFirewallGroupType,
+  CreateFirewallRule,
+  DeleteFirewallRule,
 } from "@/lib/projectDB"
 
 
@@ -12,11 +14,11 @@ export const CommandService = {
   createComputeCommand: (node: Node, userId: string) => {
     const createInstance: CreateInstanceType = {
       data: {
-        region: node.data.spec.region.split(' ')[1].replace(/[()]/g, ''),
+        region: node.data.spec.region_id,
         plan: node.data.spec.plan,
         label: node.data.spec.label,
         os_id: node.data.spec.os,
-        backups: node.data.spec.auto_backups ? "enabled" : "disabled",
+        backups: node.data.spec.auto_backups,
         hostname: userId
       }
     }
@@ -33,7 +35,7 @@ export const CommandService = {
       data: {
         id: node.id,
         backups: node.data.spec.auto_backups,
-        firewall_group_id: "",
+        firewall_group_id: node.data.spec.firewall_group_id,
         os_id: node.data.spec.os_id,
         plan: node.data.spec.plan,
         ddos_protection: true,
@@ -63,8 +65,8 @@ export const CommandService = {
     const createManagedDatabase: CreateManagedDatabaseType = {
       data: {
         database_engine: node.data.spec.db_engine,
-        database_engine_version: 1,
-        region: node.data.spec.region.split(' ')[1].replace(/[()]/g, ''),
+        database_engine_version: node.data.spec.db_version,
+        region: node.data.spec.region_id,
         plan: node.data.spec.plan,
         label: node.data.spec.label,
       }
@@ -93,7 +95,7 @@ export const CommandService = {
   },
 
   deleteDBCommand: (node: Node) => {
-    const deleteManagedDatabase: DeleteInstanceType = {
+    const deleteManagedDatabase: DeleteManagedDatabaseType = {
       data: {
         id: node.id,
       }
@@ -107,8 +109,8 @@ export const CommandService = {
   createObjectCommand: (node: Node) => {
     const createObjectStorage: CreateObjectStorageType = {
       data: {
-        cluster_id: 1,
-        tier_id: node.data.spec.id,
+        cluster_id: node.data.spec.cluster_id,
+        tier_id: node.data.spec.tier_id,
         label: node.data.spec.label,
       }
     }
@@ -149,7 +151,7 @@ export const CommandService = {
   createBlockCommand: (node: Node) => {
     const createBlockStorage: CreateBlockStorageType = {
       data: {
-        region: node.data.spec.region.split(' ')[1].replace(/[()]/g, ''),
+        region: node.data.spec.region_id,
         size_gb: node.data.spec.size,
         label: node.data.spec.label,
       }
@@ -166,7 +168,7 @@ export const CommandService = {
     const updateBlockStorage: UpdateBlockStorageType = {
       data: {
         id: node.id,
-        region: node.data.spec.region.split(' ')[1].replace(/[()]/g, ''),
+        region: node.data.spec.region_id,
         size_gb: node.data.spec.size,
         label: node.data.spec.label,
       }
@@ -187,6 +189,101 @@ export const CommandService = {
     return {
       command_name: "DeleteBlockStorage",
       data: deleteBlockStorage
+    }
+  },
+
+  attachCommand: (node: Node, attached_to: string) => {
+    const attachedTo = {
+      data: {
+        id: node.id,
+        instance_id: attached_to,
+        live: true
+      }
+    }
+    return {
+      command_name: "AttachBlockStorageToInstance",
+      data: attachedTo
+    }
+  },
+
+  detachCommand: (node: Node) => {
+    const detachFrom = {
+      data: {
+        id: node.id,
+        live: true
+      }
+    }
+    return {
+      command_name: "DetachBlockStorageFromInstance",
+      data: detachFrom
+    }
+  },
+
+  createFirewallCommand: (node: Node) => {
+    const createFirewall: CreateFirewallGroupType = {
+      data: {
+        description: node.data.spec.label
+      }
+    }
+    return {
+      command_name: "CreateFirewallGroup",
+      position: { x: node.position.x, y: node.position.y },
+      data: createFirewall
+    }
+  },
+
+  updateFirewallCommand: (node: Node) => {
+    const updateFirewall: UpdateFirewallGroupType = {
+      data: {
+        id: node.id,
+        description: node.data.spec.label
+      }
+    }
+    return {
+      command_name: "UpdateFirewallGroup",
+      position: { x: node.position.x, y: node.position.y },
+      data: updateFirewall
+    }
+  },
+
+  deleteFirewallCommand: (node: Node) => {
+    const deleteFirewall: DeleteFirewallGroupType = {
+      data: {
+        id: node.id
+      }
+    }
+    return {
+      command_name: "DeleteDirewallGroup",
+      data: deleteFirewall
+    }
+  },
+
+  createRuleCommands: (node: Node) => {
+  const rules = node.data.spec.rules || []
+    return rules.map((rule: CreateFirewallRule['data']) => ({
+      command_name: "CreateFirewallRule",
+      data: {
+        fire_wall_group_id: node.id,
+        ip_type: rule.ip_type,
+        protocol: rule.protocol,
+        port: rule.port,
+        subent: rule.subent,
+        subnet_size: rule.subnet_size,
+        notes: rule.notes
+      }
+    }))
+  },
+  
+  deleteRuleCommand: (node: Node) => {
+    const deleteRuel: DeleteFirewallRule = {
+      data: {
+        fire_wall_group_id: node.id,
+        fire_wall_rule_id: node.data.spec.rules.rule_id
+      }
+    }
+    return {
+      command_name: "DeleteFirewallRule",
+      data: deleteRuel
     }
   },
 

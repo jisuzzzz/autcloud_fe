@@ -55,7 +55,7 @@ export default function DatabaseSpec({ spec:localSpec }: DatabaseSpecProps) {
           </div>
         </InfoItem>
         <InfoItem label="ID">{spec.plan}</InfoItem>
-        <InfoItem label="DB Engine">{spec.db_engine + " " + spec.db_version}</InfoItem>
+        <InfoItem label="DB Engine">{(spec.db_engine === 'pg' ? 'PostgreSQL' : 'MySQL' ) + " " + spec.db_version}</InfoItem>
       </SpecSection>
 
       <SpecSection>

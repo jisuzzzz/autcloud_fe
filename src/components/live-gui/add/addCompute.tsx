@@ -65,7 +65,7 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
       node.data.type === 'FireWall' &&
       node.data.spec.status !== 'remove' 
     ).map(node => ({
-      value: node.id,
+      value: node.id.toString(),
       label: node.data.spec.label 
     }))
 
