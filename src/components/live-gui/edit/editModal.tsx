@@ -16,11 +16,10 @@ export type SpecType = ComputeSpecType | DatabaseSpecType | BlockStorageSpecType
 interface EditModalProps{
   onClose: () => void
   resource: ResourceNodeType
-  setNodes: (updater: (prev: Node[]) => Node[]) => void 
   setEdges: (updater: (prev: Edge[]) => Edge[]) => void
 }
 
-export default function EditModal({onClose, resource, setNodes, setEdges}: EditModalProps) {
+export default function EditModal({onClose, resource, setEdges }: EditModalProps) {
   const {yDoc} = useYjsStore() 
   const me = useSelf()
 
@@ -45,17 +44,6 @@ export default function EditModal({onClose, resource, setNodes, setEdges}: EditM
       
     if(Object.keys(changes).length > 0) {
 
-      setNodes(prev => prev.map(node => 
-        node.id === selectedNodeId
-         ? {
-          ...node,
-          data: {
-            ...node.data,
-            status: 'edit'
-          },
-         }
-         : node
-      ))
       LiveFlowService.editNodeV2(
         selectedNodeId,
         changes,

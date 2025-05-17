@@ -8,7 +8,6 @@ import SelectBox from '@/components/custom/selectBox';
 import { DatabasePlans } from '@/lib/dbOptions';
 import { RegionsArray } from '@/lib/resourceOptions';
 import { useState, useEffect } from 'react';
-import { eventBus } from '@/services/eventBus';
 import { Input } from '@/components/ui/input';
 
 interface DatabaseSpecProps {
@@ -30,7 +29,9 @@ export default function EditDatabaseSpec({ spec, onEdit, onClose }: DatabaseSpec
     ram: spec.ram,
     disk: spec.disk,
     replica_nodes: spec.replica_nodes,
-    monthly_cost: spec.monthly_cost
+    monthly_cost: spec.monthly_cost,
+    db_engine: spec.db_engine,
+    db_version: spec.db_engine === 'pg' ? '15' : '8',
   })
 
   const watchedValues = watch()
@@ -55,13 +56,13 @@ export default function EditDatabaseSpec({ spec, onEdit, onClose }: DatabaseSpec
     flag: region.flag
   }))
 
-  const filterDBOptions = (region: string) => {
-    if (region) {
+  const filterDBOptions = (region_id: string) => {
+    if (region_id) {
       const filtered = DatabasePlans.filter(option => 
-        option.regions.includes(region)
+        option.regions.includes(region_id)
       ).map(option => ({
         plan: option.plan,
-        region: region,
+        region: region_id,
         engine: option.supported_engines,
         vcpu: option.spec.vcpu_count,
         ram: option.spec.ram,
@@ -77,22 +78,19 @@ export default function EditDatabaseSpec({ spec, onEdit, onClose }: DatabaseSpec
   }
 
   useEffect(() => {
-    if (spec.region) {
-      const regionCodeMatch = spec.region.match(/\(([^)]+)\)/)
-      const regionCode = regionCodeMatch ? regionCodeMatch[1] : spec.region
+    if (spec.region_id) {
       
-      filterDBOptions(regionCode)
+      filterDBOptions(spec.region_id)
     }
   }, [])
 
-  const handleRegionChange = (region: string) => {
-    const selectedRegion = RegionsArray.find(r => r.id === region)
-    const regionWithCity = selectedRegion ? 
-      `${selectedRegion.city} (${region})` : 
-      region
-    
-    setValue('region', regionWithCity)
-    filterDBOptions(region)
+  const handleRegionChange = (region_id: string) => {
+    const selectedRegion = RegionsArray.find(r => r.id === region_id)
+    if(!selectedRegion) return
+
+    setValue('region_id', region_id)
+    setValue('region', selectedRegion.city)
+    filterDBOptions(region_id)
   }
 
   const handleDBPlanChange = (plan: string) => {
@@ -104,6 +102,8 @@ export default function EditDatabaseSpec({ spec, onEdit, onClose }: DatabaseSpec
       setValue('disk', selected.disk)
       setValue('replica_nodes', selected.replica_nodes)
       setValue('monthly_cost', selected.monthly_cost)
+      setValue('db_engine', selected.engine)
+      setValue('db_version', selected.engine === 'pg' ? '15' : '8')
 
       setSelectedSpec({
         engines: selected.engine,
@@ -112,18 +112,20 @@ export default function EditDatabaseSpec({ spec, onEdit, onClose }: DatabaseSpec
         disk: selected.disk,
         replica_nodes: selected.replica_nodes,
         monthly_cost: selected.monthly_cost,
+        db_engine: selected.engine,
+        db_version: selected.engine === 'pg' ? '15' : '8',
       })
     }
   }
 
   const handleEngineChange = (engine: string) => {
     setValue('db_engine', engine)
+    setValue('db_version', engine === 'pg' ? '15' : '8')
   }
 
   const onSubmit = (data: DatabaseSpecType) => {
     if (onEdit) {
       onEdit(data);
-      eventBus.publish('dbSpecUpdated', data)
     }
   };
   return (
@@ -156,7 +158,7 @@ export default function EditDatabaseSpec({ spec, onEdit, onClose }: DatabaseSpec
       <div className="flex justify-between items-center px-4 py-2.5 border-b">
         <h3 className="text-xs text-gray-500">Stauts</h3>
         <Button
-          className={cn('px-2.5 h-7 rounded-sm pointer-events-none', {
+          className={cn('px-2.5 h-7 rounded-sm pointer-events-none text-xs', {
             'bg-green-500': spec.status === 'running',
             'bg-yellow-500': spec.status === 'pending',
             'bg-red-500': spec.status === 'stopped',
@@ -194,9 +196,9 @@ export default function EditDatabaseSpec({ spec, onEdit, onClose }: DatabaseSpec
           <SelectBox 
             option={selectedSpec.engines.map(engine => ({
               value: engine,
-              label: engine === 'pg' ? 'PostgreSQL' : engine === 'mysql' ? 'MySQL' : engine
+              label: engine === 'pg' ? 'PostgreSQL 15' : engine === 'mysql' ? 'MySQL 8' : engine
             }))}
-            placeholder={spec.db_engine || "Select database engine"}
+            placeholder={spec.db_engine + " " + spec.db_version || "Select database engine"}
             className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full", 
               isValueChanged('db_engine') ? "text-blue-500 font-medium" : ""
             )}

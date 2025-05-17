@@ -11,7 +11,6 @@ import { ComputeOptions } from '@/lib/computeOptions'
 import { RegionsArray, OSArray } from '@/lib/resourceOptions'
 import SelectBox from '@/components/custom/selectBox'
 import { useState, useEffect } from 'react'
-import { eventBus } from '@/services/eventBus'
 import { useYjsStore } from '@/lib/useYjsStore'
 import { Node, Edge, MarkerType } from 'reactflow'
 
@@ -28,7 +27,7 @@ export default function EditComputeSpec({
   onEdit,
   onClose,
   setEdges,
-  id
+  id,
 }: EditComputeSpecProps) {
 
   const {yDoc} = useYjsStore()
@@ -54,7 +53,7 @@ export default function EditComputeSpec({
   const firewallGroup = nodes
     .filter(node => 
       node.data.type === 'FireWall' &&
-      node.data.spec.staus !== 'remove' 
+      node.data.spec.status !== 'remove' 
     ).map(node => ({
       value: node.id,
       label: node.data.spec.label 
@@ -84,13 +83,13 @@ export default function EditComputeSpec({
   }))
 
 
-  const filterComputeOptions = (region: string) => {
-    if (region) {
+  const filterComputeOptions = (region_id: string) => {
+    if (region_id) {
       const filtered = ComputeOptions.filter(option => 
-        option.regions.includes(region)
+        option.regions.includes(region_id)
       ).map(option => ({
         plan: option.plan,
-        region: region,
+        region: region_id,
         vcpu: option.vcpu_count,
         ram: option.ram,
         disk: option.disk,
@@ -105,22 +104,20 @@ export default function EditComputeSpec({
   }
 
   useEffect(() => {
-    if (spec.region) {
-      const regionCodeMatch = spec.region.match(/\(([^)]+)\)/)
-      const regionCode = regionCodeMatch ? regionCodeMatch[1] : spec.region
-      
-      filterComputeOptions(regionCode)
+    if (spec.region_id) {
+      filterComputeOptions(spec.region_id)
     }
   }, [])
 
-  const handleRegionChange = (region: string) => {
-    const selectedRegion = RegionsArray.find(r => r.id === region)
-    const regionWithCity = selectedRegion ? 
-      `${selectedRegion.city} (${region})` : 
-      region
-    
-    setValue('region', regionWithCity)
-    filterComputeOptions(region)
+  const handleRegionChange = (region_id: string) => {
+    const selectedRegion = RegionsArray.find(r => r.id === region_id)
+    if(selectedRegion) {
+      setValue('region_id', region_id)
+      setValue('region', selectedRegion.city)
+    }
+    // setValue('plan', '')
+
+    filterComputeOptions(region_id)
   }
 
   const handleOsChange = (osId: string) => {
@@ -180,7 +177,6 @@ export default function EditComputeSpec({
           ]
         }
       })
-      eventBus.publish('computeSpecUpdated', data)
     }
   }
 
@@ -214,7 +210,7 @@ export default function EditComputeSpec({
       <div className="flex justify-between items-center px-4 py-2.5 border-b">
         <h3 className="text-xs text-gray-500">Status</h3>
         <Button
-          className={cn('px-2.5 h-7 rounded-sm pointer-events-none', {
+          className={cn('px-2.5 h-7 rounded-sm pointer-events-none text-xs', {
             'bg-green-500': spec.status === 'running',
             'bg-yellow-500': spec.status === 'pending',
             'bg-red-500': spec.status === 'stopped',
@@ -323,12 +319,11 @@ export default function EditComputeSpec({
         </InfoItem>
 
         <InfoItem label="Auto Backups">
-          {spec.auto_backups ? (
+          {spec.auto_backups === "enable" ? (
             <p className="text-xs text-green-600">Enabled</p>
           ) : (
             <p className="text-xs text-red-600">Not Enabled</p>
           )}
-          <InfoIcon label="!" />
         </InfoItem>
       </SpecSection>
     </form>

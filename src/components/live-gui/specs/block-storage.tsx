@@ -2,7 +2,6 @@ import Image from "next/image"
 import { InfoItem, SpecSection, InfoIcon } from "../specBar"
 import { BlockStorageSpecType } from "@/lib/projectDB"
 import { useEffect, useState, useMemo } from "react"
-import { eventBus } from "@/services/eventBus"
 import { RegionsArray } from "@/lib/resourceOptions"
 
 interface BlockStorageSpecProps {
@@ -15,30 +14,15 @@ export default function BlockStorageSpec({spec: localSpec }:BlockStorageSpecProp
   useEffect(() => {
     setSpec(localSpec)
   }, [localSpec])
-  
-  useEffect(() => {
-    // 이벤트 구독
-    const unsubscribe = eventBus.subscribe('blockSpecUpdated', (updatedSpec) => {
-      setSpec(prevSpec => ({ ...prevSpec, ...updatedSpec }))
-    })
-    
-    // 컴포넌트 언마운트시 구독 해제
-    return () => unsubscribe();
-  }, [])
 
   const regionInfo = useMemo(() => {
 
-    let regionId = spec.region
-    const regionCodeMatch = spec.region.match(/\(([^)]+)\)/)
-    if (regionCodeMatch) {
-      regionId = regionCodeMatch[1]
-    }
-    
+    let regionId = spec.region_id
     const region = RegionsArray.find(r => r.id === regionId)
     return {
       flag: region?.flag || '/flag-icn.svg',
     };
-  }, [spec.region])
+  }, [spec.region_id])
   
   return (
     <>
@@ -51,7 +35,7 @@ export default function BlockStorageSpec({spec: localSpec }:BlockStorageSpecProp
               width={21}
               height={22}
             ></Image>
-            <p className="text-xs">{spec.region}</p>
+            <p className="text-xs">{`${spec.region} (${spec.region_id})`}</p>
           </div>
         </InfoItem>
 

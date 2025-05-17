@@ -21,11 +21,13 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseSpecProps) {
       status: "pending",
       plan: "",
       db_engine: "",
+      db_version: "",
       latest_backup: "2 hours ago",
       vcpu_count: "", 
       ram: "", 
       disk: "",
       replica_nodes: "",
+      region_id: "",
       region: "",
       label: "",
       monthly_cost:""
@@ -51,7 +53,8 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseSpecProps) {
     ram: '',
     disk: '',
     replica_nodes: '',
-    monthly_cost: ''
+    monthly_cost: '',
+    db_version: ''
   })
 
   const regionOptions = RegionsArray.map(region => ({
@@ -60,13 +63,13 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseSpecProps) {
     flag: region.flag
   }))
 
-  const filterDBOptions = (region: string) => {
-    if (region) {
+  const filterDBOptions = (region_id: string) => {
+    if (region_id) {
       const filtered = DatabasePlans.filter(option => 
-        option.regions.includes(region)
+        option.regions.includes(region_id)
       ).map(option => ({
         plan: option.plan,
-        region: region,
+        region: region_id,
         engine: option.supported_engines,
         vcpu: option.spec.vcpu_count,
         ram: option.spec.ram,
@@ -81,14 +84,13 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseSpecProps) {
     }
   }
 
-  const handleRegionChange = (region: string) => {
-    const selectedRegion = RegionsArray.find(r => r.id === region)
-    const regionWithCity = selectedRegion ? 
-      `${selectedRegion.city} (${region})` : 
-      region
-    
-    setValue('region', regionWithCity)
-    filterDBOptions(region)
+  const handleRegionChange = (region_id: string) => {
+    const selectedRegion = RegionsArray.find(r => r.id === region_id)
+    if(!selectedRegion) return
+
+    setValue('region_id', region_id)
+    setValue('region', selectedRegion.city)
+    filterDBOptions(region_id)
   }
 
   const handleDBPlanChange = (plan: string) => {
@@ -100,6 +102,7 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseSpecProps) {
       setValue('disk', selected.disk)
       setValue('replica_nodes', selected.replica_nodes)
       setValue('monthly_cost', selected.monthly_cost)
+      setValue('db_version', selected.engine === 'pg' ? '15' : '8')
 
       setSelectedSpec({
         engines: selected.engine,
@@ -107,7 +110,8 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseSpecProps) {
         ram: selected.ram,
         disk: selected.disk,
         replica_nodes: selected.replica_nodes,
-        monthly_cost: selected.monthly_cost
+        monthly_cost: selected.monthly_cost,
+        db_version: selected.engine === 'pg' ? '15' : '8',
       })
     }
   }
@@ -168,7 +172,7 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseSpecProps) {
                 value: opt.plan,
                 label: opt.plan
               }))}
-              placeholder={"Select compute type"}
+              placeholder={"Select Database Plan"}
               className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full",
                 !watch('region') ? "cursor-not-allowed pointer-events-none" : ""
               )}
@@ -182,7 +186,7 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseSpecProps) {
             <SelectBox 
               option={selectedSpec.engines.map(engine => ({
                 value: engine,
-                label: engine === 'pg' ? 'PostgreSQL' : engine === 'mysql' ? 'MySQL' : engine
+                label: engine === 'pg' ? 'PostgreSQL 15' : engine === 'mysql' ? 'MySQL 8' : engine
               }))}
               placeholder={"Select database engine"}
               className="h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full"

@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { useState } from "react"
 import EditFirewallRule from "./editRules"
-import { eventBus } from '@/services/eventBus'
 
 interface FireWallSpecProps {
   spec: FirewallSpecType
@@ -76,7 +75,6 @@ export default function EditFirewallSpec({spec, onEdit, onClose}:FireWallSpecPro
   const onSubmit = (data:FirewallSpecType) => {
     if(onEdit) {
       onEdit(data)
-      eventBus.publish('firewallUpdated', data)
     }
   }
   

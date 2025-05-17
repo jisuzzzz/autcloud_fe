@@ -5,7 +5,6 @@ import SelectBox from "@/components/custom/selectBox"
 import { BlockStorageSpecType } from "@/lib/projectDB"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
-import { eventBus } from "@/services/eventBus"
 import { RegionsArray } from "@/lib/resourceOptions"
 import { cn } from "@/lib/utils"
 import { useYjsStore } from "@/lib/useYjsStore"
@@ -66,13 +65,12 @@ export default function EditBlockStorageSpec({spec, onEdit, onClose, setEdges, i
     flag: region.flag
   }))
 
-  const handleRegionChange = (region: string) => {
-    const selectedRegion = RegionsArray.find(r => r.id === region)
-    const regionWithCity = selectedRegion ? 
-      `${selectedRegion.city} (${region})` : 
-      region
-    
-    setValue('region', regionWithCity)
+  const handleRegionChange = (region_id: string) => {
+    const selectedRegion = RegionsArray.find(r => r.id === region_id)
+    if(!selectedRegion) return
+
+    setValue('region_id', region_id)
+    setValue('region', selectedRegion.city)
   }
   
   const onSubmit = (data:BlockStorageSpecType) => {
@@ -109,8 +107,6 @@ export default function EditBlockStorageSpec({spec, onEdit, onClose, setEdges, i
           ]
         }
       })
-      
-      eventBus.publish('blockSpecUpdated', data)
     }
   }
   

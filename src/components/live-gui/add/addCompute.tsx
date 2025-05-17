@@ -12,7 +12,7 @@ import { RegionsArray, OSArray } from '@/lib/resourceOptions'
 import SelectBox from '@/components/custom/selectBox'
 import { useState, useEffect } from 'react'
 import { useYjsStore } from '@/lib/useYjsStore'
-import { Node, Edge } from 'reactflow'
+import { Node } from 'reactflow'
 
 interface AddNewResourceProps {
   onAdd: (data: ComputeSpecType) => void
@@ -24,13 +24,12 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
   const {yDoc} = useYjsStore()
   
   const yNodes = yDoc.getArray<Node>('nodes')
-  const yEdges = yDoc.getArray<Edge>('edges')
   const nodes = yNodes.toArray() as Node[]
-  const edges = yEdges.toArray() as Edge[]
 
   const { register, handleSubmit, setValue, watch }  = useForm({
     defaultValues: {
       region: '',
+      region_id: '',
       plan: '',
       os_id: '',
       os: '',
@@ -41,7 +40,7 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
       status: 'running',
       ip_address: '64.176.217.21',
       label: '',
-      auto_backups: false,
+      auto_backups: 'enable',
       monthly_cost: '',
       group_id: '',
     },
@@ -64,7 +63,7 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
   const firewallGroup = nodes
     .filter(node => 
       node.data.type === 'FireWall' &&
-      node.data.spec.staus !== 'remove' 
+      node.data.spec.status !== 'remove' 
     ).map(node => ({
       value: node.id,
       label: node.data.spec.label 
@@ -93,13 +92,13 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
     label: os.name
   }))
 
-  const filterComputeOptions = (region: string) => {
-    if (region) {
+  const filterComputeOptions = (region_id: string) => {
+    if (region_id) {
       const filtered = ComputeOptions.filter(option => 
-        option.regions.includes(region)
+        option.regions.includes(region_id)
       ).map(option => ({
         plan: option.plan,
-        region: region,
+        region: region_id,
         vcpu: option.vcpu_count,
         ram: option.ram,
         disk: option.disk,
@@ -113,14 +112,13 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
     }
   }
 
-  const handleRegionChange = (region: string) => {
-    const selectedRegion = RegionsArray.find(r => r.id === region)
-    const regionWithCity = selectedRegion ? 
-      `${selectedRegion.city} (${region})` : 
-      region
-    
-    setValue('region', regionWithCity)
-    filterComputeOptions(region)
+  const handleRegionChange = (region_id: string) => {
+    const selectedRegion = RegionsArray.find(r => r.id === region_id)
+    if(!selectedRegion) return
+
+    setValue('region_id', region_id)
+    setValue('region', selectedRegion.city)
+    filterComputeOptions(region_id)
   }
 
   const handleOsChange = (os_id: string) => {
@@ -157,7 +155,6 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
       onAdd(data)
     }
   }
-
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

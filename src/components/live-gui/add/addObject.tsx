@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { RegionsArray } from "@/lib/resourceOptions"
 import { Input } from "@/components/ui/input"
 import { useEffect, useState } from "react"
-import { ObjectStorageOptions } from "@/lib/objectStorageOptions"
+import { ObjectPlan, ObjectRegion, ObjectStorageOptions } from "@/lib/objectStorageOptions"
 import { cn } from "@/lib/utils"
 
 interface AddNewObjectStorageProps {
@@ -17,80 +17,103 @@ interface AddNewObjectStorageProps {
 }
 
 export default function AddNewObjectStorage({onClose, onAdd}: AddNewObjectStorageProps) {
-
-  const [filteredObjectOptions, setFilteredObjectOptions] = useState<any[]>([])
+  const [filteredOptions, setFilteredOptions] = useState<any[]>([])
   const [isFormValid, setIsFormValid] = useState(false)
 
-  const defaultValues = {
-    id: "",
+  const defaultValues: Partial<ObjectStorageSpecType> = {
     label: "",
     region: "",
     plan: "",
+    tier_id: "",
+    cluster_id: "",
     price: "",
-    storage_price: "0.018/GB",
-    transfer_price: "0.018/GB"
+    disk_gb_price: "",
+    bw_gb_price: "",
+    ratelimit_ops_secs: "",
+    ratelimit_ops_bytes: ""
   }
 
-  const [selectedPrice, setSelectedPrice] = useState({
+  const [selectedSpec, setSelectedSpec] = useState({
     price: '',
+    disk_gb_price: '',
+    bw_gb_price: '',
+    ratelimit_ops_secs: '',
+    ratelimit_ops_bytes: ''
   })
 
-  const { register, handleSubmit, setValue, watch } = useForm({
+  const { register, handleSubmit, setValue, watch } = useForm<ObjectStorageSpecType>({
     defaultValues,
     mode: "onChange"
   })
 
-  const region = watch('region')
-  const label = watch('label')
-  const plan = watch('plan')
+  const watchedValues = watch()
+  const { region, label, plan, tier_id, cluster_id } = watchedValues
 
   useEffect(() => {
-    setIsFormValid(!!region && !!label && !!plan)
-  }, [region, label, plan])
+    setIsFormValid(!!region && !!label && !!plan && !!tier_id && !!cluster_id)
+  }, [region, label, plan, tier_id, cluster_id])
 
-  const regionOptions = RegionsArray.map(region => ({
-    value: region.id,
-    label: `${region.city} (${region.id})`,
-    flag: region.flag
+  const planOptions = ObjectPlan.map(plan => ({
+    value: plan.tier_id,
+    label: plan.plan
   }))
 
-  const filterObjectOtions = (region: string) => {
-    if(region) {
+  const filterObjectOtions = (tier_id: string) => {
+    if(tier_id) {
       const filtered = ObjectStorageOptions.filter(option =>
-        option.regions.includes(region)
+        option.tier_id === tier_id
       ).map(option => ({
-        id: option.id,
-        region: region,
-        plan: option.plan,
+        cluster_id: option.cluster_id,
+        tier_id: tier_id,
+        region: option.city,
+        plan: option.sales_name,
         price: option.price,
+        ratelimit_ops_secs: option.ratelimit_ops_secs,
+        ratelimit_ops_bytes: option.ratelimit_ops_bytes,
+        disk_gb_price: option.disk_gb_price,
+        bw_gb_price: option.bw_gb_price,
       }))
-      setFilteredObjectOptions(filtered)
+      setFilteredOptions(filtered)
     } else {
-      setFilteredObjectOptions([])
+      setFilteredOptions([])
     }
   }
 
-  const handleRegionChange = (region: string) => {
-    const selectedRegion = RegionsArray.find(r => r.id === region)
-    const regionWithCity = selectedRegion ? 
-      `${selectedRegion.city} (${region})` : 
-      region
-    
-    setValue('region', regionWithCity)
-    filterObjectOtions(region)
-  }
-
-  const handlePlanChange = (id: string) => {
-    const selected = filteredObjectOptions.find(opt => opt.id === id)
+  const handleRegionChange = (cluster_id: string) => {
+    const selected = filteredOptions.find(opt => opt.cluster_id === cluster_id)
     if(selected) {
-      setValue('id', id)
-      setValue('plan', selected.plan)
-      setValue('price', `${selected.price}`)
-
-      setSelectedPrice({
-        price: selected.price
+      setValue('cluster_id', cluster_id)
+      setValue('region', selected.region)
+      setValue('price', selected.price)
+      setValue('ratelimit_ops_secs', selected.ratelimit_ops_secs)
+      setValue('ratelimit_ops_bytes', selected.ratelimit_ops_bytes)
+      setValue('disk_gb_price', selected.disk_gb_price)
+      setValue('bw_gb_price', selected.bw_gb_price)
+      
+      setSelectedSpec({
+        price: selected.price,
+        disk_gb_price: selected.disk_gb_price,
+        bw_gb_price: selected.bw_gb_price,
+        ratelimit_ops_secs: selected.ratelimit_ops_secs,
+        ratelimit_ops_bytes: selected.ratelimit_ops_bytes
       })
     }
+  }
+
+  const handlePlanChange = (tier_id: string) => {
+    setValue('tier_id', tier_id)
+    // Find the plan name from ObjectPlan
+    const selectedPlan = ObjectPlan.find(plan => plan.tier_id === tier_id)
+    if (selectedPlan) {
+      setValue('plan', selectedPlan.plan)
+    }
+    
+    // Clear the currently selected region and related fields
+    setValue('cluster_id', '')
+    setValue('region', '')
+    
+    // Filter available options for this tier
+    filterObjectOtions(tier_id)
   }
   
   const onSubmit = (data: ObjectStorageSpecType) => {
@@ -104,7 +127,7 @@ export default function AddNewObjectStorage({onClose, onAdd}: AddNewObjectStorag
       <div className="flex items-center px-4 py-2 border-b justify-between">
         <div className="gap-3 flex items-center">
           <Image
-            alt="block storage"
+            alt="object storage"
             src={"/aut-objectstorage.svg"}
             width={23.5}
             height={23.5}
@@ -126,56 +149,70 @@ export default function AddNewObjectStorage({onClose, onAdd}: AddNewObjectStorag
         </div>
       </div>
       <SpecSection>
-        <InfoItem label="Region">
+        <InfoItem label="Plan">
           <div className="flex flex-col w-full">
             <SelectBox 
-              option={regionOptions}
-              placeholder={"Select region"}
+              option={planOptions}
+              placeholder="Select plan"
               className="h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full" 
-              onChange={handleRegionChange}
-              showFlags={true}
-            />
-            {!region && <p className="text-[11px] text-blue-400 mt-1">* Required field</p>}
-          </div>
-        </InfoItem>
-        <InfoItem label="Plan">
-          <div className='flex flex-col w-full' style={{ cursor: !watch('region') ? 'not-allowed' : 'default' }}>
-            <SelectBox 
-              option={filteredObjectOptions.map(opt => ({
-                value: opt.id,
-                label: opt.plan
-              }))}
-              placeholder={"Select compute type"}
-              className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full",
-                !watch('region') ? "cursor-not-allowed pointer-events-none" : ""
-              )}
               onChange={handlePlanChange}
             />
             {!plan && <p className="text-[11px] text-blue-400 mt-1">* Required field</p>}
           </div>
         </InfoItem>
-        {region && plan && (
-            <>
-              <InfoItem label="Price">
-                <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2">
-                  ${selectedPrice.price}
-                  <p className="text-[11px] text-gray-400">per Month</p>
-                </div>
-              </InfoItem>
-            </>
+        <InfoItem label="Region">
+          <div className='flex flex-col w-full' style={{ cursor: !tier_id ? 'not-allowed' : 'default' }}>
+            <SelectBox 
+              option={filteredOptions.map(opt => ({
+                value: opt.cluster_id,
+                label: opt.region
+              }))}
+              placeholder="Select region"
+              className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full",
+                !tier_id ? "cursor-not-allowed pointer-events-none" : ""
+              )}
+              onChange={handleRegionChange}
+            />
+            {!region && <p className="text-[11px] text-blue-400 mt-1">* Required field</p>}
+          </div>
+        </InfoItem>
+      </SpecSection>
+
+      <SpecSection>
+        {tier_id && cluster_id && (
+          <>
+            <InfoItem label="Price">
+              <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2">
+                ${selectedSpec.price}
+                <p className="text-[11px] text-gray-400">per Month</p>
+              </div>
+            </InfoItem>
+            <InfoItem label="Storage Price">
+              <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2">
+                ${selectedSpec.disk_gb_price}/GB
+                <p className="text-[11px] text-gray-400">over 1000GB</p>
+              </div>
+            </InfoItem>
+            <InfoItem label="Transfer Price">
+              <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2">
+                ${selectedSpec.bw_gb_price}/GB
+                <p className="text-[11px] text-gray-400">over 1000GB</p>
+              </div>
+            </InfoItem>
+            <InfoItem label="Rate Limit Ops/Sec">
+              <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2">
+                {selectedSpec.ratelimit_ops_secs}
+                <p className="text-[11px] text-gray-400">ops/sec</p>
+              </div>
+            </InfoItem>
+            <InfoItem label="Rate Limit Ops/bytes">
+              <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2">
+                {selectedSpec.ratelimit_ops_bytes}
+                <p className="text-[11px] text-gray-400">bytes/sec</p>
+              </div>
+            </InfoItem>
+          </>
         )}
-        <InfoItem label="Storage Price">
-          <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2">
-            ${defaultValues.storage_price}
-            <p className="text-[11px] text-gray-400">over 1000GB</p>
-          </div>
-        </InfoItem>
-        <InfoItem label="Transfer Price">
-          <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2">
-            ${defaultValues.transfer_price}
-            <p className="text-[11px] text-gray-400">over 1000GB</p>
-          </div>
-        </InfoItem>
         <InfoItem label="Label">
           <div className="flex flex-col w-full">
             <Input

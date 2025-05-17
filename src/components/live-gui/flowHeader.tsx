@@ -15,7 +15,6 @@ import { LiveFlowService } from '@/services/liveflow';
 interface HeaderProps {
   projectId: string;
   projectName: string;
-  setNodes: (updater: (prev: Node[]) => Node[]) => void;
 }
 
 // React.memo -> 컴포넌트 자체를 메모이제이션
@@ -49,7 +48,6 @@ const Avatars = React.memo(function Avatars() {
 export default function FlowHeader({
   projectId,
   projectName,
-  setNodes,
 }: HeaderProps) {
   const {yDoc} = useYjsStore()
   const me = useSelf();
@@ -61,15 +59,6 @@ export default function FlowHeader({
   const handleClickPuhblish = () => {
     LiveFlowService.CreateCommandList(yDoc, me?.id)
 
-    // setNodes((prev: Node[]) =>
-    //   prev.map((node) => ({
-    //     ...node,
-    //     data: {
-    //       ...node.data,
-    //       isNew: false,
-    //     },
-    //   }))
-    // );
   };
 
   return (

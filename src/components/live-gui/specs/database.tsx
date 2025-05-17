@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils';
 import { InfoItem, SpecSection } from '../specBar';
 import { DatabaseSpecType } from '@/lib/projectDB';
 import { useEffect, useState, useMemo } from "react"
-import { eventBus } from "@/services/eventBus"
 import { RegionsArray } from '@/lib/resourceOptions';
 
 interface DatabaseSpecProps {
@@ -17,31 +16,16 @@ export default function DatabaseSpec({ spec:localSpec }: DatabaseSpecProps) {
   useEffect(() => {
     setSpec(localSpec)
   }, [localSpec])
-
-  useEffect(() => {
-    // 이벤트 구독
-    const unsubscribe = eventBus.subscribe('dbSpecUpdated', (updatedSpec) => {
-      setSpec(prevSpec => ({ ...prevSpec, ...updatedSpec }))
-    })
-    
-    // 컴포넌트 언마운트시 구독 해제
-    return () => unsubscribe();
-  }, [])
-
   // 지역 ID에서 국기 이미지 경로 매핑
   const regionInfo = useMemo(() => {
 
-    let regionId = spec.region;
-    const regionCodeMatch = spec.region.match(/\(([^)]+)\)/);
-    if (regionCodeMatch) {
-      regionId = regionCodeMatch[1];
-    }
+    let regionId = spec.region_id
     
     const region = RegionsArray.find(r => r.id === regionId);
     return {
       flag: region?.flag || '/flag-icn.svg',
     };
-  }, [spec.region]);
+  }, [spec.region_id]);
 
   return (
     <>
@@ -60,18 +44,18 @@ export default function DatabaseSpec({ spec:localSpec }: DatabaseSpecProps) {
 
       <SpecSection>
       <InfoItem label="Region">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <Image
               alt="region"
               src={regionInfo.flag}
               width={21}
               height={21}
             ></Image>
-            <p className="text-xs">{spec.region}</p>
+            <p className="text-xs">{`${spec.region} (${spec.region_id})`}</p>
           </div>
         </InfoItem>
         <InfoItem label="ID">{spec.plan}</InfoItem>
-        <InfoItem label="DB Engine">{spec.db_engine}</InfoItem>
+        <InfoItem label="DB Engine">{spec.db_engine + " " + spec.db_version}</InfoItem>
       </SpecSection>
 
       <SpecSection>

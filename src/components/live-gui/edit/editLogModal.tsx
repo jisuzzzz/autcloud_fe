@@ -1,3 +1,4 @@
+'use client'
 import Modal from "@/components/custom/modal"
 
 interface ResourceHistory {
@@ -80,6 +81,10 @@ function LogCard({ title, prev, curr, status }: LogCardProps) {
 }
 
 export default function EditLogModal({ resourceHistory, onClose }: EditLogModalProps) {
+  const filteredChanges = Object.entries(resourceHistory.specChanges).filter(
+    ([key]) => !key.toLowerCase().includes('id')
+  )
+
   return (
     <Modal className="fixed top-[70px] left-[268px]">
       <div className="w-[550px] max-h-[90vh] bg-white rounded-md border shadow-lg overflow-y-hidden">
@@ -104,7 +109,7 @@ export default function EditLogModal({ resourceHistory, onClose }: EditLogModalP
 
         <div className="px-4 pb-4 text-xs overflow-y-auto max-h-[calc(90vh-226px)] scrollbar-thin">
           <div className="space-y-4">
-            {Object.entries(resourceHistory.specChanges).map(([key, value]) => {
+            {filteredChanges.map(([key, value]) => {
               const title = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
 
               if (value && typeof value === 'object' && ('prevValue' in value || 'currValue' in value)) {

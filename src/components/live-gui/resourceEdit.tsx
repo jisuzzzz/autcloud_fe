@@ -20,11 +20,10 @@ export function SaveEditButton({ formId }: { formId?: string}) {
 
 interface StartEditButtonProps{
   resource: ResourceNodeType
-  setNodes: (updater: (prev: Node[]) => Node[]) => void
   setEdges: (updater: (prev: Edge[]) => Edge[]) => void 
 }
 
-export function StartEditButton({resource, setNodes, setEdges}: StartEditButtonProps) {
+export function StartEditButton({resource, setEdges }: StartEditButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   return (
     <>
@@ -37,7 +36,6 @@ export function StartEditButton({resource, setNodes, setEdges}: StartEditButtonP
         <EditModal 
           resource={resource}
           onClose={() => setIsModalOpen(false)}
-          setNodes={setNodes}
           setEdges={setEdges}
         />
       )}

@@ -128,10 +128,11 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
 // }
   
   useEffect(() => {
-    if (!yDoc || !user?.id || !isConnected) return
 
     const yNodes = yDoc.getArray<Node>('nodes')
     const yEdges = yDoc.getArray<Edge>('edges')
+
+    if (!yDoc || !user?.id || !isConnected) return
 
     if(yNodes.length===0){
       const initialNodes = convertToNodes(initial_resources)
@@ -159,7 +160,7 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
     // yEdges.delete(0, yEdges.length)
     
     const observer = (event: Y.YArrayEvent<Node>, tr: Y.Transaction) => {
-      if (event.transaction.local) return
+      // if (event.transaction.local) return
       const updatedNodes = yNodes.toArray() as Node[]
       setNodes(updatedNodes)
     }
@@ -258,7 +259,6 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
               },
               selected: false
             }
-            setNodes(prev => [...prev, newNode])
             LiveFlowService.addNode(newNode, user.id, user.info.name, yDoc)
             LiveFlowService.pushToUndoStack(user.id, {
               type: 'add',
@@ -271,18 +271,6 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
           case 'x':
             if(!occupiedNode || !occupiedNode[0] || occupiedNode[0].data.status === 'remove') return
             
-            setNodes(prev => prev.map(node => 
-              node.id === occupiedNode[0].id 
-                ? {
-                    ...node,
-                    data: {
-                      ...node.data,
-                      status: 'remove'
-                    },
-                    selected: false
-                  } 
-                : node
-            ))
             LiveFlowService.removeNodeV2(occupiedNode[0].id, user.id, user.info.name, yDoc)
             LiveFlowService.pushToUndoStack(user.id, {
               type: 'remove',
@@ -293,14 +281,12 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
 
           case '/':
             if(!occupiedNode || !occupiedNode[0]) return
-            setNodes(nodes.filter(n => !occupiedNode.find(sn => sn.id === n.id)))
             LiveFlowService.removeNode(occupiedNode[0].id, yDoc)
             break
 
           case 'z':
             const undoNodes = LiveFlowService.undo(user.id, user.info.name, yDoc)
             if(!undoNodes) return
-            setNodes(undoNodes)
             break
 
           case 'k':
@@ -326,16 +312,12 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
         <FlowHeader 
           projectId={id}
           projectName={name} 
-          setNodes={setNodes}
         />
         <ToolBar 
-          setNodes={setNodes}
           onConnect={onConnect}
         />
         <SpecBar 
-          setNodes={setNodes} 
           setEdges={setEdges}
-          node={occupiedNode[0]}
         />
         <ReactFlow
           nodes={nodes}

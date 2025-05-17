@@ -16,11 +16,10 @@ type SpecType = ComputeSpecType | DatabaseSpecType | BlockStorageSpecType | Obje
 interface EditModalProps{
   onClose: () => void
   type: string
-  setNodes: (updater: (prev: Node[]) => Node[]) => void
   onConnect: (connection: Connection) => void
 }
 
-export default function AddNewResourceModal({onClose, type, setNodes, onConnect}: EditModalProps) {
+export default function AddNewResourceModal({onClose, type, onConnect}: EditModalProps) {
   const {yDoc} = useYjsStore() 
   const me = useSelf()
 
@@ -43,7 +42,6 @@ export default function AddNewResourceModal({onClose, type, setNodes, onConnect}
       },
     }
     
-    setNodes((prev: Node[]) => [...prev, newNode])
     LiveFlowService.addNode(newNode, me.id, me.info.name, yDoc)
     
     if(type === 'BlockStorage' && (addedSpec as BlockStorageSpecType).attached_to) {
@@ -101,7 +99,6 @@ export default function AddNewResourceModal({onClose, type, setNodes, onConnect}
     >
       <div className="w-[400px] max-h-[calc(100vh-90px)] bg-white rounded-xs border overflow-y-auto scrollbar-thin">
         {renderEditComponent()}
-        {/* <AddNewCompute onAdd={handleAdd} onClose={onClose} /> */}
       </div>
     </Modal>
   )

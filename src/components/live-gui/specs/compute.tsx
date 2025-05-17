@@ -6,45 +6,28 @@ import { InfoItem, SpecSection, InfoIcon } from '../specBar';
 import { Copy } from 'lucide-react';
 import { ComputeSpecType } from '@/lib/projectDB';
 import { useEffect, useState, useMemo } from 'react';
-import { eventBus } from '@/services/eventBus';
 import { RegionsArray } from '@/lib/resourceOptions';
 
 interface ComputeSpecProps {
-  spec: ComputeSpecType;
+  spec: ComputeSpecType
 }
 
 export default function ComputeSpec({ spec: initSpec }: ComputeSpecProps) {
-  const [spec, setSpec] = useState(initSpec);
+  const [spec, setSpec] = useState(initSpec)
 
   useEffect(() => {
     setSpec(initSpec)
   }, [initSpec])
 
-
-  useEffect(() => {
-    // 이벤트 구독
-    const unsubscribe = eventBus.subscribe('computeSpecUpdated', (updatedSpec) => {
-      setSpec(prevSpec => ({ ...prevSpec, ...updatedSpec }));
-    });
-    
-    // 컴포넌트 언마운트시 구독 해제
-    return () => unsubscribe();
-  }, []);
-
   // 지역 ID에서 국기 이미지 경로 매핑
   const regionInfo = useMemo(() => {
 
-    let regionId = spec.region;
-    const regionCodeMatch = spec.region.match(/\(([^)]+)\)/);
-    if (regionCodeMatch) {
-      regionId = regionCodeMatch[1];
-    }
-    
+    let regionId = spec.region_id
     const region = RegionsArray.find(r => r.id === regionId);
     return {
       flag: region?.flag || '/flag-icn.svg',
     };
-  }, [spec.region]);
+  }, [spec.region_id])
   
   return (
     <>
@@ -71,7 +54,7 @@ export default function ComputeSpec({ spec: initSpec }: ComputeSpecProps) {
               width={21}
               height={21}
             ></Image>
-            <p className="text-xs">{spec.region}</p>
+            <p className="text-xs">{`${spec.region} (${spec.region_id})`}</p>
           </div>
         </InfoItem>
         
@@ -101,7 +84,7 @@ export default function ComputeSpec({ spec: initSpec }: ComputeSpecProps) {
           {spec.group_id || "Set up a Firewall"}
         </InfoItem>
         <InfoItem label="Auto Backups">
-          {spec.auto_backups ? (
+          {spec.auto_backups === "enable" ? (
             <p className="text-xs text-green-600">Enabled</p>
           ) : (
             <p className="text-xs text-red-600">Not Enabled</p>

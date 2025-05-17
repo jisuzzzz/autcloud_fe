@@ -3,7 +3,6 @@ import { InfoItem, SpecSection } from "../specBar"
 import { ChevronDown, ChevronUp } from "lucide-react"
 import { FirewallSpecType } from "@/lib/projectDB"
 import { useState, useEffect } from "react"
-import { eventBus } from "@/services/eventBus"
 
 interface FireWallSpecProps {
   spec: FirewallSpecType
@@ -21,13 +20,6 @@ export default function FirewallSpec({ spec: localSpec }: FireWallSpecProps) {
     setOpenIndex(openIndex === idx ? null : idx)
   }
 
-  useEffect(() => {
-    const unsubscribe = eventBus.subscribe('dbSpecUpdated', (updatedSpec) => {
-      setSpec(prevSpec => ({ ...prevSpec, ...updatedSpec }))
-    })
-    
-    return () => unsubscribe();
-  }, [])
 
   return (
     <>

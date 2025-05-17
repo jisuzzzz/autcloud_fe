@@ -13,7 +13,6 @@ interface Resource {
 }
 
 interface ToolBarProps {
-  setNodes: (updater: (prev: Node[]) => Node[]) => void
   onConnect: (connection: Connection) => void
 }
 
@@ -44,7 +43,7 @@ const resources: Resource[] = [
 //   )
 // }
 
-export default function ToolBar({ setNodes, onConnect }: ToolBarProps) {
+export default function ToolBar({ onConnect }: ToolBarProps) {
   const [selectedResourceType, setSelectedResourceType] = useState<{type: string, } | null>(null)
 
   const handleResourceClick = (resource: Resource) => {
@@ -83,7 +82,6 @@ export default function ToolBar({ setNodes, onConnect }: ToolBarProps) {
         <EditSummary />
       {selectedResourceType && (
         <AddNewResourceModal
-          setNodes={setNodes}
           onClose={() => setSelectedResourceType(null)} 
           type={selectedResourceType.type} 
           onConnect={onConnect}

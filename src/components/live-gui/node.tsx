@@ -26,7 +26,10 @@ export default function ResourceNode({ id, data, selected=false }: NodeProps) {
   const users = useOthers()
   const me = useSelf()
   const myColor = me?.info?.color as string || '#FFCA28'
-  //  다른 사용자가 점유중인 노드 확인
+
+  const isMySelected = Array.isArray(me?.presence.selectedNodes) && 
+    me?.presence.selectedNodes.includes(id)
+
   const isOccupiedByOthers = users.some(user => 
     Array.isArray(user.presence.selectedNodes) && 
     user.presence.selectedNodes.includes(id)
@@ -37,14 +40,14 @@ export default function ResourceNode({ id, data, selected=false }: NodeProps) {
       <div 
         className={`
           w-13 h-13 relative
-          ${selected ? 'ring-2' : ''}
+          ${isMySelected ? 'ring-2' : ''}
           ${data.status === 'add' ? 'shadow-[0_0_15px_rgba(34,197,94,0.7)]' : ''}
           ${data.status === 'remove' ? 'shadow-[0_0_15px_rgba(239,68,68,0.7)]' : ''}
           ${data.status === 'edit' ? 'shadow-[0_0_15px_rgba(59,130,246,0.7)]' : ''}
           flex flex-col items-center justify-center`
         }
         style={{
-          ...(selected && {'--tw-ring-color': myColor}),
+          ...(isMySelected && {'--tw-ring-color': myColor}),
           pointerEvents: isOccupiedByOthers ? 'none' : 'auto'
         }}
       >

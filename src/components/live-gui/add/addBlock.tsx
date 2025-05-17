@@ -28,6 +28,7 @@ export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageP
   const defaultValues = {
     id: '',
     region: '',
+    region_id: '',
     type: "NVMe",
     mount_id: "ewr-a23cda1547af4b",
     attached_to: '',
@@ -72,13 +73,12 @@ export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageP
     flag: region.flag
   }))
 
-  const handleRegionChange = (region: string) => {
-    const selectedRegion = RegionsArray.find(r => r.id === region)
-    const regionWithCity = selectedRegion ? 
-      `${selectedRegion.city} (${region})` : 
-      region
-    
-    setValue('region', regionWithCity)
+  const handleRegionChange = (region_id: string) => {
+    const selectedRegion = RegionsArray.find(r => r.id === region_id)
+    if(!selectedRegion) return
+
+    setValue('region_id', region_id)
+    setValue('region', selectedRegion.city)
   }
 
   const onSubmit = (data:BlockStorageSpecType) => {
