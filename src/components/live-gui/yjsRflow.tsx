@@ -196,6 +196,7 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
 
   // 노드 선택 처리
   const handleSelectionChange = useCallback(({ nodes: selectedNodes }: { nodes: Node[] }) => {
+    if(selectedNodes.length === 0) return
     const nodeIds = selectedNodes.map(node => node.id)
     setoccupiedNode(selectedNodes)
     setMyPresence({ selectedNodes: nodeIds })
@@ -302,26 +303,6 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
             setNodes(undoNodes)
             break
 
-          // case 'g':
-          //   const newGroupNode = {
-          //     id: `group-${Date.now()}`,
-          //     type: 'group',
-          //     position: {
-          //       x: 100,
-          //       y: 100,
-          //     },
-          //     style: {
-          //       width: 300,
-          //       height: 200,
-          //     },
-          //     data: { 
-          //       label: `Group ${nodes.filter(n => n.type === 'group').length + 1}`,
-          //       status: 'add'
-          //     },
-          //     selected: false
-          //   }
-          //   setNodes(prev => [...prev, newGroupNode])
-          //   break
           case 'k':
             LiveFlowService.initAllYDoc(yDoc)
         }
@@ -354,6 +335,7 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
         <SpecBar 
           setNodes={setNodes} 
           setEdges={setEdges}
+          node={occupiedNode[0]}
         />
         <ReactFlow
           nodes={nodes}

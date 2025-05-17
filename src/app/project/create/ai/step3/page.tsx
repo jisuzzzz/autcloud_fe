@@ -246,3 +246,9 @@
 //     </div>
 //   );
 // }
+
+export default function Step3Page() {
+  return (
+    <div></div>
+  )
+}

@@ -82,7 +82,7 @@ function LogCard({ title, prev, curr, status }: LogCardProps) {
 export default function EditLogModal({ resourceHistory, onClose }: EditLogModalProps) {
   return (
     <Modal className="fixed top-[70px] left-[268px]">
-      <div className="w-[600px] max-h-[90vh] bg-white rounded-md border shadow-lg overflow-y-hidden">
+      <div className="w-[550px] max-h-[90vh] bg-white rounded-md border shadow-lg overflow-y-hidden">
         <div className="sticky top-0 p-4 border-b bg-white z-10 flex justify-between items-center">
           <h2 className="text-xs font-semibold">Detailed Change Log</h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">

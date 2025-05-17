@@ -71,27 +71,19 @@ export function SpecSection({
 interface SpecBarProps {
   setNodes: (updater: (prev: Node[]) => Node[]) => void 
   setEdges: (updater: (prev: Edge[]) => Edge[]) => void
+  node: Node
 }
 
-export default function SpecBar({setNodes, setEdges}: SpecBarProps) {
+export default function SpecBar({setNodes, setEdges, node}: SpecBarProps) {
 
   const [selectedResource, setSelectedResource] = useState<Node | null>(null)
   const me = useSelf();
   const  {yDoc} = useYjsStore()
-  
-  useEffect(() => {
-    if(!yDoc) return
 
-    const yNodes = yDoc.getArray<Node>('nodes')
-    const specBarNodes = yNodes.toArray() as Node[]
-    const selectedNodeId = (me?.presence.selectedNodes as string[])?.[0]
-    if(selectedNodeId && specBarNodes) {
-      const resource = specBarNodes.find((r) => r.id === selectedNodeId)
-      setSelectedResource(resource || null)
-    } else {
-      setSelectedResource(null)
-    }
-  }, [me?.presence.selectedNodes])
+  useEffect(() => {
+    setSelectedResource(node)
+  }, [node])
+  
   //md:block hidden 
 
   return selectedResource ? (
