@@ -30,7 +30,7 @@ export function StartEditButton({resource, setEdges }: StartEditButtonProps) {
       <button
         onClick={() => setIsModalOpen(true)}
       >
-        <SquarePen size={18} className="text-gray-500 hover:text-[#8171E8]" />
+        <SquarePen size={18} className="text-gray-500 hover:text-[#8171E8] cursor-pointer" />
       </button>
       {isModalOpen && (
         <EditModal 

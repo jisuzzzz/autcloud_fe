@@ -313,15 +313,14 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         spec: {
           cluster_id: "2",
           tier_id: "2",
-          label: "Shopify-Asset-Storage",
-          region_id: "ewr",
-          region: "New Jersey",
           plan: "Standard",
+          label: "Shopify-Asset-Storage",
+          region: "New Jersey",
           price: "18",
           ratelimit_ops_secs: "800",
           ratelimit_ops_bytes: "629145600",
           disk_gb_price: "0.018",
-          bw_gb_price: "0.01",
+          bw_gb_price: "0.01"
         }
       },
       {
@@ -330,7 +329,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 500, y: 400 },
         status: 'add',
         spec: {
-          id: "999c0000-0000-0000-0000-0000000001",
+          id: "bs-chi-001",
           region_id: "ewr",
           region: "New Jersey",
           type: "NVMe",
@@ -352,10 +351,10 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           db_engine: "pg",
           db_version: "15",
           latest_backup: "2 hours ago",
-          vcpu_count: "1", 
-          ram: "1024", 
-          disk: "25",
           replica_nodes: "1",
+          vcpu_count: "1",
+          ram: "1024",
+          disk: "25",
           region_id: "ewr",
           region: "New Jersey",
           label: "Shopify-PostgreSQL-DB",
@@ -368,27 +367,27 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 500, y: 100 },
         status: 'add',
         spec: {
-            label: 'Allow HTTP',
-            rules: [
+          label: "Allow HTTP",
+          rules: [
             {
               rule_id: "1",
-              action: 'accept',
-              port: '80',
-              ip_type: 'v4',
-              protocol: 'tcp',
-              subnet: '0.0.0.0',
+              action: "accept",
+              port: "80",
+              ip_type: "v4",
+              protocol: "tcp",
+              subnet: "0.0.0.0",
               subnet_size: 0,
-              notes: 'Public HTTP access'
+              notes: "Public HTTP access"
             },
             {
-              rule_id: "1",
-              action: 'accept',
-              port: '80',
-              ip_type: 'v4',
-              protocol: 'tcp',
-              subnet: '0.0.0.0',
+              rule_id: "2",
+              action: "accept",
+              port: "443",
+              ip_type: "v4",
+              protocol: "tcp",
+              subnet: "0.0.0.0",
               subnet_size: 0,
-              notes: 'Public HTTP access'
+              notes: "Public HTTPS access"
             }
           ]
         }
@@ -396,245 +395,270 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
     ]
   },
 
-  // {
-  //   id: "8ab36845-d77c-482f-b9e3-5a4c31f89d52",
-  //   name: "Shopify+ HA",
-  //   description: "e-commerce platform infrastructure design with high availability",
-  //   initial_resources: [
-  //     {
-  //       id: "compute-1",
-  //       type: "Compute",
-  //       position: { x: 400, y: 150 },
-  //       status: 'add', 
-  //       spec: {
-  //         plan: 'vc2-4c-8gb',
-  //         status: "running",
-  //         region: "Chicago (ord)",
-  //         ip_address: "192.168.1.101",
-  //         vcpu: "4",
-  //         ram: "8192.00",
-  //         disk: "80",
-  //         bandwidth: "5.0",
-  //         label: "Shopify-Web-Server-Primary",
-  //         os_id: "2571",
-  //         os: "Ubuntu 25.04 x64",
-  //         auto_backups: "enable",
-  //         monthly_cost: "0"
-  //       }
-  //     },
-  //     {
-  //       id: "compute-2",
-  //       type: "Compute",
-  //       position: { x: 600, y: 150 },
-  //       status: 'add', 
-  //       spec: {
-  //         plan: 'vc2-4c-8gb',
-  //         status: "running",
-  //         region: "Chicago (ord)",
-  //         ip_address: "192.168.1.102",
-  //         vcpu: "4",
-  //         ram: "8192.00",
-  //         disk: "80",
-  //         bandwidth: "5.0",
-  //         label: "Shopify-Web-Server-Secondary",
-  //         os_id: "2571",
-  //         os: "Ubuntu 25.04 x64",
-  //         auto_backups: "diable",
-  //         monthly_cost: "0"
-  //       }
-  //     },
-  //     {
-  //       id: "block-1",
-  //       type: "BlockStorage",
-  //       position: { x: 400, y: 300 },
-  //       status: 'add',
-  //       spec: {
-  //         id: "bs-chi-001",
-  //         region: "Chicago (ord)",
-  //         type: "NVMe",
-  //         mount_id: "ord-b47cda1547af9c",
-  //         attached_to: "compute-1",
-  //         size: "500",
-  //         label: "Shopify-Data-Primary",
-  //         date_created: "06/10/2024 09:12:45"
-  //       }
-  //     },
-  //     {
-  //       id: "block-2",
-  //       type: "BlockStorage",
-  //       position: { x: 600, y: 300 },
-  //       status: 'add',
-  //       spec: {
-  //         id: "bs-chi-002",
-  //         region: "Chicago (ord)",
-  //         type: "NVMe",
-  //         mount_id: "ord-c58eda1896af3d",
-  //         attached_to: "compute-2",
-  //         size: "500",
-  //         label: "Shopify-Data-Secondary",
-  //         date_created: "06/10/2024 09:15:32"
-  //       }
-  //     },
-  //     {
-  //       id: "db-1",
-  //       type: "Database",
-  //       position: { x: 500, y: 450 },
-  //       status: 'add',
-  //       spec: {
-  //         status: "running",
-  //         plan: "vultur-dbaas-business-cc-4-16-4",
-  //         db_engine: "PostgreSQL",
-  //         db_version: "15",
-  //         latest_backup: "3 hours ago",
-  //         vcpu_count: "1", 
-  //         ram: "1024", 
-  //         disk: "25",
-  //         replica_nodes: "2",
-  //         region: "Chicago (ord)",
-  //         label: "Shopify-PostgreSQL-Cluster",
-  //         monthly_cost: "0"
-  //       }
-  //     },
-  //     // {
-  //     //   id: "firewall-1",
-  //     //   type: "FireWall",
-  //     //   position: { x: 500, y: 50 },
-  //     //   status: 'add',
-  //     //   spec: {
-  //     //     description: "HA-Protection-Layer"
-  //     //   }
-  //     // },
-  //     // {
-  //     //   id: "storage-1",
-  //     //   type: "ObjectStorage",
-  //     //   position: { x: 300, y: 450 },
-  //     //   status: 'add',
-  //     //   spec: {
-  //     //     id: "2",
-  //     //     label: "Shopify-Asset-Storage-HA",
-  //     //     region: "Chicago (ord)",
-  //     //     plan: "Performance",
-  //     //     price: "50.00",
-  //     //     storage_price: "0.023",
-  //     //     transfer_price: "0.020"
-  //     //   }
-  //     // }
-  //   ]
-  // },
+  {
+    id: "8ab36845-d77c-482f-b9e3-5a4c31f89d52",
+    name: "Shopify+ HA",
+    description: "e-commerce platform infrastructure design with high availability",
+    initial_resources: [
+      {
+        id: "compute-1",
+        type: "Compute",
+        position: { x: 500, y: 250 },
+        status: 'add', 
+        spec: {
+          plan: 'vc2-2c-2gb',
+          status: "running",
+          region_id: "ewr",
+          region: "New Jersey",
+          ip_address: "64.176.217.21",
+          vcpu: "1",
+          ram: "1024.00",
+          disk: "25",
+          bandwidth: "0.34",
+          label: "Shopify-Web-Server",
+          os_id: "2571",
+          os: "Ubuntu 25.04 x64",
+          auto_backups: "enable",
+          monthly_cost: "0",
+          group_id: "firewall-1"
+        }
+      },
+      {
+        id: "compute-2",
+        type: "Compute",
+        position: { x: 600, y: 150 },
+        status: 'add', 
+        spec: {
+          plan: 'vc2-4c-8gb',
+          status: "running",
+          region_id: "ord",
+          region: "Chicago",
+          ip_address: "192.168.1.102",
+          vcpu: "4",
+          ram: "8192.00",
+          disk: "80",
+          bandwidth: "5.0",
+          label: "Shopify-Web-Server-Secondary",
+          os_id: "2571",
+          os: "Ubuntu 25.04 x64",
+          auto_backups: "disable",
+          monthly_cost: "0",
+          group_id: "firewall-1"
+        }
+      },
+      {
+        id: "block-1",
+        type: "BlockStorage",
+        position: { x: 400, y: 300 },
+        status: 'add',
+        spec: {
+          id: "bs-chi-001",
+          region_id: "ord",
+          region: "Chicago",
+          type: "NVMe",
+          mount_id: "ord-b47cda1547af9c",
+          attached_to: "compute-1",
+          size: "500",
+          label: "Shopify-Data-Primary",
+          date_created: "06/10/2024 09:12:45"
+        }
+      },
+      {
+        id: "block-2",
+        type: "BlockStorage",
+        position: { x: 600, y: 300 },
+        status: 'add',
+        spec: {
+          id: "bs-chi-002",
+          region_id: "ord",
+          region: "Chicago",
+          type: "NVMe",
+          mount_id: "ord-c58eda1896af3d",
+          attached_to: "compute-2",
+          size: "500",
+          label: "Shopify-Data-Secondary",
+          date_created: "06/10/2024 09:15:32"
+        }
+      },
+      {
+        id: "db-1",
+        type: "Database",
+        position: { x: 500, y: 450 },
+        status: 'add',
+        spec: {
+          status: "running",
+          plan: "vultur-dbaas-business-cc-4-16-4",
+          db_engine: "pg",
+          db_version: "15",
+          latest_backup: "3 hours ago",
+          vcpu_count: "1",
+          ram: "1024",
+          disk: "25",
+          replica_nodes: "2",
+          region_id: "ord",
+          region: "Chicago",
+          label: "Shopify-PostgreSQL-Cluster",
+          monthly_cost: "0"
+        }
+      },
+      {
+        id: "firewall-1",
+        type: "FireWall",
+        position: { x: 500, y: 50 },
+        status: 'add',
+        spec: {
+          label: "HA-Protection-Layer",
+          rules: [
+            {
+              rule_id: "1",
+              action: "accept",
+              port: "80,443",
+              ip_type: "v4",
+              protocol: "tcp",
+              subnet: "0.0.0.0",
+              subnet_size: 0,
+              notes: "Load Balancer Access"
+            }
+          ]
+        }
+      }
+    ]
+  },
   
-  // {
-  //   id: "5cd92f34-a17b-429d-8e35-9bf72c680d13",
-  //   name: "Shopify+ Microservices",
-  //   description: "e-commerce platform infrastructure design with microservices architecture",
-  //   initial_resources: [
-  //     {
-  //       id: "compute-1",
-  //       type: "Compute",
-  //       position: { x: 400, y: 200 },
-  //       status: 'add', 
-  //       spec: {
-  //         plan: 'vc2-2c-4gb',
-  //         status: "running",
-  //         region: "Seattle (sea)",
-  //         ip_address: "10.0.1.101",
-  //         vcpu: "2",
-  //         ram: "4096.00",
-  //         disk: "50",
-  //         bandwidth: "3.0",
-  //         label: "Shopify-API-Gateway",
-  //         os_id: "2571",
-  //         os: "Ubuntu 25.04 x64",
-  //         auto_backups: "enable",
-  //         monthly_cost: "0"
-  //       }
-  //     },
-  //     {
-  //       id: "compute-2",
-  //       type: "Compute",
-  //       position: { x: 600, y: 200 },
-  //       status: 'add', 
-  //       spec: {
-  //         plan: 'vc2-2c-4gb',
-  //         status: "running",
-  //         region: "Seattle (sea)",
-  //         ip_address: "10.0.1.102",
-  //         vcpu: "2",
-  //         ram: "4096.00",
-  //         disk: "50",
-  //         bandwidth: "3.0",
-  //         label: "Shopify-Auth-Service",
-  //         os_id: "2571",
-  //         os: "Ubuntu 25.04 x64",
-  //         auto_backups: "enable",
-  //         monthly_cost: "0"
-  //       }
-  //     },
-  //     {
-  //       id: "db-1",
-  //       type: "Database",
-  //       position: { x: 400, y: 380 },
-  //       status: 'add',
-  //       spec: {
-  //         status: "running",
-  //         plan: "vultur-dbaas-business-cc-2-8-2",
-  //         db_engine: "PostgreSQL",
-  //         db_version: "15",
-  //         latest_backup: "1 hour ago",
-  //         vcpu_count: "1", 
-  //         ram: "1024", 
-  //         disk: "25",
-  //         replica_nodes: "1",
-  //         region: "Seattle (sea)",
-  //         label: "Shopify-Product-DB",
-  //         monthly_cost: "0"
-  //       }
-  //     },
-  //     {
-  //       id: "db-2",
-  //       type: "Database",
-  //       position: { x: 600, y: 380 },
-  //       status: 'add',
-  //       spec: {
-  //         status: "running",
-  //         plan: "vultur-dbaas-business-cc-2-8-2",
-  //         db_engine: "PostgreSQL",
-  //         db_version: "15",
-  //         latest_backup: "1 hour ago",
-  //         vcpu_count: "1", 
-  //         ram: "1024", 
-  //         disk: "25",
-  //         replica_nodes: "1",
-  //         region: "Seattle (sea)",
-  //         label: "Shopify-Order-DB",
-  //         monthly_cost: "0"
-  //       }
-  //     },
-  //     // {
-  //     //   id: "storage-1",
-  //     //   type: "ObjectStorage",
-  //     //   position: { x: 500, y: 550 },
-  //     //   status: 'add',
-  //     //   spec: {
-  //     //     id: "2",
-  //     //     label: "Shopify-Media-Storage",
-  //     //     region: "Seattle (sea)",
-  //     //     plan: "Premium",
-  //     //     price: "36.00",
-  //     //     storage_price: "0.020",
-  //     //     transfer_price: "0.019"
-  //     //   }
-  //     // },
-  //     // {
-  //     //   id: "firewall-1",
-  //     //   type: "FireWall",
-  //     //   position: { x: 500, y: 100 },
-  //     //   status: 'add',
-  //     //   spec: {
-  //     //     description: "API-Gateway-Protection"
-  //     //   }
-  //     // }
-  //   ]
-  // }
+  {
+    id: "5cd92f34-a17b-429d-8e35-9bf72c680d13",
+    name: "Shopify+ Microservices",
+    description: "e-commerce platform infrastructure design with microservices architecture",
+    initial_resources: [
+      {
+        id: "compute-1",
+        type: "Compute",
+        position: { x: 400, y: 200 },
+        status: 'add', 
+        spec: {
+          plan: 'vc2-2c-4gb',
+          status: "running",
+          region_id: "sea",
+          region: "Seattle",
+          ip_address: "10.0.1.101",
+          vcpu: "2",
+          ram: "4096.00",
+          disk: "50",
+          bandwidth: "3.0",
+          label: "Shopify-API-Gateway",
+          os_id: "2571",
+          os: "Ubuntu 25.04 x64",
+          auto_backups: "enable",
+          monthly_cost: "0",
+          group_id: "firewall-1"
+        }
+      },
+      {
+        id: "compute-2",
+        type: "Compute",
+        position: { x: 600, y: 200 },
+        status: 'add', 
+        spec: {
+          plan: 'vc2-2c-4gb',
+          status: "running",
+          region_id: "sea",
+          region: "Seattle",
+          ip_address: "10.0.1.102",
+          vcpu: "2",
+          ram: "4096.00",
+          disk: "50",
+          bandwidth: "3.0",
+          label: "Shopify-Auth-Service",
+          os_id: "2571",
+          os: "Ubuntu 25.04 x64",
+          auto_backups: "enable",
+          monthly_cost: "0",
+          group_id: "firewall-1"
+        }
+      },
+      {
+        id: "db-1",
+        type: "Database",
+        position: { x: 400, y: 380 },
+        status: 'add',
+        spec: {
+          status: "running",
+          plan: "vultur-dbaas-business-cc-2-8-2",
+          db_engine: "pg",
+          db_version: "15",
+          latest_backup: "1 hour ago",
+          vcpu_count: "1",
+          ram: "1024",
+          disk: "25",
+          replica_nodes: "1",
+          region_id: "sea",
+          region: "Seattle",
+          label: "Shopify-Product-DB",
+          monthly_cost: "0"
+        }
+      },
+      {
+        id: "db-2",
+        type: "Database",
+        position: { x: 600, y: 380 },
+        status: 'add',
+        spec: {
+          status: "running",
+          plan: "vultur-dbaas-business-cc-2-8-2",
+          db_engine: "pg",
+          db_version: "15",
+          latest_backup: "1 hour ago",
+          vcpu_count: "1",
+          ram: "1024",
+          disk: "25",
+          replica_nodes: "1",
+          region_id: "sea",
+          region: "Seattle",
+          label: "Shopify-Order-DB",
+          monthly_cost: "0"
+        }
+      },
+      {
+        id: "storage-1",
+        type: "ObjectStorage",
+        position: { x: 500, y: 550 },
+        status: 'add',
+        spec: {
+          cluster_id: "2",
+          tier_id: "3",
+          plan: "Premium",
+          label: "Shopify-Media-Storage",
+          region: "Seattle",
+          price: "36",
+          ratelimit_ops_secs: "1000",
+          ratelimit_ops_bytes: "1073741824",
+          disk_gb_price: "0.020",
+          bw_gb_price: "0.019"
+        }
+      },
+      {
+        id: "firewall-1",
+        type: "FireWall",
+        position: { x: 500, y: 100 },
+        status: 'add',
+        spec: {
+          label: "API-Gateway-Protection",
+          rules: [
+            {
+              rule_id: "1",
+              action: "accept",
+              port: "443",
+              ip_type: "v4",
+              protocol: "tcp",
+              subnet: "0.0.0.0",
+              subnet_size: 0,
+              notes: "API Gateway Access"
+            }
+          ]
+        }
+      }
+    ]
+  }
 ]
 
 // 프로젝트 관련 함수들
@@ -646,7 +670,8 @@ export function getProjects() {
   return PROJECT_TEMPLATES.map(project => ({
     id: project.id,
     name: project.name,
-    description: project.description
+    description: project.description,
+    initial_resources: project.initial_resources
   }));
 }
 

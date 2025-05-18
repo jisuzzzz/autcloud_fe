@@ -38,7 +38,7 @@ export default function EditFirewallSpec({spec, onEdit, onClose}:FireWallSpecPro
   
   const handleDeleteRule = (idx: number) => {
     // 삭제할 규칙 확인
-    if (window.confirm('이 규칙을 삭제하시겠습니까?')) {
+    if (window.confirm('Do you want to delete this rule?')) {
       // 규칙 배열 복사
       const updatedRules = [...watchedValues.rules]
       // 해당 인덱스의 규칙 삭제
@@ -129,14 +129,14 @@ export default function EditFirewallSpec({spec, onEdit, onClose}:FireWallSpecPro
                 <button
                   type="button"
                   onClick={() => handleEditRule(idx)}
-                  className="text-gray-500 hover:text-[#8171E8]"
+                  className="text-gray-500 hover:text-[#8171E8] cursor-pointer"
                 >
                   <Edit size={16} />
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDeleteRule(idx)}
-                  className="text-gray-500 hover:text-red-500"
+                  className="text-gray-500 hover:text-red-500 cursor-pointer"
                 >
                   <Trash2 size={16} />
                 </button>

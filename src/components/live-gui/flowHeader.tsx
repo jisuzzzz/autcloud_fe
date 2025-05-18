@@ -95,7 +95,7 @@ export default function FlowHeader({
           </Button>
           <Button
             onClick={handleClickPuhblish}
-            className={cn('px-3 rounded-sm h-8 bg-[#7868E6] border border-[#6035BE] hover:bg-[#8474FF]')}
+            className={cn('px-3 rounded-sm h-8 bg-[#7868E6] border border-[#6035BE] hover:bg-[#8474FF] cursor-pointer')}
           >
             Publish
           </Button>

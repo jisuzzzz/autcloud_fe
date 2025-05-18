@@ -37,7 +37,7 @@ export default function FirewallSpec({ spec: localSpec }: FireWallSpecProps) {
           return (
             <div key={idx} className="border rounded-md mb-2.5">
               <button
-                className="flex justify-between items-center w-full h-9 px-3 py-2 hover:bg-violet-50 text-sm"
+                className="flex justify-between items-center w-full h-9 px-3 py-2 hover:bg-violet-50 text-sm cursor-pointer"
                 onClick={() => toggle(idx)}
               >
                 <span className="font-medium text-xs">Rule {idx + 1}: {rule.notes || rule.port}</span>

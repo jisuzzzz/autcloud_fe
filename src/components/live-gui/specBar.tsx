@@ -78,19 +78,6 @@ export default function SpecBar({setEdges}: SpecBarProps) {
   const me = useSelf();
   const  {yDoc} = useYjsStore()
 
-  // useEffect(() => {
-  //   if(!yDoc) return
-
-  //   const yNodes = yDoc.getArray<Node>('nodes')
-  //   const specBarNodes = yNodes.toArray() as Node[]
-  //   const selectedNodeId = (me?.presence.selectedNodes as string[])?.[0]
-  //   if(selectedNodeId && specBarNodes) {
-  //     const resource = specBarNodes.find((r) => r.id === selectedNodeId)
-  //     setSelectedResource(resource || null)
-  //   } else {
-  //     setSelectedResource(null)
-  //   }
-  // }, [me?.presence.selectedNodes])
   useEffect(() => {
     if (!yDoc) return
   
