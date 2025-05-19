@@ -55,6 +55,7 @@ export default function ResourceNode({ id, data, selected=false }: NodeProps) {
           alt='resources-icons'
           src={resourceIcons[data.type as keyof typeof resourceIcons]}
           fill
+          priority
           className="object-contain rounded-xs"
         />
         <div className="fixed top-[60px] w-[200px] text-xs font-medium text-gray-700 text-center mt-1">

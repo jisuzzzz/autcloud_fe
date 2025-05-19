@@ -11,6 +11,7 @@ import { useYjsStore } from "@/lib/useYjsStore"
 import { Node, Edge, MarkerType } from "reactflow"
 import { Input } from "@/components/ui/input"
 import { useEffect, useState } from "react"
+import * as Y from 'yjs'
 
 interface BlockStorageSpecProps {
   spec: BlockStorageSpecType
@@ -24,8 +25,13 @@ export default function EditBlockStorageSpec({spec, onEdit, onClose, setEdges, i
   const {yDoc} = useYjsStore()
   const [hasChanges, setHasChanges] = useState(false)
   
-  const yNodes = yDoc.getArray<Node>('nodes')
-  const nodes = yNodes.toArray() as Node[]
+  const yNodes = yDoc.getArray<Y.Map<any>>('nodes')
+  const nodes = yNodes.toArray().map(ynode => ({
+    id: ynode.get('id') as string,
+    type: ynode.get('type') as string,
+    position: ynode.get('position'),
+    data: ynode.get('data')
+  })) as Node[]
 
   const { register, handleSubmit, setValue, watch } = useForm<BlockStorageSpecType>({
     defaultValues: spec

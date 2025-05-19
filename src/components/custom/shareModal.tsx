@@ -27,8 +27,8 @@ export default function ShareModal({ onClose, projectId }: ShareModalProps) {
   const [isMiniModalOpen, setIsMiniModalOpen] = useState(false)
   const [selectedUserIndex, setSelectedUserIndex] = useState<number | null>(null)
   const [users, setUsers] = useState<InviteUser[]>([
-    { email:"wltn7722@gmail.com", name: "김지수", isOwner: true, role: "admin", accepted: true },
-    { email:"meked@naver.com", name: "jisu", isOwner: false, role: "editor", accepted: false },
+    { email:"wltn7722@gmail.com", name: "jisu", isOwner: true, role: "admin", accepted: true },
+    { email:"meked@naver.com", name: "tatum", isOwner: false, role: "editor", accepted: false },
   ]);
 
   const handleMiniModalOpen = (index: number) => {

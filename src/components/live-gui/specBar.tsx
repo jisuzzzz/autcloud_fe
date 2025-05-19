@@ -19,6 +19,7 @@ import Image from 'next/image';
 import { StartEditButton } from './resourceEdit';
 import { useYjsStore } from '@/lib/useYjsStore';
 import { Edge, Node } from 'reactflow';
+import * as Y from 'yjs';
 
 export function InfoIcon({ label }: { label: string }) {
   return (
@@ -80,11 +81,17 @@ export default function SpecBar({setEdges}: SpecBarProps) {
 
   useEffect(() => {
     if (!yDoc) return
-  
-    const yNodes = yDoc.getArray<Node>('nodes')
-  
+
+    const yNodes = yDoc.getArray<Y.Map<any>>('nodes')
+
     const updateSpecBar = () => {
-      const specBarNodes = yNodes.toArray() as Node[]
+      const specBarNodes = yNodes.toArray().map(ynode => ({
+        id: ynode.get('id') as string,
+        type: ynode.get('type') as string,
+        position: ynode.get('position'),
+        data: ynode.get('data')
+      })) as Node[]
+      
       const selectedNodeId = (me?.presence.selectedNodes as string[])?.[0]
       if (selectedNodeId) {
         const resource = specBarNodes.find((r) => r.id === selectedNodeId)
@@ -93,20 +100,20 @@ export default function SpecBar({setEdges}: SpecBarProps) {
         setSelectedResource(null)
       }
     }
-  
-    updateSpecBar() // 초기화
-  
+
+    updateSpecBar()
+
     const observer = () => updateSpecBar()
-    yNodes.observe(observer)
-  
+    yNodes.observeDeep(observer)
+
     return () => {
-      yNodes.unobserve(observer)
+      yNodes.unobserveDeep(observer)
     }
   }, [yDoc, me?.presence.selectedNodes])
   //md:block hidden 
 
   return selectedResource ? (
-    <div className="fixed top-[55px] right-0 bg-white border-l w-[256px] h-screen z-40">
+    <div className="md:block hidden  fixed top-[55px] right-0 bg-white border-l w-[256px] h-screen z-40">
       <div className="flex justify-between items-center px-4 py-3 border-b">
         <div className="gap-3 flex items-center">
           <Image

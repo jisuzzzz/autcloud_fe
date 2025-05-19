@@ -3,9 +3,14 @@ import type { NextRequest } from 'next/server';
 import { AuthService } from './services/auth';
 
 export async function middleware(request: NextRequest) {
-  if (request.nextUrl.pathname.startsWith('/auth')) {
+  const path = request.nextUrl.pathname;
+  if ((path.startsWith('/auth'))) {
     return NextResponse.next();
   }
+  if (path.startsWith('/api/auth/signin') || path.startsWith('/api/auth/signup')) {
+    return NextResponse.next();
+  }
+  
   // todo: refreshToken 만료시 login page redirect
   const accessToken = request.cookies.get('access_token')?.value;
   const refreshToken = request.cookies.get('refresh_token')?.value;
@@ -57,6 +62,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // '/project/:path*',
+    '/project/:path*',
   ],
 };

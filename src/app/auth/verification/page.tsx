@@ -1,5 +1,5 @@
 'use client';
-
+import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
@@ -105,7 +105,7 @@ export default function VerificationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-[#F8F7FF] flex flex-col">
       <div className="w-full flex justify-end items-center px-8 py-3 text-sm space-x-4">
         <span className="text-gray-400 leading-none">
           이미 계정이 있으신가요?
@@ -120,8 +120,15 @@ export default function VerificationPage() {
 
       <div className="flex-1 flex items-center justify-center px-4">
         <div className="w-[320px] text-center">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded flex items-center justify-center text-gray-400 font-bold">
-            Logo
+          <div className="w-16 h-16 mx-auto mb-4 rounded flex items-center justify-center text-gray-400 font-bold">
+            <Image
+              src={'/aut-logo.svg'}
+              alt='logo'
+              width={76}
+              height={76}
+            >
+
+            </Image>
           </div>
 
           <h2 className="text-xl font-medium mb-2">이메일 인증</h2>

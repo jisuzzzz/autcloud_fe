@@ -10,6 +10,8 @@ import { useYjsStore } from "@/lib/useYjsStore"
 import { Node, Edge } from "reactflow"
 import { Input } from "@/components/ui/input"
 import { useEffect, useState } from "react"
+import * as Y from 'yjs'
+
 
 interface AddNewBlockStorageProps {
   onAdd: (data: BlockStorageSpecType) => void
@@ -20,11 +22,17 @@ export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageP
   const {yDoc} = useYjsStore()
   const [isFormValid, setIsFormValid] = useState(false)
   
-  const yNodes = yDoc.getArray<Node>('nodes')
+  const yNodes = yDoc.getArray<Y.Map<any>>('nodes')
+  const nodes = yNodes.toArray().map(ynode => ({
+    id: ynode.get('id') as string,
+    type: ynode.get('type') as string,
+    position: ynode.get('position'),
+    data: ynode.get('data')
+  })) as Node[]
+  
   const yEdges = yDoc.getArray<Edge>('edges')
-  const nodes = yNodes.toArray() as Node[]
   const edges = yEdges.toArray() as Edge[]
-
+  
   const defaultValues = {
     id: '',
     region: '',

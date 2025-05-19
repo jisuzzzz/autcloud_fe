@@ -96,8 +96,7 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
   const [clipboard, setClipboard] = useState<{nodes: Node[]} | null>(null)
   const [occupiedNode, setoccupiedNode] = useState<Node[]>([])
 
-  const { setNodeRef } = useDroppable({ id: 'flow-drop' })
-
+  // const { setNodeRef } = useDroppable({ id: 'flow-drop' })
 
 // const { project } = useReactFlow()
 
@@ -128,43 +127,54 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
 // }
   
   useEffect(() => {
-
-    const yNodes = yDoc.getArray<Node>('nodes')
+    const yNodes = yDoc.getArray<Y.Map<any>>('nodes')
     const yEdges = yDoc.getArray<Edge>('edges')
 
     if (!yDoc || !user?.id || !isConnected) return
 
-    if(yNodes.length===0){
+    if(yNodes.length === 0) {
       const initialNodes = convertToNodes(initial_resources)
       setNodes(initialNodes)
       const initialEdges = convertToEdges(initial_resources)
       setEdges(initialEdges)
-
+      
       LiveFlowService.initNodes(initialNodes, initialEdges, yDoc)
     } else {
-      const sharedNodes = yNodes.toArray() as Node[]
+      // YMap을 ReactFlow Node로 변환
+      const sharedNodes = yNodes.toArray().map(nodeMap => ({
+        id: nodeMap.get('id'),
+        type: nodeMap.get('type'),
+        position: {
+          x: nodeMap.get('position').x,
+          y: nodeMap.get('position').y
+        },
+        data: nodeMap.get('data')
+      })) as Node[]
       setNodes(sharedNodes)
+
       if(yEdges.length > 0) {
         const sharedEdges = yEdges.toArray() as Edge[]
         setEdges(sharedEdges)
       }
     }
-    // LiveFlowService.initNodes(initialNodes, [], yDoc)
     LiveFlowService.initUserActionHistory(user.id, yDoc)
     LiveFlowService.initProjectHistory(yDoc)
 
-    if(yEdges.length > 0) {
-      const sharedEdges = yEdges.toArray() as Edge[]
-      setEdges(sharedEdges)
-    }
-    // yEdges.delete(0, yEdges.length)
-    
-    const observer = (event: Y.YArrayEvent<Node>, tr: Y.Transaction) => {
-      // if (event.transaction.local) return
-      const updatedNodes = yNodes.toArray() as Node[]
+    const observer = (events: Y.YEvent<any>[], transaction: Y.Transaction) => {
+      const updatedNodes = yNodes.toArray().map(nodeMap => ({
+        id: nodeMap.get('id'),
+        type: nodeMap.get('type'),
+        position: {
+          x: nodeMap.get('position').x,
+          y: nodeMap.get('position').y
+        },
+        data: nodeMap.get('data')
+      }))
       setNodes(updatedNodes)
     }
-    yNodes.observe(observer)
+
+    // YArray와 내부 데이터 변경 모두 감지
+    yNodes.observeDeep(observer)
 
     const edgeObserver = (event: Y.YArrayEvent<Edge>, tr: Y.Transaction) => {
       if (event.transaction.local) return
@@ -174,13 +184,12 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
     yEdges.observe(edgeObserver)
 
     return () => {
-      yNodes.unobserve(observer)
+      yNodes.unobserveDeep(observer)
       yEdges.unobserve(edgeObserver)
     }
   }, [yDoc, isConnected])
 
   const handleNodesChange = useCallback((changes: NodeChange[]) => {
-
     onNodesChange(changes)
     const positionChange = changes.find(change => 
       change.type === 'position' && 'position' in change
@@ -271,7 +280,7 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
             LiveFlowService.addNode(newNode, user.id, user.info.name, yDoc)
             LiveFlowService.pushToUndoStack(user.id, {
               type: 'add',
-              nodes: [newNode],
+              nodeId: nodeId,
               timestamp: Date.now()
             }, yDoc)
             setoccupiedNode([])
@@ -283,7 +292,7 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
             LiveFlowService.removeNodeV2(occupiedNode[0].id, user.id, user.info.name, yDoc)
             LiveFlowService.pushToUndoStack(user.id, {
               type: 'remove',
-              nodes: occupiedNode,
+              nodeId: occupiedNode[0].id,
               timestamp: Date.now()
             }, yDoc)
             break
@@ -294,8 +303,7 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
             break
 
           case 'z':
-            const undoNodes = LiveFlowService.undo(user.id, user.info.name, yDoc)
-            if(!undoNodes) return
+            LiveFlowService.undo(user.id, user.info.name, yDoc)
             break
 
           case 'k':
@@ -316,8 +324,7 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
   }
 
   return (
-    <DndContext>
-      <div ref={setNodeRef} className="h-[calc(100vh)] w-full">
+      <div className="h-[calc(100vh)] w-full">
         <FlowHeader 
           projectId={id}
           projectName={name} 
@@ -351,6 +358,5 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
           />
         </ReactFlow>
       </div>
-    </DndContext>
   );
 }

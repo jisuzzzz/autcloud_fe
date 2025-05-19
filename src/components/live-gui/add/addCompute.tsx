@@ -13,6 +13,7 @@ import SelectBox from '@/components/custom/selectBox'
 import { useState, useEffect } from 'react'
 import { useYjsStore } from '@/lib/useYjsStore'
 import { Node } from 'reactflow'
+import * as Y from 'yjs'
 
 interface AddNewResourceProps {
   onAdd: (data: ComputeSpecType) => void
@@ -23,8 +24,13 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
 
   const {yDoc} = useYjsStore()
   
-  const yNodes = yDoc.getArray<Node>('nodes')
-  const nodes = yNodes.toArray() as Node[]
+  const yNodes = yDoc.getArray<Y.Map<any>>('nodes')
+  const nodes = yNodes.toArray().map(ynode => ({
+    id: ynode.get('id') as string,
+    type: ynode.get('type') as string,
+    position: ynode.get('position'),
+    data: ynode.get('data')
+  })) as Node[]
 
   const { register, handleSubmit, setValue, watch }  = useForm({
     defaultValues: {

@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { getProjectById } from '@/lib/projectDB';
 import ProjectThumbnail from '@/components/live-gui/thumbnail';
+import { motion } from 'framer-motion';
 
 const DIAGRAMS = [
   getProjectById("9cd47912-c94a-451f-a1a2-ec5b2097c461"),
@@ -60,7 +61,7 @@ export default function Step3Page() {
           <div />
         </div>
 
-        <div className="grid grid-cols-3 gap-6 mb-14">
+        <div className="grid grid-cols-3 gap-6 mb-12">
           {DIAGRAMS.map((diagram) => diagram && (
             <div
               key={diagram.id}
@@ -88,7 +89,7 @@ export default function Step3Page() {
                   </p>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-2 scrollbar-thin">
                   {diagram.initial_resources.map(resource => (
                     <div key={resource.id} className="text-xs p-3 border rounded-md bg-gray-50">
                       <div className="font-medium mb-1">{resource.type}</div>

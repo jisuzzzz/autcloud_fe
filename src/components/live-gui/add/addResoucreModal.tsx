@@ -69,7 +69,7 @@ export default function AddNewResourceModal({onClose, type, onConnect}: EditModa
       
     LiveFlowService.pushToUndoStack(me.id, {
       type: 'add',
-      nodes: [newNode],
+      nodeId: newNode.id,
       timestamp: Date.now(),
     }, yDoc)
 
