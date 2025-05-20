@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { InfoItem, SpecSection } from '../specBar';
-import { DatabaseSpecType } from '@/lib/projectDB';
+import { InfoItem, AttributeSection } from '../attributeBar';
+import { DatabaseAttributeType } from '@/lib/projectDB';
 import { useForm } from 'react-hook-form';
 import SelectBox from '@/components/custom/selectBox';
 import { DatabasePlans } from '@/lib/dbOptions';
@@ -10,25 +10,25 @@ import { RegionsArray } from '@/lib/resourceOptions';
 import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 
-interface DatabaseSpecProps {
-  spec: DatabaseSpecType;
-  onEdit: (data: DatabaseSpecType) => void;
+interface DatabaseAttributeProps {
+  attribute: DatabaseAttributeType;
+  onEdit: (data: DatabaseAttributeType) => void;
   onClose: () => void;
 }
 
-export default function EditDatabaseSpec({ spec, onEdit, onClose }: DatabaseSpecProps) {
-  const { register, handleSubmit, setValue, watch } = useForm<DatabaseSpecType>({
-    defaultValues: spec,
+export default function EditDatabaseAttribute({ attribute, onEdit, onClose }: DatabaseAttributeProps) {
+  const { register, handleSubmit, setValue, watch } = useForm<DatabaseAttributeType>({
+    defaultValues: attribute,
   });
 
   const [filteredDBOptions, setFilteredDBOptions] = useState<any[]>([])
 
-  const [selectedSpec, setSelectedSpec] = useState({
-    vcpu_count: spec.vcpu_count,
-    ram: spec.ram,
-    disk: spec.disk,
-    replica_nodes: spec.replica_nodes,
-    monthly_cost: spec.monthly_cost,
+  const [selectedAttribute, setSelectedAttribute] = useState({
+    vcpu_count: attribute.vcpu_count,
+    ram: attribute.ram,
+    disk: attribute.disk,
+    replica_nodes: attribute.replica_nodes,
+    monthly_cost: attribute.monthly_cost,
   })
   const db_engines = ['pg','mysql']
 
@@ -36,16 +36,16 @@ export default function EditDatabaseSpec({ spec, onEdit, onClose }: DatabaseSpec
   const [hasChanges, setHasChanges] = useState(false)
 
   useEffect(() => {
-    const hasAnyChanges = Object.keys(spec).some(key => {
-      const field = key as keyof DatabaseSpecType
-      return watchedValues[field] !== spec[field]
+    const hasAnyChanges = Object.keys(attribute).some(key => {
+      const field = key as keyof DatabaseAttributeType
+      return watchedValues[field] !== attribute[field]
     })
     setHasChanges(hasAnyChanges)
-  }, [watchedValues, spec])
+  }, [watchedValues, attribute])
 
-  const isValueChanged = (property: keyof DatabaseSpecType) => {
+  const isValueChanged = (property: keyof DatabaseAttributeType) => {
     const currValue = watch(property)
-    return currValue !== spec[property]
+    return currValue !== attribute[property]
   }
 
   const regionOptions = RegionsArray.map(region => ({
@@ -62,9 +62,9 @@ export default function EditDatabaseSpec({ spec, onEdit, onClose }: DatabaseSpec
         plan: option.plan,
         region: region_id,
         engine: option.supported_engines,
-        vcpu: option.spec.vcpu_count,
-        ram: option.spec.ram,
-        disk: option.spec.disk,
+        vcpu: option.attribute.vcpu_count,
+        ram: option.attribute.ram,
+        disk: option.attribute.disk,
         monthly_cost: option.monthly_cost,
         replica_nodes: option.numbers_of_node
       }))
@@ -76,9 +76,9 @@ export default function EditDatabaseSpec({ spec, onEdit, onClose }: DatabaseSpec
   }
 
   useEffect(() => {
-    if (spec.region_id) {
+    if (attribute.region_id) {
       
-      filterDBOptions(spec.region_id)
+      filterDBOptions(attribute.region_id)
     }
   }, [])
 
@@ -101,7 +101,7 @@ export default function EditDatabaseSpec({ spec, onEdit, onClose }: DatabaseSpec
       setValue('replica_nodes', selected.replica_nodes)
       setValue('monthly_cost', selected.monthly_cost)
 
-      setSelectedSpec({
+      setSelectedAttribute({
         vcpu_count: selected.vcpu,
         ram: selected.ram,
         disk: selected.disk,
@@ -116,7 +116,7 @@ export default function EditDatabaseSpec({ spec, onEdit, onClose }: DatabaseSpec
     setValue('db_version', engine.includes('pg') ? '15' : '8')
   }
 
-  const onSubmit = (data: DatabaseSpecType) => {
+  const onSubmit = (data: DatabaseAttributeType) => {
     if (onEdit) {
       onEdit(data);
     }
@@ -152,20 +152,20 @@ export default function EditDatabaseSpec({ spec, onEdit, onClose }: DatabaseSpec
         <h3 className="text-xs text-gray-500">Stauts</h3>
         <Button
           className={cn('px-2.5 h-7 rounded-sm pointer-events-none text-xs', {
-            'bg-green-500': spec.status === 'running',
-            'bg-yellow-500': spec.status === 'pending',
-            'bg-red-500': spec.status === 'stopped',
+            'bg-green-500': attribute.status === 'running',
+            'bg-yellow-500': attribute.status === 'pending',
+            'bg-red-500': attribute.status === 'stopped',
           })}
         >
-          {spec.status}
+          {attribute.status}
         </Button>
       </div>
 
-      <SpecSection>
+      <AttributeSection>
         <InfoItem label="Region">
           <SelectBox 
             option={regionOptions}
-            placeholder={spec.region || "Select region"}
+            placeholder={attribute.region || "Select region"}
             className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full", 
               isValueChanged('region') ? "text-blue-500 font-medium" : "")}
             onChange={handleRegionChange}
@@ -178,7 +178,7 @@ export default function EditDatabaseSpec({ spec, onEdit, onClose }: DatabaseSpec
               value: opt.plan,
               label: opt.plan
             }))}
-            placeholder={spec.plan || "Select compute type"}
+            placeholder={attribute.plan || "Select compute type"}
             className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full", 
               isValueChanged('plan') ? "text-blue-500 font-medium" : ""
             )}
@@ -191,47 +191,47 @@ export default function EditDatabaseSpec({ spec, onEdit, onClose }: DatabaseSpec
               value: engine,
               label: engine === 'pg' ? 'PostgreSQL 15' : engine === 'mysql' ? 'MySQL 8' : engine
             }))}
-            placeholder={(spec.db_engine === 'pg' ? 'PostgreSQL' : 'MySQL' ) + " " + spec.db_version || "Select database engine"}
+            placeholder={(attribute.db_engine === 'pg' ? 'PostgreSQL' : 'MySQL' ) + " " + attribute.db_version || "Select database engine"}
             className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full", 
               isValueChanged('db_engine') ? "text-blue-500 font-medium" : ""
             )}
             onChange={handleEngineChange}
           />
         </InfoItem>
-      </SpecSection>
-      <SpecSection>
+      </AttributeSection>
+      <AttributeSection>
         <InfoItem label="vCPU/s">
           <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('vcpu_count') ? "text-blue-500 font-medium" : "")}>
-            {`${selectedSpec.vcpu_count} vCPU`}
+            {`${selectedAttribute.vcpu_count} vCPU`}
           </div>
         </InfoItem>
         <InfoItem label="RAM">
           <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('ram') ? "text-blue-500 font-medium" : "")}>
-            {`${selectedSpec.ram} MB`}
+            {`${selectedAttribute.ram} MB`}
           </div>
         </InfoItem>
         <InfoItem label="Disk">
           <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('disk') ? "text-blue-500 font-medium" : "")}>
-            {`${selectedSpec.disk} GB`}
+            {`${selectedAttribute.disk} GB`}
           </div>
         </InfoItem>
         <InfoItem label="Replica Nodes">
           <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('replica_nodes') ? "text-blue-500 font-medium" : "")}>
-            {`${selectedSpec.replica_nodes} Node`}
+            {`${selectedAttribute.replica_nodes} Node`}
           </div>
         </InfoItem>
         <InfoItem label="Monthly Cost">
           <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('monthly_cost') ? "text-blue-500 font-medium" : "")}>
-            {`$${selectedSpec.monthly_cost} per Month`}
+            {`$${selectedAttribute.monthly_cost} per Month`}
           </div>
         </InfoItem>
-      </SpecSection>
-      <SpecSection>
+      </AttributeSection>
+      <AttributeSection>
         <InfoItem label="Label">
           <Input
             className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm", 
@@ -239,7 +239,7 @@ export default function EditDatabaseSpec({ spec, onEdit, onClose }: DatabaseSpec
             {...register('label')}
           />
         </InfoItem>
-      </SpecSection>
+      </AttributeSection>
     </form>
   );
 }

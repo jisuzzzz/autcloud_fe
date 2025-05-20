@@ -1,8 +1,8 @@
 'use client'
 import Image from "next/image"
-import { InfoItem, SpecSection } from "../specBar"
+import { InfoItem, AttributeSection } from "../attributeBar"
 import SelectBox from "@/components/custom/selectBox"
-import { ObjectStorageSpecType } from "@/lib/projectDB"
+import { ObjectStorageAttributeType } from "@/lib/projectDB"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { RegionsArray } from "@/lib/resourceOptions"
@@ -12,7 +12,7 @@ import { ObjectPlan, ObjectRegion, ObjectStorageOptions } from "@/lib/objectStor
 import { cn } from "@/lib/utils"
 
 interface AddNewObjectStorageProps {
-  onAdd: (data: ObjectStorageSpecType) => void
+  onAdd: (data: ObjectStorageAttributeType) => void
   onClose: () => void
 }
 
@@ -20,7 +20,7 @@ export default function AddNewObjectStorage({onClose, onAdd}: AddNewObjectStorag
   const [filteredOptions, setFilteredOptions] = useState<any[]>([])
   const [isFormValid, setIsFormValid] = useState(false)
 
-  const defaultValues: Partial<ObjectStorageSpecType> = {
+  const defaultValues: Partial<ObjectStorageAttributeType> = {
     label: "",
     region: "",
     plan: "",
@@ -33,7 +33,7 @@ export default function AddNewObjectStorage({onClose, onAdd}: AddNewObjectStorag
     ratelimit_ops_bytes: ""
   }
 
-  const [selectedSpec, setSelectedSpec] = useState({
+  const [selectedAttribute, setSelectedAttribute] = useState({
     price: '',
     disk_gb_price: '',
     bw_gb_price: '',
@@ -41,7 +41,7 @@ export default function AddNewObjectStorage({onClose, onAdd}: AddNewObjectStorag
     ratelimit_ops_bytes: ''
   })
 
-  const { register, handleSubmit, setValue, watch } = useForm<ObjectStorageSpecType>({
+  const { register, handleSubmit, setValue, watch } = useForm<ObjectStorageAttributeType>({
     defaultValues,
     mode: "onChange"
   })
@@ -90,7 +90,7 @@ export default function AddNewObjectStorage({onClose, onAdd}: AddNewObjectStorag
       setValue('disk_gb_price', selected.disk_gb_price)
       setValue('bw_gb_price', selected.bw_gb_price)
       
-      setSelectedSpec({
+      setSelectedAttribute({
         price: selected.price,
         disk_gb_price: selected.disk_gb_price,
         bw_gb_price: selected.bw_gb_price,
@@ -116,7 +116,7 @@ export default function AddNewObjectStorage({onClose, onAdd}: AddNewObjectStorag
     filterObjectOtions(tier_id)
   }
   
-  const onSubmit = (data: ObjectStorageSpecType) => {
+  const onSubmit = (data: ObjectStorageAttributeType) => {
     if(onAdd) {
       onAdd(data)
     }
@@ -148,7 +148,7 @@ export default function AddNewObjectStorage({onClose, onAdd}: AddNewObjectStorag
           </Button>
         </div>
       </div>
-      <SpecSection>
+      <AttributeSection>
         <InfoItem label="Plan">
           <div className="flex flex-col w-full">
             <SelectBox 
@@ -176,38 +176,38 @@ export default function AddNewObjectStorage({onClose, onAdd}: AddNewObjectStorag
             {!region && <p className="text-[11px] text-blue-400 mt-1">* Required field</p>}
           </div>
         </InfoItem>
-      </SpecSection>
+      </AttributeSection>
 
-      <SpecSection>
+      <AttributeSection>
         {tier_id && cluster_id && (
           <>
             <InfoItem label="Price">
               <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2">
-                ${selectedSpec.price}
+                ${selectedAttribute.price}
                 <p className="text-[11px] text-gray-400">per Month</p>
               </div>
             </InfoItem>
             <InfoItem label="Storage Price">
               <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2">
-                ${selectedSpec.disk_gb_price}/GB
+                ${selectedAttribute.disk_gb_price}/GB
                 <p className="text-[11px] text-gray-400">over 1000GB</p>
               </div>
             </InfoItem>
             <InfoItem label="Transfer Price">
               <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2">
-                ${selectedSpec.bw_gb_price}/GB
+                ${selectedAttribute.bw_gb_price}/GB
                 <p className="text-[11px] text-gray-400">over 1000GB</p>
               </div>
             </InfoItem>
             <InfoItem label="Rate Limit Ops/Sec">
               <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2">
-                {selectedSpec.ratelimit_ops_secs}
+                {selectedAttribute.ratelimit_ops_secs}
                 <p className="text-[11px] text-gray-400">ops/sec</p>
               </div>
             </InfoItem>
             <InfoItem label="Rate Limit Ops/bytes">
               <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2">
-                {selectedSpec.ratelimit_ops_bytes}
+                {selectedAttribute.ratelimit_ops_bytes}
                 <p className="text-[11px] text-gray-400">bytes/sec</p>
               </div>
             </InfoItem>
@@ -223,7 +223,7 @@ export default function AddNewObjectStorage({onClose, onAdd}: AddNewObjectStorag
             {!label && <p className="text-[11px] text-blue-400 mt-1">* Required field</p>}
           </div>
         </InfoItem>
-      </SpecSection>
+      </AttributeSection>
     </form>
   )
 }

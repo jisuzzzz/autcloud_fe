@@ -1,8 +1,8 @@
 'use client'
 import Image from "next/image"
-import { InfoItem, SpecSection, InfoIcon } from "../specBar"
+import { InfoItem, AttributeSection, InfoIcon } from "../attributeBar"
 import SelectBox from "@/components/custom/selectBox"
-import { BlockStorageSpecType } from "@/lib/projectDB"
+import { BlockStorageAttributeType } from "@/lib/projectDB"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { RegionsArray } from "@/lib/resourceOptions"
@@ -13,15 +13,15 @@ import { Input } from "@/components/ui/input"
 import { useEffect, useState } from "react"
 import * as Y from 'yjs'
 
-interface BlockStorageSpecProps {
-  spec: BlockStorageSpecType
-  onEdit: (data: BlockStorageSpecType) => void
+interface BlockStorageAttributeProps {
+  attribute: BlockStorageAttributeType
+  onEdit: (data: BlockStorageAttributeType) => void
   onClose: () => void
   setEdges: (updater: (prev: Edge[]) => Edge[]) => void
   id: string
 }
 
-export default function EditBlockStorageSpec({spec, onEdit, onClose, setEdges, id}:BlockStorageSpecProps) {
+export default function EditBlockStorageAttribute({attribute, onEdit, onClose, setEdges, id}:BlockStorageAttributeProps) {
   const {yDoc} = useYjsStore()
   const [hasChanges, setHasChanges] = useState(false)
   
@@ -33,36 +33,36 @@ export default function EditBlockStorageSpec({spec, onEdit, onClose, setEdges, i
     data: ynode.get('data')
   })) as Node[]
 
-  const { register, handleSubmit, setValue, watch } = useForm<BlockStorageSpecType>({
-    defaultValues: spec
+  const { register, handleSubmit, setValue, watch } = useForm<BlockStorageAttributeType>({
+    defaultValues: attribute
   })
   
   const watchedValues = watch()
   
   useEffect(() => {
-    const hasAnyChange = Object.keys(spec).some(key => {
-      const field = key as keyof BlockStorageSpecType
-      return watchedValues[field] !== spec[field]
+    const hasAnyChange = Object.keys(attribute).some(key => {
+      const field = key as keyof BlockStorageAttributeType
+      return watchedValues[field] !== attribute[field]
     })
     
     setHasChanges(hasAnyChange)
-  }, [watchedValues, spec])
+  }, [watchedValues, attribute])
   
   const computeNodes = nodes.filter(node => 
     node.data.type === 'Compute' &&
-    node.data.spec.status !== 'remove'
+    node.data.attribute.status !== 'remove'
   ).map(node => ({
     value: node.id,
-    label: node.data.spec.label
+    label: node.data.attribute.label
   }))
 
   const handleAttachChange = (computeId: string) => {
     setValue('attached_to', computeId)
   }
 
-  const isValueChanged = (property: keyof BlockStorageSpecType) => {
+  const isValueChanged = (property: keyof BlockStorageAttributeType) => {
     const currValue = watch(property)
-    return currValue !== spec[property]
+    return currValue !== attribute[property]
   }
 
   const regionOptions = RegionsArray.map(region => ({
@@ -79,17 +79,17 @@ export default function EditBlockStorageSpec({spec, onEdit, onClose, setEdges, i
     setValue('region', selectedRegion.city)
   }
   
-  const onSubmit = (data:BlockStorageSpecType) => {
+  const onSubmit = (data:BlockStorageAttributeType) => {
     if(onEdit) {
       onEdit(data)
       
       const computeId = data.attached_to
       if(!computeId && (computeId === '')) return
       setEdges(prev => {
-        const existingEdge = prev.find(edge => edge.target === spec.attached_to)
+        const existingEdge = prev.find(edge => edge.target === attribute.attached_to)
         if(existingEdge) {
           return prev.map(edge =>
-            edge.target === spec.attached_to
+            edge.target === attribute.attached_to
               ? {...edge, target: computeId}
               : edge
           )
@@ -143,11 +143,11 @@ export default function EditBlockStorageSpec({spec, onEdit, onClose, setEdges, i
         </div>
       </div>
 
-      <SpecSection>
+      <AttributeSection>
         <InfoItem label="Region">
           <SelectBox 
             option={regionOptions}
-            placeholder={spec.region || "Select region"}
+            placeholder={attribute.region || "Select region"}
             className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full", 
               isValueChanged('region') ? "text-blue-500 font-medium" : "")}
             onChange={handleRegionChange}
@@ -159,31 +159,31 @@ export default function EditBlockStorageSpec({spec, onEdit, onClose, setEdges, i
           <h3 className="text-xs text-gray-500">{"Attatch to"}</h3>
           <SelectBox
             option={computeNodes}
-            placeholder={nodes.find(node => node.id === spec.attached_to)?.data.spec.label || "Select compute"}
+            placeholder={nodes.find(node => node.id === attribute.attached_to)?.data.attribute.label || "Select compute"}
             className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full", 
               isValueChanged('attached_to') ? "text-blue-500 font-medium" : "")}
             onChange={handleAttachChange}
           />
           <p className="text-xs text-gray-500">on this page, GB = 1024^3 bytes</p>
         </div>
-      </SpecSection>
+      </AttributeSection>
         
-      <SpecSection>
-        <InfoItem label="Type">{spec.type}</InfoItem>
+      <AttributeSection>
+        <InfoItem label="Type">{attribute.type}</InfoItem>
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <h3 className="text-xs text-gray-500">{"Mount ID"}</h3>
             <InfoIcon label="?"/>
           </div>
-          <p className="text-xs">{spec.mount_id}</p>
+          <p className="text-xs">{attribute.mount_id}</p>
         </div>
 
         <InfoItem label="Size">
-          <p className="text-xs text-[#8171E8]">{`${spec.size} GB`}</p>
+          <p className="text-xs text-[#8171E8]">{`${attribute.size} GB`}</p>
         </InfoItem>
-      </SpecSection>
+      </AttributeSection>
 
-      <SpecSection>
+      <AttributeSection>
         <InfoItem label="Label">
           <Input
             className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm", 
@@ -191,7 +191,7 @@ export default function EditBlockStorageSpec({spec, onEdit, onClose, setEdges, i
             {...register('label')}
           />
         </InfoItem>
-      </SpecSection>
+      </AttributeSection>
     </form>
   )
 }

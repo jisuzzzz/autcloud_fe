@@ -6,7 +6,7 @@ type ResourceConfig = {
     y: number
   },
   status: 'add' | 'remove' | 'edit' | 'comfirm',
-  spec: ComputeSpecType | DatabaseSpecType | BlockStorageSpecType | ObjectStorageSpecType | FirewallSpecType
+  attribute: ComputeAttributeType | DatabaseAttributeType | BlockStorageAttributeType | ObjectStorageAttributeType | FirewallAttributeType
 }
 
 type ResourceNodeType = {
@@ -20,7 +20,7 @@ type ResourceNodeType = {
   data: {
     type: 'Compute' | 'Database' | 'BlockStorage' | 'ObjectStorage' | 'FireWall',
     status: 'add' | 'remove' | 'edit' | 'comfirm',
-    spec: ComputeSpecType | DatabaseSpecType | BlockStorageSpecType | ObjectStorageSpecType | FirewallSpecType
+    attribute: ComputeAttributeType | DatabaseAttributeType | BlockStorageAttributeType | ObjectStorageAttributeType | FirewallAttributeType
   }
 }
 
@@ -31,7 +31,7 @@ type ProjectTemplate = {
   initial_resources: ResourceConfig[]
 }
 
-type ComputeSpecType = {
+type ComputeAttributeType = {
   plan: string,
   status: string,
   region_id: string,
@@ -49,7 +49,7 @@ type ComputeSpecType = {
   group_id?: string
 }
 
-type DatabaseSpecType = {
+type DatabaseAttributeType = {
   status: string,
   plan: string,
   db_engine: string,
@@ -65,7 +65,7 @@ type DatabaseSpecType = {
   monthly_cost: string
 }
 
-type BlockStorageSpecType = {
+type BlockStorageAttributeType = {
   id: string,
   region_id: string,
   region: string,
@@ -77,7 +77,7 @@ type BlockStorageSpecType = {
   date_created: string
 }
 
-type ObjectStorageSpecType = {
+type ObjectStorageAttributeType = {
   cluster_id: string,
   tier_id: string,
   plan: string,
@@ -90,7 +90,7 @@ type ObjectStorageSpecType = {
   bw_gb_price: string,
 }
 
-type FirewallSpecType = {
+type FirewallAttributeType = {
   label: string
   rules: FirewallRuleType[]
 }
@@ -106,7 +106,7 @@ type FirewallRuleType = {
   notes: string
 }
 
-type SpecValueType = string | number | boolean | null
+type AttributeValueType = string | number | boolean | null
 type NodeChangeStatus = 'added' | 'removed' | 'modified' | 'unchanged'
 type ProjectChanges = {
   [noedId: string]: {
@@ -114,10 +114,10 @@ type ProjectChanges = {
     userName: string,
     status: NodeChangeStatus,
     label: string,
-    specChanges: {
+    attributeChanges: {
       [key: string] : {
-        prevValue: SpecValueType,
-        currValue: SpecValueType,
+        prevValue: AttributeValueType,
+        currValue: AttributeValueType,
       } 
     }
   }
@@ -278,7 +278,7 @@ type CommandList = CommandItem[]
 
 const PROJECT_TEMPLATES: ProjectTemplate[] = [
   {
-    id: "9cd47912-c94a-451f-a1a2-ec5b2097c461",
+    id: "37bfb83b-dd64-410b-81c5-7374b0c453e0",
     name: "Shopify+",
     description: "e-commerce platform infrastructure design",
     initial_resources: [
@@ -287,7 +287,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         type: "Compute",
         position: { x: 500, y: 250 },
         status: 'add', 
-        spec: {
+        attribute: {
           plan: 'vc2-2c-2gb',
           status: "running",
           region_id: "ewr",
@@ -310,7 +310,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         type: "ObjectStorage",
         position: { x: 350, y: 400 },
         status: 'add',
-        spec: {
+        attribute: {
           cluster_id: "2",
           tier_id: "2",
           plan: "Standard",
@@ -328,7 +328,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         type: "BlockStorage",
         position: { x: 500, y: 400 },
         status: 'add',
-        spec: {
+        attribute: {
           id: "bs-chi-001",
           region_id: "ewr",
           region: "New Jersey",
@@ -345,7 +345,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         type: "Database",
         position: { x: 650, y: 400 },
         status: 'add',
-        spec: {
+        attribute: {
           status: "pending",
           plan: "vultur-dbaas-startup-cc-1-55-2",
           db_engine: "pg",
@@ -366,7 +366,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         type: "FireWall",
         position: { x: 500, y: 100 },
         status: 'add',
-        spec: {
+        attribute: {
           label: "Allow HTTP",
           rules: [
             {
@@ -405,7 +405,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         type: "Compute",
         position: { x: 500, y: 250 },
         status: 'add', 
-        spec: {
+        attribute: {
           plan: 'vc2-2c-2gb',
           status: "running",
           region_id: "ewr",
@@ -428,7 +428,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         type: "Compute",
         position: { x: 600, y: 150 },
         status: 'add', 
-        spec: {
+        attribute: {
           plan: 'vc2-4c-8gb',
           status: "running",
           region_id: "ord",
@@ -451,7 +451,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         type: "BlockStorage",
         position: { x: 400, y: 300 },
         status: 'add',
-        spec: {
+        attribute: {
           id: "bs-chi-001",
           region_id: "ord",
           region: "Chicago",
@@ -468,7 +468,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         type: "BlockStorage",
         position: { x: 600, y: 300 },
         status: 'add',
-        spec: {
+        attribute: {
           id: "bs-chi-002",
           region_id: "ord",
           region: "Chicago",
@@ -485,7 +485,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         type: "Database",
         position: { x: 500, y: 450 },
         status: 'add',
-        spec: {
+        attribute: {
           status: "running",
           plan: "vultur-dbaas-business-cc-4-16-4",
           db_engine: "pg",
@@ -506,7 +506,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         type: "FireWall",
         position: { x: 500, y: 50 },
         status: 'add',
-        spec: {
+        attribute: {
           label: "HA-Protection-Layer",
           rules: [
             {
@@ -535,7 +535,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         type: "Compute",
         position: { x: 400, y: 200 },
         status: 'add', 
-        spec: {
+        attribute: {
           plan: 'vc2-2c-4gb',
           status: "running",
           region_id: "sea",
@@ -558,7 +558,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         type: "Compute",
         position: { x: 600, y: 200 },
         status: 'add', 
-        spec: {
+        attribute: {
           plan: 'vc2-2c-4gb',
           status: "running",
           region_id: "sea",
@@ -581,7 +581,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         type: "Database",
         position: { x: 400, y: 380 },
         status: 'add',
-        spec: {
+        attribute: {
           status: "running",
           plan: "vultur-dbaas-business-cc-2-8-2",
           db_engine: "pg",
@@ -602,7 +602,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         type: "Database",
         position: { x: 600, y: 380 },
         status: 'add',
-        spec: {
+        attribute: {
           status: "running",
           plan: "vultur-dbaas-business-cc-2-8-2",
           db_engine: "pg",
@@ -623,7 +623,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         type: "ObjectStorage",
         position: { x: 500, y: 550 },
         status: 'add',
-        spec: {
+        attribute: {
           cluster_id: "2",
           tier_id: "3",
           plan: "Premium",
@@ -641,7 +641,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         type: "FireWall",
         position: { x: 500, y: 100 },
         status: 'add',
-        spec: {
+        attribute: {
           label: "API-Gateway-Protection",
           rules: [
             {
@@ -679,13 +679,13 @@ export {
   type ProjectTemplate, 
   type ResourceConfig, 
   type ResourceNodeType,
-  type ComputeSpecType,
-  type DatabaseSpecType,
-  type BlockStorageSpecType,
-  type ObjectStorageSpecType,
-  type FirewallSpecType,
+  type ComputeAttributeType,
+  type DatabaseAttributeType,
+  type BlockStorageAttributeType,
+  type ObjectStorageAttributeType,
+  type FirewallAttributeType,
   type FirewallRuleType,
-  type SpecValueType,
+  type AttributeValueType,
   type NodeChangeStatus, 
   type ProjectChanges,
   type CreateInstanceType,

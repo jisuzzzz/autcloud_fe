@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { InfoItem, SpecSection } from '../specBar';
-import { DatabaseSpecType } from '@/lib/projectDB';
+import { InfoItem, AttributeSection } from '../attributeBar';
+import { DatabaseAttributeType } from '@/lib/projectDB';
 import { useForm } from 'react-hook-form';
 import SelectBox from '@/components/custom/selectBox';
 import { DatabasePlans } from '@/lib/dbOptions';
@@ -10,13 +10,13 @@ import { RegionsArray } from '@/lib/resourceOptions';
 import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 
-interface DatabaseSpecProps {
-  onAdd: (data: DatabaseSpecType) => void;
+interface DatabaseAttributeProps {
+  onAdd: (data: DatabaseAttributeType) => void;
   onClose: () => void;
 }
 
-export default function AddNewDatabase({ onAdd, onClose }: DatabaseSpecProps) {
-  const { register, handleSubmit, setValue, watch } = useForm<DatabaseSpecType>({
+export default function AddNewDatabase({ onAdd, onClose }: DatabaseAttributeProps) {
+  const { register, handleSubmit, setValue, watch } = useForm<DatabaseAttributeType>({
     defaultValues: {
       status: "pending",
       plan: "",
@@ -47,7 +47,7 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseSpecProps) {
     setIsFormValid(!!region && !!dbPlan && !!engine && !!label)
   }, [region, dbPlan, engine, label])
 
-  const [selectedSpec, setSelectedSpec] = useState({
+  const [selectedAttribute, setSelectedAttribute] = useState({
     vcpu_count: '',
     ram: '',
     disk: '',
@@ -70,9 +70,9 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseSpecProps) {
         plan: option.plan,
         region: region_id,
         engine: option.supported_engines,
-        vcpu: option.spec.vcpu_count,
-        ram: option.spec.ram,
-        disk: option.spec.disk,
+        vcpu: option.attribute.vcpu_count,
+        ram: option.attribute.ram,
+        disk: option.attribute.disk,
         monthly_cost: option.monthly_cost,
         replica_nodes: option.numbers_of_node
       }))
@@ -102,7 +102,7 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseSpecProps) {
       setValue('replica_nodes', selected.replica_nodes)
       setValue('monthly_cost', selected.monthly_cost)
 
-      setSelectedSpec({
+      setSelectedAttribute({
         vcpu_count: selected.vcpu,
         ram: selected.ram,
         disk: selected.disk,
@@ -117,7 +117,7 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseSpecProps) {
     setValue('db_version', engine.includes('pg') ? '15' : '8')
   }
 
-  const onSubmit = (data: DatabaseSpecType) => {
+  const onSubmit = (data: DatabaseAttributeType) => {
     if (onAdd) {
       onAdd(data);
     }
@@ -149,7 +149,7 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseSpecProps) {
         </div>
       </div>
 
-      <SpecSection>
+      <AttributeSection>
         <InfoItem label="Region">
           <div className='flex flex-col w-full'>  
             <SelectBox 
@@ -192,40 +192,40 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseSpecProps) {
             {!engine && <p className="text-[11px] text-blue-400 mt-1">* Required field</p>}
           </div>
         </InfoItem>
-      </SpecSection>
+      </AttributeSection>
 
       {region && dbPlan && engine &&(
         <>
-          <SpecSection>
+          <AttributeSection>
             <InfoItem label="vCPU/s">
               <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm">
-                {`${selectedSpec.vcpu_count} vCPU`}
+                {`${selectedAttribute.vcpu_count} vCPU`}
               </div>
             </InfoItem>
             <InfoItem label="RAM">
               <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm">
-                {`${selectedSpec.ram} MB`}
+                {`${selectedAttribute.ram} MB`}
               </div>
             </InfoItem>
             <InfoItem label="Disk">
               <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm">
-                {`${selectedSpec.disk} GB`}
+                {`${selectedAttribute.disk} GB`}
               </div>
             </InfoItem>
             <InfoItem label="Replica Nodes">
               <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm">
-                {`${selectedSpec.replica_nodes} Node`}
+                {`${selectedAttribute.replica_nodes} Node`}
               </div>
             </InfoItem>
             <InfoItem label="Monthly Cost">
               <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm">
-                {`$${selectedSpec.replica_nodes} per Month`}
+                {`$${selectedAttribute.replica_nodes} per Month`}
               </div>
             </InfoItem>
-          </SpecSection>
+          </AttributeSection>
         </>
       )}
-      <SpecSection>
+      <AttributeSection>
         <InfoItem label="Label">
           <div className='flex flex-col w-full'>
             <Input
@@ -236,7 +236,7 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseSpecProps) {
             {!label && <p className="text-[11px] text-blue-400 mt-1">* Required field</p>}
           </div>
         </InfoItem>
-      </SpecSection>
+      </AttributeSection>
     </form>
   );
 }

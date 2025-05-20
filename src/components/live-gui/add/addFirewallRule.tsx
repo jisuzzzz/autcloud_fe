@@ -6,7 +6,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { FirewallRuleType } from "@/lib/projectDB"
 import { useForm } from 'react-hook-form'
-import { SpecSection, InfoItem } from "../specBar"
+import { AttributeSection, InfoItem } from "../attributeBar"
 
 interface FirewallModalProps {
   onClose: () => void
@@ -95,7 +95,7 @@ export default function AddNewwFirewallRule({ onClose, onSave }: FirewallModalPr
           </div>
         </div>
         
-        <SpecSection>
+        <AttributeSection>
           <InfoItem label="Protocol">
             <div className="flex flex-col w-full">
               <SelectBox 
@@ -160,7 +160,7 @@ export default function AddNewwFirewallRule({ onClose, onSave }: FirewallModalPr
               {...register('notes')}
             />
           </InfoItem>
-        </SpecSection>
+        </AttributeSection>
       </div>
     </Modal>
   )

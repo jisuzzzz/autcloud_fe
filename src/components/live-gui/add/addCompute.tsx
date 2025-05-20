@@ -2,9 +2,9 @@
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { InfoItem, SpecSection, InfoIcon } from '../specBar'
+import { InfoItem, AttributeSection, InfoIcon } from '../attributeBar'
 import { Copy } from 'lucide-react'
-import { ComputeSpecType } from '@/lib/projectDB'
+import { ComputeAttributeType } from '@/lib/projectDB'
 import { useForm } from 'react-hook-form'
 import { Input } from '@/components/ui/input'
 import { ComputeOptions } from '@/lib/computeOptions'
@@ -16,7 +16,7 @@ import { Node } from 'reactflow'
 import * as Y from 'yjs'
 
 interface AddNewResourceProps {
-  onAdd: (data: ComputeSpecType) => void
+  onAdd: (data: ComputeAttributeType) => void
   onClose: () => void
 }
 
@@ -69,17 +69,17 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
   const firewallGroup = nodes
     .filter(node => 
       node.data.type === 'FireWall' &&
-      node.data.spec.status !== 'remove' 
+      node.data.attribute.status !== 'remove' 
     ).map(node => ({
       value: node.id.toString(),
-      label: node.data.spec.label 
+      label: node.data.attribute.label 
     }))
 
   const handleFirewallChange = (firewallId: string) => {
     setValue('group_id', firewallId)
   }
 
-  const [selectedSpec, setSelectedSpec] = useState({
+  const [selectedAttribute, setSelectedAttribute] = useState({
     vcpu: '',
     ram: '',
     disk: '',
@@ -146,7 +146,7 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
       setValue('bandwidth', selected.bandwidth)
       setValue('monthly_cost', selected.monthly_cost)
 
-      setSelectedSpec({
+      setSelectedAttribute({
         vcpu: selected.vcpu,
         ram: selected.ram,
         disk: selected.disk,
@@ -156,7 +156,7 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
     }
   }
 
-  const onSubmit = (data: ComputeSpecType) => {
+  const onSubmit = (data: ComputeAttributeType) => {
     if (onAdd) {
       onAdd(data)
     }
@@ -189,7 +189,7 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
         </div>
       </div>
 
-      <SpecSection>
+      <AttributeSection>
         <InfoItem label="region">
           <div className='flex flex-col w-full'>
             <SelectBox 
@@ -238,29 +238,29 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
             <Copy size={18} className="text-gray-500" />
           </div>
         </InfoItem>
-      </SpecSection>
+      </AttributeSection>
         
       {region && computePlan && os && (
         <>
-          <SpecSection>
+          <AttributeSection>
             <InfoItem label="vCPU/s">
               <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm">
-                {`${selectedSpec.vcpu} vCPU`}
+                {`${selectedAttribute.vcpu} vCPU`}
               </div>
             </InfoItem>
             <InfoItem label="RAM">
               <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm">
-                {`${selectedSpec.ram} MB`}
+                {`${selectedAttribute.ram} MB`}
               </div>
             </InfoItem>
             <InfoItem label="Disk">
               <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm">
-                {`${selectedSpec.disk} GB`}
+                {`${selectedAttribute.disk} GB`}
               </div>
             </InfoItem>
             <InfoItem label="Bandwidth">
               <div className="h-9 w-full flex items-center px-3 text-xs text-[#8171E8] bg-white shadow-none border rounded-sm">
-                {`${selectedSpec.bandwidth} GB`}
+                {`${selectedAttribute.bandwidth} GB`}
                 <div className='ml-2'>
                   <InfoIcon label="?" />
                 </div>
@@ -268,13 +268,13 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
             </InfoItem>
             <InfoItem label="Monthly Cost">
               <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm">
-                {`$${selectedSpec.monthly_cost} per Month`}
+                {`$${selectedAttribute.monthly_cost} per Month`}
               </div>
             </InfoItem>
-          </SpecSection>
+          </AttributeSection>
         </>
       )}
-      <SpecSection>
+      <AttributeSection>
         <InfoItem label='Firewall'>
           <SelectBox
             option={firewallGroup}
@@ -294,7 +294,7 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
             {!label && <p className="text-[11px] text-blue-400 mt-1">* Required field</p>}
           </div>
         </InfoItem>
-      </SpecSection>
+      </AttributeSection>
     </form>
   )
 }

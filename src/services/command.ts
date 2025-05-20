@@ -14,11 +14,11 @@ export const CommandService = {
   createComputeCommand: (node: Node, userId: string) => {
     const createInstance: CreateInstanceType = {
       data: {
-        region: node.data.spec.region_id,
-        plan: node.data.spec.plan,
-        label: node.data.spec.label,
-        os_id: node.data.spec.os,
-        backups: node.data.spec.auto_backups,
+        region: node.data.attribute.region_id,
+        plan: node.data.attribute.plan,
+        label: node.data.attribute.label,
+        os_id: node.data.attribute.os,
+        backups: node.data.attribute.auto_backups,
         hostname: userId
       }
     }
@@ -34,12 +34,12 @@ export const CommandService = {
     const updateInstance: UpdateInstanceType = {
       data: {
         id: node.id,
-        backups: node.data.spec.auto_backups,
-        firewall_group_id: node.data.spec.firewall_group_id,
-        os_id: node.data.spec.os_id,
-        plan: node.data.spec.plan,
+        backups: node.data.attribute.auto_backups,
+        firewall_group_id: node.data.attribute.firewall_group_id,
+        os_id: node.data.attribute.os_id,
+        plan: node.data.attribute.plan,
         ddos_protection: true,
-        label: node.data.spec.label
+        label: node.data.attribute.label
       }
     }
     return {
@@ -64,11 +64,11 @@ export const CommandService = {
   createDBCommand: (node: Node) => {
     const createManagedDatabase: CreateManagedDatabaseType = {
       data: {
-        database_engine: node.data.spec.db_engine,
-        database_engine_version: node.data.spec.db_version,
-        region: node.data.spec.region_id,
-        plan: node.data.spec.plan,
-        label: node.data.spec.label,
+        database_engine: node.data.attribute.db_engine,
+        database_engine_version: node.data.attribute.db_version,
+        region: node.data.attribute.region_id,
+        plan: node.data.attribute.plan,
+        label: node.data.attribute.label,
       }
     }
     
@@ -83,8 +83,8 @@ export const CommandService = {
     const updateManagedDatabase: UpdateManagedDatabaseType = {
       data: {
         id: node.id,
-        plan: node.data.spec.plan,
-        label: node.data.spec.label
+        plan: node.data.attribute.plan,
+        label: node.data.attribute.label
       }
     }
     return {
@@ -109,9 +109,9 @@ export const CommandService = {
   createObjectCommand: (node: Node) => {
     const createObjectStorage: CreateObjectStorageType = {
       data: {
-        cluster_id: node.data.spec.cluster_id,
-        tier_id: node.data.spec.tier_id,
-        label: node.data.spec.label,
+        cluster_id: node.data.attribute.cluster_id,
+        tier_id: node.data.attribute.tier_id,
+        label: node.data.attribute.label,
       }
     }
     
@@ -126,7 +126,7 @@ export const CommandService = {
     const updateObjectStorage: UpdateObjectStorageType = {
       data: {
         id: node.id,
-        label: node.data.spec.label
+        label: node.data.attribute.label
       }
     }
     return {
@@ -151,9 +151,9 @@ export const CommandService = {
   createBlockCommand: (node: Node) => {
     const createBlockStorage: CreateBlockStorageType = {
       data: {
-        region: node.data.spec.region_id,
-        size_gb: node.data.spec.size,
-        label: node.data.spec.label,
+        region: node.data.attribute.region_id,
+        size_gb: node.data.attribute.size,
+        label: node.data.attribute.label,
       }
     }
     
@@ -168,9 +168,9 @@ export const CommandService = {
     const updateBlockStorage: UpdateBlockStorageType = {
       data: {
         id: node.id,
-        region: node.data.spec.region_id,
-        size_gb: node.data.spec.size,
-        label: node.data.spec.label,
+        region: node.data.attribute.region_id,
+        size_gb: node.data.attribute.size,
+        label: node.data.attribute.label,
       }
     }
     return {
@@ -222,7 +222,7 @@ export const CommandService = {
   createFirewallCommand: (node: Node) => {
     const createFirewall: CreateFirewallGroupType = {
       data: {
-        description: node.data.spec.label
+        description: node.data.attribute.label
       }
     }
     return {
@@ -236,7 +236,7 @@ export const CommandService = {
     const updateFirewall: UpdateFirewallGroupType = {
       data: {
         id: node.id,
-        description: node.data.spec.label
+        description: node.data.attribute.label
       }
     }
     return {
@@ -259,7 +259,7 @@ export const CommandService = {
   },
 
   createRuleCommands: (node: Node) => {
-  const rules = node.data.spec.rules || []
+  const rules = node.data.attribute.rules || []
     return rules.map((rule: CreateFirewallRule['data']) => ({
       command_name: "CreateFirewallRule",
       data: {
@@ -278,7 +278,7 @@ export const CommandService = {
     const deleteRuel: DeleteFirewallRule = {
       data: {
         fire_wall_group_id: node.id,
-        fire_wall_rule_id: node.data.spec.rules.rule_id
+        fire_wall_rule_id: node.data.attribute.rules.rule_id
       }
     }
     return {

@@ -2,9 +2,9 @@
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { InfoItem, SpecSection, InfoIcon } from '../specBar'
+import { InfoItem, AttributeSection, InfoIcon } from '../attributeBar'
 import { Copy } from 'lucide-react'
-import { ComputeSpecType } from '@/lib/projectDB'
+import { ComputeAttributeType } from '@/lib/projectDB'
 import { useForm } from 'react-hook-form'
 import { Input } from '@/components/ui/input'
 import { ComputeOptions } from '@/lib/computeOptions'
@@ -15,21 +15,21 @@ import { useYjsStore } from '@/lib/useYjsStore'
 import { Node, Edge, MarkerType } from 'reactflow'
 import * as Y from 'yjs'
 
-interface EditComputeSpecProps {
-  spec: ComputeSpecType
-  onEdit: (data: ComputeSpecType) => void
+interface EditComputeAttributeProps {
+  attribute: ComputeAttributeType
+  onEdit: (data: ComputeAttributeType) => void
   onClose: () => void
   setEdges: (updater: (prev: Edge[]) => Edge[]) => void
   id: string
 }
 
-export default function EditComputeSpec({
-  spec,
+export default function EditComputeAttribute({
+  attribute,
   onEdit,
   onClose,
   setEdges,
   id,
-}: EditComputeSpecProps) {
+}: EditComputeAttributeProps) {
 
   const {yDoc} = useYjsStore()
 
@@ -41,36 +41,36 @@ export default function EditComputeSpec({
     data: ynode.get('data')
   })) as Node[]
 
-  const { register, handleSubmit, setValue, watch } = useForm<ComputeSpecType>({
-    defaultValues: spec,
+  const { register, handleSubmit, setValue, watch } = useForm<ComputeAttributeType>({
+    defaultValues: attribute,
   })
 
-  const [selectedSpec, setSelectedSpec] = useState({
-    vcpu: spec.vcpu,
-    ram: spec.ram,
-    disk: spec.disk,
-    bandwidth: spec.bandwidth,
-    monthly_cost: spec.monthly_cost
+  const [selectedAttribute, setSelectedAttribute] = useState({
+    vcpu: attribute.vcpu,
+    ram: attribute.ram,
+    disk: attribute.disk,
+    bandwidth: attribute.bandwidth,
+    monthly_cost: attribute.monthly_cost
   })
 
   const watchedValues = watch()
   const [hasChanges, setHasChanges] = useState(false)
 
   useEffect(() => {
-    const hasAnyChanges = Object.keys(spec).some(key => {
-      const field = key as keyof ComputeSpecType
-      return watchedValues[field] !== spec[field]
+    const hasAnyChanges = Object.keys(attribute).some(key => {
+      const field = key as keyof ComputeAttributeType
+      return watchedValues[field] !== attribute[field]
     })
     setHasChanges(hasAnyChanges)
-  }, [watchedValues, spec])
+  }, [watchedValues, attribute])
 
   const firewallGroup = nodes
     .filter(node => 
       node.data.type === 'FireWall' &&
-      node.data.spec.status !== 'remove' 
+      node.data.attribute.status !== 'remove' 
     ).map(node => ({
       value: node.id,
-      label: node.data.spec.label 
+      label: node.data.attribute.label 
   }))
 
   const handleFirewallChange = (firewallId: string) => {
@@ -78,9 +78,9 @@ export default function EditComputeSpec({
   }
 
 
-  const isValueChanged = (property: keyof ComputeSpecType) => {
+  const isValueChanged = (property: keyof ComputeAttributeType) => {
     const currValue = watch(property)
-    return currValue !== spec[property]
+    return currValue !== attribute[property]
   }
 
   const [filteredComputeOptions, setFilteredComputeOptions] = useState<any[]>([])
@@ -118,8 +118,8 @@ export default function EditComputeSpec({
   }
 
   useEffect(() => {
-    if (spec.region_id) {
-      filterComputeOptions(spec.region_id)
+    if (attribute.region_id) {
+      filterComputeOptions(attribute.region_id)
     }
   }, [])
 
@@ -153,7 +153,7 @@ export default function EditComputeSpec({
       setValue('bandwidth', selected.bandwidth)
       setValue('monthly_cost', selected.monthly_cost)
 
-      setSelectedSpec({
+      setSelectedAttribute({
         vcpu: selected.vcpu,
         ram: selected.ram,
         disk: selected.disk,
@@ -163,18 +163,18 @@ export default function EditComputeSpec({
     }
   }
 
-  const onSubmit = (data: ComputeSpecType) => {
+  const onSubmit = (data: ComputeAttributeType) => {
     if (onEdit) {
       onEdit(data)
       const firewallId = data.group_id
       if((firewallId === '') || !firewallId) return
       setEdges(prev => {
-        const existingEdge = prev.find(edge => edge.target === spec.group_id)
+        const existingEdge = prev.find(edge => edge.target === attribute.group_id)
 
         if (existingEdge) {
           // 원래 엣지가 있으면 그거 업데이트
           return prev.map(edge =>
-            edge.target === spec.group_id
+            edge.target === attribute.group_id
               ? { ...edge, target: firewallId }
               : edge
           )
@@ -233,20 +233,20 @@ export default function EditComputeSpec({
         <h3 className="text-xs text-gray-500">Status</h3>
         <Button
           className={cn('px-2.5 h-7 rounded-sm pointer-events-none text-xs', {
-            'bg-green-500': spec.status === 'running',
-            'bg-yellow-500': spec.status === 'pending',
-            'bg-red-500': spec.status === 'stopped',
+            'bg-green-500': attribute.status === 'running',
+            'bg-yellow-500': attribute.status === 'pending',
+            'bg-red-500': attribute.status === 'stopped',
           })}
         >
-          {spec.status}
+          {attribute.status}
         </Button>
       </div>
 
-      <SpecSection>
+      <AttributeSection>
         <InfoItem label="Region">
           <SelectBox 
             option={regionOptions}
-            placeholder={spec.region || "Select region"}
+            placeholder={attribute.region || "Select region"}
             className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full", 
               isValueChanged('region') ? "text-blue-500 font-medium" : "")}
             onChange={handleRegionChange}
@@ -260,7 +260,7 @@ export default function EditComputeSpec({
               value: opt.plan,
               label: opt.plan
             }))}
-            placeholder={spec.plan || "Select compute type"}
+            placeholder={attribute.plan || "Select compute type"}
             className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full", 
               isValueChanged('plan') ? "text-blue-500 font-medium" : ""
             )}
@@ -271,7 +271,7 @@ export default function EditComputeSpec({
         <InfoItem label="OS">
           <SelectBox 
             option={OsOptions}
-            placeholder={spec.os}
+            placeholder={attribute.os}
             className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full", 
               isValueChanged('os') ? "text-blue-500 font-medium" : "")}
             onChange={handleOsChange}
@@ -280,35 +280,35 @@ export default function EditComputeSpec({
 
         <InfoItem label="IP Address">
           <div className="flex w-full justify-between items-center">
-            <p className="text-xs">{spec.ip_address}</p>
+            <p className="text-xs">{attribute.ip_address}</p>
             <Copy size={18} className="text-gray-500" />
           </div>
         </InfoItem>
-      </SpecSection>
+      </AttributeSection>
 
-      <SpecSection>
+      <AttributeSection>
         <InfoItem label="vCPU/s">
           <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('vcpu') ? "text-blue-500 font-medium" : "")}>
-            {`${selectedSpec.vcpu} vCPU`}
+            {`${selectedAttribute.vcpu} vCPU`}
           </div>
         </InfoItem>
         <InfoItem label="RAM">
           <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('ram') ? "text-blue-500 font-medium" : "")}>
-            {`${selectedSpec.ram} MB`}
+            {`${selectedAttribute.ram} MB`}
           </div>
         </InfoItem>
         <InfoItem label="Disk">
           <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('disk') ? "text-blue-500 font-medium" : "")}>
-            {`${selectedSpec.disk} GB`}
+            {`${selectedAttribute.disk} GB`}
           </div>
         </InfoItem>
         <InfoItem label="Bandwidth">
           <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('bandwidth') ? "text-blue-500 font-medium" : "")}>
-            {`${selectedSpec.bandwidth} GB`}
+            {`${selectedAttribute.bandwidth} GB`}
             <div className='ml-2'>
               <InfoIcon  label="?" />
             </div>
@@ -317,16 +317,16 @@ export default function EditComputeSpec({
         <InfoItem label="Monthly Cost">
           <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('monthly_cost') ? "text-blue-500 font-medium" : "")}>
-            {`$${selectedSpec.monthly_cost} per Month`}
+            {`$${selectedAttribute.monthly_cost} per Month`}
           </div>
         </InfoItem>
-      </SpecSection>
+      </AttributeSection>
 
-      <SpecSection>
+      <AttributeSection>
         <InfoItem label='Firewall'>
           <SelectBox
             option={firewallGroup}
-            placeholder={spec.group_id || 'Select firewall group'}
+            placeholder={attribute.group_id || 'Select firewall group'}
             className="h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full"
             onChange={handleFirewallChange}
           >
@@ -341,13 +341,13 @@ export default function EditComputeSpec({
         </InfoItem>
 
         <InfoItem label="Auto Backups">
-          {spec.auto_backups === "enable" ? (
+          {attribute.auto_backups === "enable" ? (
             <p className="text-xs text-green-600">Enabled</p>
           ) : (
             <p className="text-xs text-red-600">Not Enabled</p>
           )}
         </InfoItem>
-      </SpecSection>
+      </AttributeSection>
     </form>
   )
 }

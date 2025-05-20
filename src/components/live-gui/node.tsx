@@ -1,7 +1,7 @@
 'use client'
 import Image from 'next/image'
 import { useOthers, useSelf } from '@liveblocks/react'
-import { ComputeSpecType, DatabaseSpecType, BlockStorageSpecType, ObjectStorageSpecType, FirewallSpecType } from '@/lib/projectDB'
+import { ComputeAttributeType, DatabaseAttributeType, BlockStorageAttributeType, ObjectStorageAttributeType, FirewallAttributeType } from '@/lib/projectDB'
 import { Handle, Position } from 'reactflow'
 
 const resourceIcons = {
@@ -17,7 +17,7 @@ interface NodeProps {
   data: {
     type: string
     status: string
-    spec: ComputeSpecType | DatabaseSpecType | BlockStorageSpecType | ObjectStorageSpecType | FirewallSpecType
+    attribute: ComputeAttributeType | DatabaseAttributeType | BlockStorageAttributeType | ObjectStorageAttributeType | FirewallAttributeType
   }
   selected: boolean
 }
@@ -59,7 +59,7 @@ export default function ResourceNode({ id, data, selected=false }: NodeProps) {
           className="object-contain rounded-xs"
         />
         <div className="fixed top-[60px] w-[200px] text-xs font-medium text-gray-700 text-center mt-1">
-          {data.spec.label}
+          {data.attribute.label}
         </div>
       </div>
       {users.map(({ connectionId, info, presence }) => {

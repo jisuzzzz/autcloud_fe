@@ -3,52 +3,52 @@ import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
 import SelectBox from "@/components/custom/selectBox"
 import { RegionsArray } from "@/lib/resourceOptions"
-import { InfoItem, SpecSection } from "../specBar"
-import { ObjectStorageSpecType } from "@/lib/projectDB"
+import { InfoItem, AttributeSection } from "../attributeBar"
+import { ObjectStorageAttributeType } from "@/lib/projectDB"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
 import { ObjectPlan, ObjectStorageOptions } from "@/lib/objectStorageOptions"
 
-interface ObectStorageSpecProps {
-  spec: ObjectStorageSpecType
-  onEdit: (data: ObjectStorageSpecType) => void
+interface ObectStorageAttributeProps {
+  attribute: ObjectStorageAttributeType
+  onEdit: (data: ObjectStorageAttributeType) => void
   onClose: () => void
 }
 
-export default function EditObjectStorageSpec({spec, onClose, onEdit}: ObectStorageSpecProps) {
-  const { register, handleSubmit, setValue, watch } = useForm<ObjectStorageSpecType>({
-    defaultValues: spec
+export default function EditObjectStorageAttribute({attribute, onClose, onEdit}: ObectStorageAttributeProps) {
+  const { register, handleSubmit, setValue, watch } = useForm<ObjectStorageAttributeType>({
+    defaultValues: attribute
   })
 
   const watchedValues = watch()
   const [hasChanges, setHasChanges] = useState(false)
   const [filteredOptions, setFilteredOptions] = useState<any[]>([])
-  const [selectedSpec, setSelectedSpec] = useState({
-    price: spec.price,
-    ratelimit_ops_secs: spec.ratelimit_ops_secs,
-    ratelimit_ops_bytes: spec.ratelimit_ops_bytes,
-    disk_gb_price: spec.disk_gb_price,
-    bw_gb_price: spec.bw_gb_price,
+  const [selectedAttribute, setSelectedAttribute] = useState({
+    price: attribute.price,
+    ratelimit_ops_secs: attribute.ratelimit_ops_secs,
+    ratelimit_ops_bytes: attribute.ratelimit_ops_bytes,
+    disk_gb_price: attribute.disk_gb_price,
+    bw_gb_price: attribute.bw_gb_price,
   })
 
   useEffect(() => {
-    if(spec.tier_id) {
-      filterObjectOtions(spec.tier_id)
+    if(attribute.tier_id) {
+      filterObjectOtions(attribute.tier_id)
     }
   }, [])
 
   useEffect(() => {
-    const hasAnyChanges = Object.keys(spec).some(key => {
-      const field = key as keyof ObjectStorageSpecType
-      return watchedValues[field] !== spec[field]
+    const hasAnyChanges = Object.keys(attribute).some(key => {
+      const field = key as keyof ObjectStorageAttributeType
+      return watchedValues[field] !== attribute[field]
     })
     setHasChanges(hasAnyChanges)
-  }, [watchedValues, spec])
+  }, [watchedValues, attribute])
 
-  const isValueChanged = (property: keyof ObjectStorageSpecType) => {
+  const isValueChanged = (property: keyof ObjectStorageAttributeType) => {
     const currValue = watch(property)
-    return currValue !== spec[property]
+    return currValue !== attribute[property]
   }
 
   const planOptions = ObjectPlan.map(plan => ({
@@ -89,7 +89,7 @@ export default function EditObjectStorageSpec({spec, onClose, onEdit}: ObectStor
       setValue('disk_gb_price', selected.disk_gb_price)
       setValue('bw_gb_price', selected.bw_gb_price)
       
-      setSelectedSpec({
+      setSelectedAttribute({
         price: selected.price,
         ratelimit_ops_secs: selected.ratelimit_ops_secs,
         ratelimit_ops_bytes: selected.ratelimit_ops_bytes,
@@ -111,7 +111,7 @@ export default function EditObjectStorageSpec({spec, onClose, onEdit}: ObectStor
     filterObjectOtions(tier_id)
   }
   
-  const onSubmit = (data: ObjectStorageSpecType) => {
+  const onSubmit = (data: ObjectStorageAttributeType) => {
     if(onEdit) {
       onEdit(data)
     }
@@ -144,7 +144,7 @@ export default function EditObjectStorageSpec({spec, onClose, onEdit}: ObectStor
         </div>
       </div>
 
-      <SpecSection>
+      <AttributeSection>
         <InfoItem label="Plan">
           <SelectBox 
             option={planOptions}
@@ -166,41 +166,41 @@ export default function EditObjectStorageSpec({spec, onClose, onEdit}: ObectStor
             onChange={handleRegionChange}
           />
         </InfoItem>
-      </SpecSection>
+      </AttributeSection>
 
-      <SpecSection>
+      <AttributeSection>
         <InfoItem label="Price">
           <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2", 
             isValueChanged('price') ? "text-blue-500 font-medium" : "")}>
-            ${selectedSpec.price}
+            ${selectedAttribute.price}
             <p className="text-[11px] text-gray-400">per Month</p>
           </div>
         </InfoItem>
         <InfoItem label="Storage Price">
           <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2",
             isValueChanged('disk_gb_price') ? "text-blue-500 font-medium" : "")}>
-            ${selectedSpec.disk_gb_price}
+            ${selectedAttribute.disk_gb_price}
             <p className="text-[11px] text-gray-400">over 1000GB</p>
           </div>
         </InfoItem>
         <InfoItem label="Transfer Price">
           <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2",
             isValueChanged('bw_gb_price') ? "text-blue-500 font-medium" : "")}>
-            ${selectedSpec.bw_gb_price}
+            ${selectedAttribute.bw_gb_price}
             <p className="text-[11px] text-gray-400">over 1000GB</p>
           </div>
         </InfoItem>
         <InfoItem label="Rate Limit Ops/Sec">
           <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2",
             isValueChanged('ratelimit_ops_secs') ? "text-blue-500 font-medium" : "")}>
-            {selectedSpec.ratelimit_ops_secs}
+            {selectedAttribute.ratelimit_ops_secs}
             <p className="text-[11px] text-gray-400">ops/sec</p>
           </div>
         </InfoItem>
         <InfoItem label="Rate Limit Ops/bytes">
           <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm gap-2",
             isValueChanged('ratelimit_ops_bytes') ? "text-blue-500 font-medium" : "")}>
-            {selectedSpec.ratelimit_ops_bytes}
+            {selectedAttribute.ratelimit_ops_bytes}
             <p className="text-[11px] text-gray-400">bytes/sec</p>
           </div>
         </InfoItem>
@@ -211,7 +211,7 @@ export default function EditObjectStorageSpec({spec, onClose, onEdit}: ObectStor
             {...register('label')}
           />
         </InfoItem>
-      </SpecSection>
+      </AttributeSection>
     </form>
   )
 }

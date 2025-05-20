@@ -1,6 +1,6 @@
 import Image from "next/image"
-import { SpecSection, InfoItem } from "../specBar"
-import { FirewallSpecType, FirewallRuleType } from "@/lib/projectDB"
+import { AttributeSection, InfoItem } from "../attributeBar"
+import { FirewallAttributeType, FirewallRuleType } from "@/lib/projectDB"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,13 +8,13 @@ import { cn } from "@/lib/utils"
 import { useState } from "react"
 import AddNewwFirewallRule from "./addFirewallRule"
 
-interface FireWallSpecProps {
-  onAdd: (data: FirewallSpecType) => void
+interface FireWallAttributeProps {
+  onAdd: (data: FirewallAttributeType) => void
   onClose: () => void
 }
 
-export default function AddNewFirewall({ onAdd, onClose }: FireWallSpecProps) {
-  const { register, handleSubmit, setValue, watch } = useForm<FirewallSpecType>({
+export default function AddNewFirewall({ onAdd, onClose }: FireWallAttributeProps) {
+  const { register, handleSubmit, setValue, watch } = useForm<FirewallAttributeType>({
     defaultValues: {
       label: '',
       rules: []
@@ -39,7 +39,7 @@ export default function AddNewFirewall({ onAdd, onClose }: FireWallSpecProps) {
     setHasChanges(true)
   }
   
-  const onSubmit = (data: FirewallSpecType) => {
+  const onSubmit = (data: FirewallAttributeType) => {
     if (onAdd) {
       onAdd(data)
     }
@@ -73,7 +73,7 @@ export default function AddNewFirewall({ onAdd, onClose }: FireWallSpecProps) {
         </div>
       </div>
 
-      <SpecSection>
+      <AttributeSection>
         <InfoItem label="Description">
           <Input
             className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm")}
@@ -81,9 +81,9 @@ export default function AddNewFirewall({ onAdd, onClose }: FireWallSpecProps) {
             onChange={() => setHasChanges(true)}
           />
         </InfoItem>
-      </SpecSection>
+      </AttributeSection>
 
-      <SpecSection>
+      <AttributeSection>
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-xs text-gray-500">Rules</h3>
           <Button 
@@ -129,7 +129,7 @@ export default function AddNewFirewall({ onAdd, onClose }: FireWallSpecProps) {
             No rules added yet. Click "Add Rule" to create one.
           </div>
         )}
-      </SpecSection>
+      </AttributeSection>
       
       {isAddRuleModalOpen && (
         <AddNewwFirewallRule

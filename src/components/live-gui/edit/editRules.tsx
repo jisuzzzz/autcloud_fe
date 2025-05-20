@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { FirewallRuleType } from "@/lib/projectDB"
 import { useForm } from 'react-hook-form'
 import { cn } from "@/lib/utils"
-import { SpecSection, InfoItem } from "../specBar"
+import { AttributeSection, InfoItem } from "../attributeBar"
 
 interface FirewallModalProps {
   onClose: () => void
@@ -93,7 +93,7 @@ export default function EditFirewallRule({ onClose, rule, onSave }: FirewallModa
           </div>
         </div>
 
-        <SpecSection>
+        <AttributeSection>
           <InfoItem label="Protocol">
             <SelectBox 
               option={PROTOCOL_OPTIONS} 
@@ -149,7 +149,7 @@ export default function EditFirewallRule({ onClose, rule, onSave }: FirewallModa
               {...register('notes')}
             />
           </InfoItem>
-        </SpecSection>
+        </AttributeSection>
         
       </div>
     </Modal>

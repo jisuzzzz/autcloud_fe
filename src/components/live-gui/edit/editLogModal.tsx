@@ -6,7 +6,7 @@ interface ResourceHistory {
   userName: string
   status: 'added' | 'modified' | 'removed'
   label: string
-  specChanges: Record<string, {
+  attributeChanges: Record<string, {
     prevValue?: any
     currValue?: any
   } | any>
@@ -81,7 +81,7 @@ function LogCard({ title, prev, curr, status }: LogCardProps) {
 }
 
 export default function EditLogModal({ resourceHistory, onClose }: EditLogModalProps) {
-  const filteredChanges = Object.entries(resourceHistory.specChanges).filter(
+  const filteredChanges = Object.entries(resourceHistory.attributeChanges).filter(
     ([key]) => !key.toLowerCase().includes('id')
   )
 

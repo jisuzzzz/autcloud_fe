@@ -1,18 +1,18 @@
 'use client';
 import { cn } from '@/lib/utils';
-import ComputeSpec from './specs/compute';
-import DatabaseSpec from './specs/database';
-import BlockStorageSpec from './specs/block-storage';
-import ObjectStorageSpec from './specs/object-storage';
-import FirewallSpec from './specs/firewall';
+import ComputeAttribute from './attribute/compute';
+import DatabaseAttribute from './attribute/database';
+import BlockStorageAttribute from './attribute/block-storage';
+import ObjectStorageAttribute from './attribute/object-storage';
+import FirewallAttribute from './attribute/firewall';
 import { useState, useEffect } from 'react';
 import { useSelf } from '@liveblocks/react';
 import {
-  ComputeSpecType,
-  DatabaseSpecType,
-  BlockStorageSpecType,
-  ObjectStorageSpecType,
-  FirewallSpecType,
+  ComputeAttributeType,
+  DatabaseAttributeType,
+  BlockStorageAttributeType,
+  ObjectStorageAttributeType,
+  FirewallAttributeType,
   ResourceNodeType,
 } from '@/lib/projectDB';
 import Image from 'next/image';
@@ -53,7 +53,7 @@ export function InfoItem({
   );
 }
 
-export function SpecSection({
+export function AttributeSection({
   children,
   className = '',
 }: {
@@ -69,11 +69,11 @@ export function SpecSection({
   );
 }
 
-interface SpecBarProps {
+interface AttributeBarProps {
   setEdges: (updater: (prev: Edge[]) => Edge[]) => void
 }
 
-export default function SpecBar({setEdges}: SpecBarProps) {
+export default function AttributeBar({setEdges}: AttributeBarProps) {
 
   const [selectedResource, setSelectedResource] = useState<Node | null>(null)
   const me = useSelf();
@@ -84,8 +84,8 @@ export default function SpecBar({setEdges}: SpecBarProps) {
 
     const yNodes = yDoc.getArray<Y.Map<any>>('nodes')
 
-    const updateSpecBar = () => {
-      const specBarNodes = yNodes.toArray().map(ynode => ({
+    const updateAttributeBar = () => {
+      const attributeBarNodes = yNodes.toArray().map(ynode => ({
         id: ynode.get('id') as string,
         type: ynode.get('type') as string,
         position: ynode.get('position'),
@@ -94,16 +94,16 @@ export default function SpecBar({setEdges}: SpecBarProps) {
       
       const selectedNodeId = (me?.presence.selectedNodes as string[])?.[0]
       if (selectedNodeId) {
-        const resource = specBarNodes.find((r) => r.id === selectedNodeId)
+        const resource = attributeBarNodes.find((r) => r.id === selectedNodeId)
         setSelectedResource(resource || null)
       } else {
         setSelectedResource(null)
       }
     }
 
-    updateSpecBar()
+    updateAttributeBar()
 
-    const observer = () => updateSpecBar()
+    const observer = () => updateAttributeBar()
     yNodes.observeDeep(observer)
 
     return () => {
@@ -124,7 +124,7 @@ export default function SpecBar({setEdges}: SpecBarProps) {
             className="rounded-xs"
           ></Image>
           <h3 className="text-xs font-medium">
-            {selectedResource?.data?.spec.label}
+            {selectedResource?.data?.attribute.label}
           </h3>
         </div>
         <StartEditButton
@@ -133,23 +133,23 @@ export default function SpecBar({setEdges}: SpecBarProps) {
         />
       </div>
       {selectedResource.data.type === 'Compute' && (
-        <ComputeSpec spec={selectedResource.data.spec as ComputeSpecType} />
+        <ComputeAttribute attribute={selectedResource.data.attribute as ComputeAttributeType} />
       )}
       {selectedResource.data.type === 'Database' && (
-        <DatabaseSpec spec={selectedResource.data.spec as DatabaseSpecType} />
+        <DatabaseAttribute attribute={selectedResource.data.attribute as DatabaseAttributeType} />
       )}
       {selectedResource.data.type === 'BlockStorage' && (
-        <BlockStorageSpec
-          spec={selectedResource.data.spec as BlockStorageSpecType}
+        <BlockStorageAttribute
+          attribute={selectedResource.data.attribute as BlockStorageAttributeType}
         />
       )}
       {selectedResource.data.type === 'ObjectStorage' && (
-        <ObjectStorageSpec
-          spec={selectedResource.data.spec as ObjectStorageSpecType}
+        <ObjectStorageAttribute
+          attribute={selectedResource.data.attribute as ObjectStorageAttributeType}
         />
       )}
       {selectedResource.data.type === 'FireWall' && (
-        <FirewallSpec spec={selectedResource.data.spec as FirewallSpecType} />
+        <FirewallAttribute attribute={selectedResource.data.attribute as FirewallAttributeType} />
       )}
     </div>
   ) : null;

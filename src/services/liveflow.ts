@@ -124,15 +124,15 @@ export const LiveFlowService = {
         userId: userId,
         userName: userName,
         status: 'added',
-        label: node.data.spec.label,
-        specChanges: {}
+        label: node.data.attribute.label,
+        attributeChanges: {}
       }
 
-      const specProperties = Object.keys(node.data.spec)
-      specProperties.forEach(property => {
-        changes[node.id].specChanges[property] = {
+      const attributeProperties = Object.keys(node.data.attribute)
+      attributeProperties.forEach(property => {
+        changes[node.id].attributeChanges[property] = {
           prevValue: null,
-          currValue: node.data.spec[property]
+          currValue: node.data.attribute[property]
         }
       })
       
@@ -166,13 +166,13 @@ export const LiveFlowService = {
           userId: userId,
           userName:userName,
           status: 'removed',
-          label: currData.spec.label,
-          specChanges: {}
+          label: currData.attribute.label,
+          attributeChanges: {}
         }
-        const specProperties = Object.keys(currData.spec)
-        specProperties.forEach(property => {
-          changes[nodeId].specChanges[property] = {
-            prevValue: currData.spec[property],
+        const attributeProperties = Object.keys(currData.attribute)
+        attributeProperties.forEach(property => {
+          changes[nodeId].attributeChanges[property] = {
+            prevValue: currData.attribute[property],
             currValue: null
           }
         })
@@ -212,42 +212,42 @@ export const LiveFlowService = {
           userName: userName,
           status: 'unchanged',
           label: 'label',
-          specChanges: {}
+          attributeChanges: {}
         }
       }
       
       let changeFlag = false
       
       Object.entries(changes).forEach(([property, newValue]) => {
-        const oldValue =  prevData.spec[property]
+        const oldValue =  prevData.attribute[property]
 
         if(oldValue !== newValue) {
           changeFlag = true
 
-          historyChanges[nodeId].specChanges[property] = {
+          historyChanges[nodeId].attributeChanges[property] = {
             prevValue: oldValue,
             currValue: newValue
           }
-          historyChanges[nodeId].specChanges[property].currValue = newValue
+          historyChanges[nodeId].attributeChanges[property].currValue = newValue
         } else if (oldValue === newValue) {
-          delete historyChanges[nodeId].specChanges[property]
+          delete historyChanges[nodeId].attributeChanges[property]
         }
       })
 
       if(changeFlag) {
         historyChanges[nodeId].status = 'modified'
         historyChanges[nodeId].userName = userName
-        historyChanges[nodeId].label = prevData.spec.label
+        historyChanges[nodeId].label = prevData.attribute.label
 
-        const updatedSpec = {...prevData.spec}
+        const updatedAttribute = {...prevData.attribute}
         Object.entries(changes).forEach(([field, newValue]) => {
-          updatedSpec[field] = newValue
+          updatedAttribute[field] = newValue
         })
 
         ynode.node.set('data', {
           ...prevData,
           status: 'edit',
-          spec: updatedSpec
+          attribute: updatedAttribute
         })
 
         if(prevData.type === 'BlockStorage' && 'attached_to' in changes) {
@@ -315,8 +315,8 @@ export const LiveFlowService = {
                 userId: userId,
                 userName: userName,
                 status: 'removed',
-                label: actionNodeData.spec.label,
-                specChanges: {...actionNodeData.spec}
+                label: actionNodeData.attribute.label,
+                attributeChanges: {...actionNodeData.attribute}
               }
             }
           }
@@ -340,8 +340,8 @@ export const LiveFlowService = {
                 userId: userId,
                 userName: userName,
                 status: 'added',
-                label: actionNodeData.spec.label,
-                specChanges: {...actionNodeData.spec}
+                label: actionNodeData.attribute.label,
+                attributeChanges: {...actionNodeData.attribute}
               }
             }
           }
@@ -353,17 +353,17 @@ export const LiveFlowService = {
             if(!actionNode) return
         
             const currData = actionNode.node.get('data')
-            const specChanges = changes[actionNodeId].specChanges
-            const revertedSpec = {...currData.spec}
+            const attributeChanges = changes[actionNodeId].attributeChanges
+            const revertedAttribute = {...currData.attribute}
         
-            Object.entries(specChanges).forEach(([key, value]) => {
-              revertedSpec[key] = value.prevValue
+            Object.entries(attributeChanges).forEach(([key, value]) => {
+              revertedAttribute[key] = value.prevValue
             })
         
             actionNode.node.set('data', {
               ...currData,
               status: 'add',
-              spec: revertedSpec
+              attribute: revertedAttribute
             })
             delete changes[actionNodeId]
           }
@@ -374,17 +374,24 @@ export const LiveFlowService = {
     })
   },
 
-  initAllYDoc: (yDoc:Y.Doc) => {
-    const yNodes = yDoc.getArray<Y.Map<any>>('nodes')
-    const yEdges = yDoc.getArray<Edge>('edges')
-    const userActionHistory = yDoc.getMap<UserStack>('userActionHistory')
-    const projectHistory = yDoc.getMap<ProjectChanges>('projectHistory') 
-    yNodes.delete(0, yNodes.length)
-    yEdges.delete(0, yEdges.length)
-    for (const key of userActionHistory.keys()) {
-      userActionHistory.delete(key)
-    }
-    projectHistory.delete('nodes')
+  initAllYDoc: (yDoc: Y.Doc, yProvider: any) => {
+
+    yDoc.gcFilter = () => true 
+    yDoc.transact(() => {
+
+      const yNodes = yDoc.getArray<Y.Map<any>>('nodes')
+      const yEdges = yDoc.getArray<Edge>('edges')
+      const userActionHistory = yDoc.getMap<UserStack>('userActionHistory')
+      const projectHistory = yDoc.getMap<ProjectChanges>('projectHistory')
+  
+      yNodes.delete(0, yNodes.length)
+      yEdges.delete(0, yEdges.length)
+      userActionHistory.clear()
+      projectHistory.clear()
+    })
+
+    yProvider.disconnect()
+    yDoc.destroy()
   },
 
   CreateCommandList: (yDoc: Y.Doc, userId?: string) => {
@@ -446,19 +453,19 @@ export const LiveFlowService = {
         }
 
         if(node.data.type === 'BlockStorage') {
-          const prevAttachTo = changes[node.id]?.specChanges?.attached_to?.prevValue?.toString()
+          const prevAttachTo = changes[node.id]?.attributeChanges?.attached_to?.prevValue?.toString()
           if(prevAttachTo) {
             const firstAttach = CommandService.attachCommand(node,prevAttachTo)
             commandList.push(firstAttach)
             const detachCommand = CommandService.detachCommand(node)
             commandList.push(detachCommand)
           }
-          const currAttachTo = node.data.spec.attached_to
+          const currAttachTo = node.data.attribute.attached_to
           const attachCommand = CommandService.attachCommand(node, currAttachTo)
           commandList.push(attachCommand)
         }
 
-        if (node.data.type === 'FireWall' && node.data.spec.rules) {
+        if (node.data.type === 'FireWall' && node.data.attribute.rules) {
           const ruleCommands = CommandService.createRuleCommands(node)
           commandList.push(...ruleCommands)
         }

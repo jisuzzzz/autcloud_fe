@@ -1,6 +1,6 @@
 'use client'
 import Modal from "../../custom/modal"
-import { BlockStorageSpecType, ComputeSpecType, DatabaseSpecType, FirewallSpecType, ObjectStorageSpecType } from "@/lib/projectDB"
+import { BlockStorageAttributeType, ComputeAttributeType, DatabaseAttributeType, FirewallAttributeType, ObjectStorageAttributeType } from "@/lib/projectDB"
 import { useYjsStore } from '@/lib/useYjsStore'
 import { useSelf } from "@liveblocks/react"
 import { LiveFlowService } from "@/services/liveflow"
@@ -11,7 +11,7 @@ import AddNewObjectStorage from "./addObject"
 import AddNewDatabase from "./addDB"
 import AddNewFirewall from "./addFirewall"
 
-type SpecType = ComputeSpecType | DatabaseSpecType | BlockStorageSpecType | ObjectStorageSpecType | FirewallSpecType
+type AttributeType = ComputeAttributeType | DatabaseAttributeType | BlockStorageAttributeType | ObjectStorageAttributeType | FirewallAttributeType
 
 interface EditModalProps{
   onClose: () => void
@@ -23,7 +23,7 @@ export default function AddNewResourceModal({onClose, type, onConnect}: EditModa
   const {yDoc} = useYjsStore() 
   const me = useSelf()
 
-  const handleAdd = (addedSpec: SpecType) => {
+  const handleAdd = (addedAttribute: AttributeType) => {
     if(!yDoc || !me?.id || !me.info?.name) return
 
     const centerPosition = {
@@ -38,14 +38,14 @@ export default function AddNewResourceModal({onClose, type, onConnect}: EditModa
       data: { 
         type: type,
         status: 'add',
-        spec: addedSpec
+        attribute: addedAttribute
       },
     }
     
     LiveFlowService.addNode(newNode, me.id, me.info.name, yDoc)
     
-    if(type === 'BlockStorage' && (addedSpec as BlockStorageSpecType).attached_to) {
-      const computeId = (addedSpec as BlockStorageSpecType).attached_to
+    if(type === 'BlockStorage' && (addedAttribute as BlockStorageAttributeType).attached_to) {
+      const computeId = (addedAttribute as BlockStorageAttributeType).attached_to
       const connection: Connection = {
         source: newNode.id,
         target: computeId,
@@ -55,8 +55,8 @@ export default function AddNewResourceModal({onClose, type, onConnect}: EditModa
       onConnect(connection)
     }
 
-    if (type === 'Compute' && (addedSpec as ComputeSpecType).group_id !== '') {
-      const firewallId = (addedSpec as ComputeSpecType).group_id
+    if (type === 'Compute' && (addedAttribute as ComputeAttributeType).group_id !== '') {
+      const firewallId = (addedAttribute as ComputeAttributeType).group_id
       if(!firewallId) return
       const connection: Connection = {
         source: newNode.id,

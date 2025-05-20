@@ -13,7 +13,7 @@ export default async function ProjectIdPage({
 
   return (
     <>
-      {/* <GetSessionClient project_id={param.projectId} /> */}
+      <GetSessionClient project_id={param.projectId} />
       <Room projectId={param.projectId}>
         <YjsReactFlow 
           project1={project || {

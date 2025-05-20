@@ -1,7 +1,7 @@
 import Image from "next/image"
-import { SpecSection, InfoItem } from "../specBar"
+import { AttributeSection, InfoItem } from "../attributeBar"
 import { Edit, Trash2 } from "lucide-react"
-import { FirewallSpecType, FirewallRuleType } from "@/lib/projectDB"
+import { FirewallAttributeType, FirewallRuleType } from "@/lib/projectDB"
 import { AddRuleButton } from "@/components/custom/actionButtons"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
@@ -10,15 +10,15 @@ import { cn } from "@/lib/utils"
 import { useState } from "react"
 import EditFirewallRule from "./editRules"
 
-interface FireWallSpecProps {
-  spec: FirewallSpecType
-  onEdit: (data: FirewallSpecType) => void
+interface FireWallAttributeProps {
+  attribute: FirewallAttributeType
+  onEdit: (data: FirewallAttributeType) => void
   onClose: () => void
 }
 
-export default function EditFirewallSpec({spec, onEdit, onClose}:FireWallSpecProps) {
-  const { register, handleSubmit, setValue, watch } = useForm<FirewallSpecType>({
-    defaultValues: spec
+export default function EditFirewallAttribute({attribute, onEdit, onClose}:FireWallAttributeProps) {
+  const { register, handleSubmit, setValue, watch } = useForm<FirewallAttributeType>({
+    defaultValues: attribute
   })
 
   const watchedValues = watch()
@@ -72,7 +72,7 @@ export default function EditFirewallSpec({spec, onEdit, onClose}:FireWallSpecPro
     handleRuleModalClose()
   }
   
-  const onSubmit = (data:FirewallSpecType) => {
+  const onSubmit = (data:FirewallAttributeType) => {
     if(onEdit) {
       onEdit(data)
     }
@@ -105,7 +105,7 @@ export default function EditFirewallSpec({spec, onEdit, onClose}:FireWallSpecPro
         </div>
       </div>
 
-      <SpecSection>
+      <AttributeSection>
         <InfoItem label="Description">
           <Input
             className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm")}
@@ -113,9 +113,9 @@ export default function EditFirewallSpec({spec, onEdit, onClose}:FireWallSpecPro
             onChange={() => setHasChanges(true)}
           />
         </InfoItem>
-      </SpecSection>
+      </AttributeSection>
 
-      <SpecSection>
+      <AttributeSection>
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-xs text-gray-500">Rules</h3>
           <AddRuleButton onSave={handleAddRule} />
@@ -163,7 +163,7 @@ export default function EditFirewallSpec({spec, onEdit, onClose}:FireWallSpecPro
             </div>
           </div>
         ))}
-      </SpecSection>
+      </AttributeSection>
       
       {isEditRuleModalOpen && editRuleIndex !== null && (
         <EditFirewallRule

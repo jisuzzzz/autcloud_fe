@@ -1,8 +1,8 @@
 'use client'
 import Image from "next/image"
-import { InfoItem, SpecSection, InfoIcon } from "../specBar"
+import { InfoItem, AttributeSection, InfoIcon } from "../attributeBar"
 import SelectBox from "@/components/custom/selectBox"
-import { BlockStorageSpecType } from "@/lib/projectDB"
+import { BlockStorageAttributeType } from "@/lib/projectDB"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { RegionsArray } from "@/lib/resourceOptions"
@@ -14,7 +14,7 @@ import * as Y from 'yjs'
 
 
 interface AddNewBlockStorageProps {
-  onAdd: (data: BlockStorageSpecType) => void
+  onAdd: (data: BlockStorageAttributeType) => void
   onClose: () => void
 }
 
@@ -63,12 +63,12 @@ export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageP
   const computeNodes = nodes
     .filter(node => 
       node.data.type === 'Compute' &&
-      node.data.spec.status !== 'remove' &&
+      node.data.attribute.status !== 'remove' &&
       !connectedComputeIds.includes(node.id)
     )
     .map(node => ({
       value: node.id,
-      label: node.data.spec.label
+      label: node.data.attribute.label
     }))
 
   const handleAttachChange = (computeId: string) => {
@@ -89,7 +89,7 @@ export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageP
     setValue('region', selectedRegion.city)
   }
 
-  const onSubmit = (data:BlockStorageSpecType) => {
+  const onSubmit = (data:BlockStorageAttributeType) => {
     if(onAdd){
       onAdd(data)
     }
@@ -122,7 +122,7 @@ export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageP
         </div>
       </div>
 
-      <SpecSection>
+      <AttributeSection>
         <InfoItem label="Region">
           <div className="flex flex-col w-full">
             <SelectBox 
@@ -147,9 +147,9 @@ export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageP
           {!attached_to && <p className="text-xs text-blue-400 mt-1">* Required field</p>}
           <p className="text-[11px] text-gray-500">on this page, GB = 1024^3 bytes</p>
         </div>
-        </SpecSection>
+        </AttributeSection>
 
-        <SpecSection>
+        <AttributeSection>
         <InfoItem label="Type">{defaultValues.type}</InfoItem>
 
         <div className="space-y-2">
@@ -163,9 +163,9 @@ export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageP
           <p className="text-xs">{defaultValues.size}</p>
         </InfoItem>
 
-      </SpecSection>
+      </AttributeSection>
 
-      <SpecSection>
+      <AttributeSection>
         <InfoItem label="Label">
           <div className="flex flex-col w-full">
             <Input
@@ -177,7 +177,7 @@ export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageP
           </div>
 
         </InfoItem>
-      </SpecSection>
+      </AttributeSection>
     </form>
   )
 }

@@ -12,9 +12,9 @@ import { useYjsStore } from '@/lib/useYjsStore'
 import * as Y from 'yjs'
 import { useMyPresence, useSelf } from '@liveblocks/react'
 import ToolBar from './toolBar'
-import SpecBar from './specBar'
+import AttributeBar from './attributeBar'
 import FlowHeader from './flowHeader'
-import { ResourceConfig, ProjectTemplate, BlockStorageSpecType, ComputeSpecType } from '@/lib/projectDB'
+import { ResourceConfig, ProjectTemplate, BlockStorageAttributeType, ComputeAttributeType } from '@/lib/projectDB'
 import { LiveFlowService } from '@/services/liveflow'
 import Loading from '../custom/loading'
 import { DndContext, DragEndEvent, useDroppable } from '@dnd-kit/core'
@@ -26,29 +26,15 @@ interface YjsReactFlowProps {
 const nodeTypes = { resource: ResourceNode }
 const edgeTypes = { edge: ArrowEdge }
 
-const convertToNodes = (resources: ResourceConfig[]): Node[] => {
-  return resources.map(resource => ({
-    id: resource.id,
-    // react-flow node의 랜더링 지정 타입
-    type: 'resource',
-    position: { x: resource.position.x, y: resource.position.y },
-    data: { 
-      type: resource.type,
-      status: resource.status,
-      spec: resource.spec
-    }
-  }))
-}
-
-const convertToEdges = (resources: ResourceConfig[]): Edge[] => {
+const convertToNodesAndEdges = (resources: ResourceConfig[]): { nodes: Node[], edges: Edge[] } => {
   const edges: Edge[] = []
-  resources.forEach(resource => {
-    if(resource.type === 'BlockStorage' && (resource.spec as BlockStorageSpecType).attached_to) {
-      
+  const nodes = resources.map(resource => {
+    if(resource.type === 'BlockStorage' && (resource.attribute as BlockStorageAttributeType).attached_to) {
+    
       const newEdge: Edge = {
         id: `e-${resource.id}-${Date.now()}`,
         source: resource.id,
-        target: (resource.spec as BlockStorageSpecType).attached_to!,
+        target: (resource.attribute as BlockStorageAttributeType).attached_to!,
         sourceHandle: 'right',
         targetHandle: 'left',
         type: 'edge',
@@ -61,11 +47,11 @@ const convertToEdges = (resources: ResourceConfig[]): Edge[] => {
       }
       edges.push(newEdge)
     }
-    if (resource.type === 'Compute' && (resource.spec as ComputeSpecType).group_id !== '') {
+    if (resource.type === 'Compute' && (resource.attribute as ComputeAttributeType).group_id !== '') {
       const newEdge: Edge = {
         id: `e-${resource.id}-${Date.now()}`,
         source: resource.id,
-        target: (resource.spec as ComputeSpecType).group_id!,
+        target: (resource.attribute as ComputeAttributeType).group_id!,
         sourceHandle: 'top',
         targetHandle: 'bottom',
         type: 'edge',
@@ -78,15 +64,25 @@ const convertToEdges = (resources: ResourceConfig[]): Edge[] => {
       }
       edges.push(newEdge)
     }
+    return {
+      id: resource.id,
+      type: 'resource',
+      position: { x: resource.position.x, y: resource.position.y },
+      data: { 
+        type: resource.type,
+        status: resource.status,
+        attribute: resource.attribute
+      }
+    }
   })
-  return edges
+  return {nodes, edges}
 }
 
 export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
 
   const { initial_resources, name, id } = project1
 
-  const { yDoc, isConnected }  = useYjsStore()
+  const { yDoc, isConnected, yProvider }  = useYjsStore()
   const user = useSelf()
   const [myPresence, setMyPresence] = useMyPresence()
 
@@ -95,6 +91,7 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
 
   const [clipboard, setClipboard] = useState<{nodes: Node[]} | null>(null)
   const [occupiedNode, setoccupiedNode] = useState<Node[]>([])
+
 
   // const { setNodeRef } = useDroppable({ id: 'flow-drop' })
 
@@ -120,7 +117,7 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
 //       data: {
 //         label: resource.label,
 //         type: resource.type,
-//         spec: {}
+//         attribute: {}
 //       }
 //     }
 //   ])
@@ -133,14 +130,13 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
     if (!yDoc || !user?.id || !isConnected) return
 
     if(yNodes.length === 0) {
-      const initialNodes = convertToNodes(initial_resources)
+      const { nodes: initialNodes, edges: initialEdges } = convertToNodesAndEdges(initial_resources)
       setNodes(initialNodes)
-      const initialEdges = convertToEdges(initial_resources)
       setEdges(initialEdges)
       
       LiveFlowService.initNodes(initialNodes, initialEdges, yDoc)
     } else {
-      // YMap을 ReactFlow Node로 변환
+
       const sharedNodes = yNodes.toArray().map(nodeMap => ({
         id: nodeMap.get('id'),
         type: nodeMap.get('type'),
@@ -253,15 +249,15 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
             const toPaste = clipboard.nodes[0]
 
             const nodeId = `${toPaste.id}-${Date.now()}`
-            const baseSpec = {
-              ...toPaste.data.spec,
-              label: `${toPaste.data.spec.label}-copy`,
+            const baseAttribute = {
+              ...toPaste.data.attribute,
+              label: `${toPaste.data.attribute.label}-copy`,
             }
             if(toPaste.data.type === 'Compute') {
-              baseSpec.group_id = ''
+              baseAttribute.group_id = ''
             }
             if(toPaste.data.type === 'BlockStorage') {
-              baseSpec.attach_to = ''
+              baseAttribute.attach_to = ''
             }
             const newNode = {
               id: nodeId,
@@ -272,7 +268,7 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
               },
               data: { 
                 ...toPaste.data,
-                spec: baseSpec,
+                attribute: baseAttribute,
                 status: 'add'
               },
               selected: false
@@ -307,7 +303,7 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
             break
 
           case 'k':
-            LiveFlowService.initAllYDoc(yDoc)
+            LiveFlowService.initAllYDoc(yDoc, yProvider)
         }
       }
     }
@@ -332,7 +328,7 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
         <ToolBar 
           onConnect={onConnect}
         />
-        <SpecBar 
+        <AttributeBar 
           setEdges={setEdges}
         />
         <ReactFlow

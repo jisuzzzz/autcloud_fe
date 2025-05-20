@@ -1,17 +1,17 @@
 'use client'
 import Modal from "../../custom/modal"
-import EditComputeSpec from "./editCompute"
-import { BlockStorageSpecType, ComputeSpecType, DatabaseSpecType, FirewallSpecType, ObjectStorageSpecType, ResourceNodeType } from "@/lib/projectDB"
+import EditComputeAttribute from "./editCompute"
+import { BlockStorageAttributeType, ComputeAttributeType, DatabaseAttributeType, FirewallAttributeType, ObjectStorageAttributeType, ResourceNodeType } from "@/lib/projectDB"
 import { useYjsStore } from '@/lib/useYjsStore'
 import { useSelf } from "@liveblocks/react"
 import { LiveFlowService } from "@/services/liveflow"
-import EditDatabaseSpec from "./editDatabase"
-import EditBlockStorageSpec from "./editBlock"
-import EditObjectStorageSpec from "./editObject"
-import EditFirewallSpec from "./editFirewall"
+import EditDatabaseAttribute from "./editDatabase"
+import EditBlockStorageAttribute from "./editBlock"
+import EditObjectStorageAttribute from "./editObject"
+import EditFirewallAttribute from "./editFirewall"
 import { Node, Edge } from "reactflow"
 
-export type SpecType = ComputeSpecType | DatabaseSpecType | BlockStorageSpecType | ObjectStorageSpecType | FirewallSpecType
+export type AttributeType = ComputeAttributeType | DatabaseAttributeType | BlockStorageAttributeType | ObjectStorageAttributeType | FirewallAttributeType
 
 interface EditModalProps{
   onClose: () => void
@@ -23,7 +23,7 @@ export default function EditModal({onClose, resource, setEdges }: EditModalProps
   const {yDoc} = useYjsStore() 
   const me = useSelf()
 
-  const handleEdit = (updateSpec: SpecType) => {
+  const handleEdit = (updateAttribute: AttributeType) => {
 
     if(!yDoc || !me?.id || !me.info?.name) return
     
@@ -33,11 +33,11 @@ export default function EditModal({onClose, resource, setEdges }: EditModalProps
     const changes: Record<string, string> = {}
 
 
-    Object.keys(updateSpec).forEach(key => {
-      const field = key as keyof SpecType
-      const newValue = typeof updateSpec[field] === 'boolean' 
-        ? String(updateSpec[field]) 
-        : updateSpec[field] as string
+    Object.keys(updateAttribute).forEach(key => {
+      const field = key as keyof AttributeType
+      const newValue = typeof updateAttribute[field] === 'boolean' 
+        ? String(updateAttribute[field]) 
+        : updateAttribute[field] as string
 
       changes[field] = newValue
     })
@@ -66,15 +66,15 @@ export default function EditModal({onClose, resource, setEdges }: EditModalProps
   const renderEditComponent = () => {
     switch(resource.data.type) {
       case 'Compute':
-        return <EditComputeSpec spec={resource.data.spec as ComputeSpecType} onEdit={handleEdit} onClose={onClose} setEdges={setEdges} id={resource.id} />
+        return <EditComputeAttribute attribute={resource.data.attribute as ComputeAttributeType} onEdit={handleEdit} onClose={onClose} setEdges={setEdges} id={resource.id} />
       case 'Database':
-        return <EditDatabaseSpec spec={resource.data.spec as DatabaseSpecType} onEdit={handleEdit} onClose={onClose} />
+        return <EditDatabaseAttribute attribute={resource.data.attribute as DatabaseAttributeType} onEdit={handleEdit} onClose={onClose} />
       case 'BlockStorage':
-        return <EditBlockStorageSpec spec={resource.data.spec as BlockStorageSpecType} onEdit={handleEdit} onClose={onClose} setEdges={setEdges} id={resource.id} />
+        return <EditBlockStorageAttribute attribute={resource.data.attribute as BlockStorageAttributeType} onEdit={handleEdit} onClose={onClose} setEdges={setEdges} id={resource.id} />
       case 'ObjectStorage':
-        return <EditObjectStorageSpec spec={resource.data.spec as ObjectStorageSpecType} onEdit={handleEdit}  onClose={onClose} />
+        return <EditObjectStorageAttribute attribute={resource.data.attribute as ObjectStorageAttributeType} onEdit={handleEdit}  onClose={onClose} />
       case 'FireWall':
-        return <EditFirewallSpec spec={resource.data.spec as FirewallSpecType} onEdit={handleEdit} onClose={onClose}/>
+        return <EditFirewallAttribute attribute={resource.data.attribute as FirewallAttributeType} onEdit={handleEdit} onClose={onClose}/>
     }
   }
   

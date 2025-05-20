@@ -2,32 +2,32 @@
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { InfoItem, SpecSection, InfoIcon } from '../specBar';
+import { InfoItem, AttributeSection, InfoIcon } from '../attributeBar';
 import { Copy } from 'lucide-react';
-import { ComputeSpecType } from '@/lib/projectDB';
+import { ComputeAttributeType } from '@/lib/projectDB';
 import { useEffect, useState, useMemo } from 'react';
 import { RegionsArray } from '@/lib/resourceOptions';
 
-interface ComputeSpecProps {
-  spec: ComputeSpecType
+interface ComputeAttributeProps {
+  attribute: ComputeAttributeType
 }
 
-export default function ComputeSpec({ spec: initSpec }: ComputeSpecProps) {
-  const [spec, setSpec] = useState(initSpec)
+export default function ComputeAttribute({ attribute: initAttribute }: ComputeAttributeProps) {
+  const [attribute, setAttribute] = useState(initAttribute)
 
   useEffect(() => {
-    setSpec(initSpec)
-  }, [initSpec])
+    setAttribute(initAttribute)
+  }, [initAttribute])
 
   // 지역 ID에서 국기 이미지 경로 매핑
   const regionInfo = useMemo(() => {
 
-    let regionId = spec.region_id
+    let regionId = attribute.region_id
     const region = RegionsArray.find(r => r.id === regionId);
     return {
       flag: region?.flag || '/flag-icn.svg',
     };
-  }, [spec.region_id])
+  }, [attribute.region_id])
   
   return (
     <>
@@ -36,16 +36,16 @@ export default function ComputeSpec({ spec: initSpec }: ComputeSpecProps) {
 
         <Button
           className={cn('px-2.5 h-7 rounded-sm pointer-events-none text-xs', {
-            'bg-green-500': spec.status === 'running',
-            'bg-yellow-500': spec.status === 'pending',
-            'bg-red-500': spec.status === 'stopped',
+            'bg-green-500': attribute.status === 'running',
+            'bg-yellow-500': attribute.status === 'pending',
+            'bg-red-500': attribute.status === 'stopped',
           })}
         >
-          {spec.status}
+          {attribute.status}
         </Button>
       </div>
 
-      <SpecSection>
+      <AttributeSection>
         <InfoItem label="Region">
           <div className="flex items-center gap-2">
             <Image
@@ -54,44 +54,44 @@ export default function ComputeSpec({ spec: initSpec }: ComputeSpecProps) {
               width={21}
               height={21}
             ></Image>
-            <p className="text-xs">{`${spec.region} (${spec.region_id})`}</p>
+            <p className="text-xs">{`${attribute.region} (${attribute.region_id})`}</p>
           </div>
         </InfoItem>
         
-        <InfoItem label='Plan'>{spec.plan}</InfoItem>
-        <InfoItem label="OS">{spec.os}</InfoItem>
+        <InfoItem label='Plan'>{attribute.plan}</InfoItem>
+        <InfoItem label="OS">{attribute.os}</InfoItem>
         <InfoItem label="IP Adress">
           <div className="flex w-full justify-between items-center">
-            <p className="text-xs">{spec.ip_address}</p>
+            <p className="text-xs">{attribute.ip_address}</p>
             <Copy size={18} className="text-gray-500 hover:text-[#8171E8]" />
           </div>
         </InfoItem>
-      </SpecSection>
+      </AttributeSection>
 
-      <SpecSection>
-        <InfoItem label="vCPU/s">{`${spec.vcpu} vCPU`}</InfoItem>
-        <InfoItem label="RAM">{`${spec.ram} MB`}</InfoItem>
-        <InfoItem label="Disk">{`${spec.disk} GB`}</InfoItem>
+      <AttributeSection>
+        <InfoItem label="vCPU/s">{`${attribute.vcpu} vCPU`}</InfoItem>
+        <InfoItem label="RAM">{`${attribute.ram} MB`}</InfoItem>
+        <InfoItem label="Disk">{`${attribute.disk} GB`}</InfoItem>
         <InfoItem label="Bandwidht">
-          <p className="text-xs text-[#8171E8]">{`${spec.bandwidth} GB`}</p>
+          <p className="text-xs text-[#8171E8]">{`${attribute.bandwidth} GB`}</p>
           <InfoIcon label="?" />
         </InfoItem>
-        <InfoItem label="Monthly Cost">{`$${spec.monthly_cost} per Month`}</InfoItem>
-      </SpecSection>
+        <InfoItem label="Monthly Cost">{`$${attribute.monthly_cost} per Month`}</InfoItem>
+      </AttributeSection>
 
-      <SpecSection>
+      <AttributeSection>
         <InfoItem label='Firewall Group'>
-          {spec.group_id || "Set up a Firewall"}
+          {attribute.group_id || "Set up a Firewall"}
         </InfoItem>
         <InfoItem label="Auto Backups">
-          {spec.auto_backups === "enable" ? (
+          {attribute.auto_backups === "enable" ? (
             <p className="text-xs text-green-600">Enabled</p>
           ) : (
             <p className="text-xs text-red-600">Not Enabled</p>
           )}
           <InfoIcon label="!" />
         </InfoItem>
-      </SpecSection>
+      </AttributeSection>
     </>
   );
 }

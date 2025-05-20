@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { fetchEventSource } from '@microsoft/fetch-event-source'
 
 interface Props {
   project_id: string
@@ -8,27 +9,46 @@ interface Props {
 
 export default function GetSessionClient({ project_id }: Props) {
   useEffect(() => {
-    const checkConnection = async () => {
+    const controller = new AbortController()
+
+    async function startSSE() {
       try {
-        const response = await fetch(`/api/project/${project_id}`, {
+        await fetchEventSource(`/api/project/${project_id}`, {
           method: 'GET',
+          signal: controller.signal,
           credentials: 'include',
-          headers: {
-            'Accept': 'text/event-stream',
+          
+          async onopen(response) {
+            if (!response.ok) {
+              throw new Error(`Server returned ${response.status}`)
+            }
+            console.log('SSE connection established')
+          },
+
+          onmessage(event) {
+            try {
+              const data = JSON.parse(event.data)
+              console.log('Received:', data)
+            } catch (e) {
+              console.error('Parse error:', event.data)
+            }
+          },
+
+          onclose() {
+            console.log('Connection closed')
+          },
+
+          onerror(err) {
+            console.error('SSE Error:', err)
           }
         })
-
-        if (response.ok) {
-          console.log('Session connection established')
-        } else {
-          console.error('Failed to connect:', response.status)
-        }
       } catch (err) {
-        console.error('Connection error:', err)
+        console.error('Connection failed:', err)
       }
     }
 
-    checkConnection()
+    startSSE()
+    return () => controller.abort()
   }, [project_id])
 
   return null

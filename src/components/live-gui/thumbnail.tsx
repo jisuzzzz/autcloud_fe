@@ -59,7 +59,7 @@ const ProjectThumbnail: React.FC<ProjectThumbnailProps> = ({
         y: resource.position.y * (height / 500),
       },
       data: {
-        label: resource.spec.label || resource.type,
+        label: resource.attribute.label || resource.type,
         type: resource.type
       },
     }));

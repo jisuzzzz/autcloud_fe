@@ -1,7 +1,4 @@
-// computeOptions.ts - Defines compute options for cloud resources
-
-// Interface for compute specifications
-export interface ComputeSpec {
+export interface ComputeAttribute {
   plan: string
   regions: string[]
   vcpu_count: number
@@ -12,8 +9,7 @@ export interface ComputeSpec {
   disk_type: string
 }
 
-// Array of compute options
-export const ComputeOptions: ComputeSpec[] = [
+export const ComputeOptions: ComputeAttribute[] = [
   {
     plan: 'vc2-1c-0.5gb-free',
     regions: ['sea'],

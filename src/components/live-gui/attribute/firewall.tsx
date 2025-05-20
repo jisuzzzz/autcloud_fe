@@ -1,20 +1,20 @@
 'use client'
-import { InfoItem, SpecSection } from "../specBar"
+import { InfoItem, AttributeSection } from "../attributeBar"
 import { ChevronDown, ChevronUp } from "lucide-react"
-import { FirewallSpecType } from "@/lib/projectDB"
+import { FirewallAttributeType } from "@/lib/projectDB"
 import { useState, useEffect } from "react"
 
-interface FireWallSpecProps {
-  spec: FirewallSpecType
+interface FireWallAttributeProps {
+  attribute: FirewallAttributeType
 }
 
-export default function FirewallSpec({ spec: localSpec }: FireWallSpecProps) {
+export default function FirewallAttribute({ attribute: localAttribute }: FireWallAttributeProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
-  const [spec, setSpec] = useState(localSpec)
+  const [attribute, setAttribute] = useState(localAttribute)
 
   useEffect(() => {
-    setSpec(localSpec)
-  }, [localSpec])
+    setAttribute(localAttribute)
+  }, [localAttribute])
 
   const toggle = (idx: number) => {
     setOpenIndex(openIndex === idx ? null : idx)
@@ -23,15 +23,15 @@ export default function FirewallSpec({ spec: localSpec }: FireWallSpecProps) {
 
   return (
     <>
-      <SpecSection>
+      <AttributeSection>
         <InfoItem label="Description">
-          {spec.label}
+          {attribute.label}
         </InfoItem>
-      </SpecSection>
+      </AttributeSection>
 
-      <SpecSection>
+      <AttributeSection>
         <h3 className="text-xs text-gray-500 mb-2">Rules</h3>
-        {spec.rules.map((rule, idx) => { 
+        {attribute.rules.map((rule, idx) => { 
           const isOpen = openIndex === idx
         
           return (
@@ -57,7 +57,7 @@ export default function FirewallSpec({ spec: localSpec }: FireWallSpecProps) {
             </div>
           )
         })}
-      </SpecSection>
+      </AttributeSection>
     </>
   )
 }
