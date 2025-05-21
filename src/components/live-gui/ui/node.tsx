@@ -1,7 +1,7 @@
 'use client'
 import Image from 'next/image'
 import { useOthers, useSelf } from '@liveblocks/react'
-import { ComputeAttributeType, DatabaseAttributeType, BlockStorageAttributeType, ObjectStorageAttributeType, FirewallAttributeType } from '@/lib/projectDB'
+import { ComputeAttributeType, DatabaseAttributeType, BlockStorageAttributeType, ObjectStorageAttributeType, FirewallAttributeType } from "@/types/type"
 import { Handle, Position } from 'reactflow'
 
 const resourceIcons = {

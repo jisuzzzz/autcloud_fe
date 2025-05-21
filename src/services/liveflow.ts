@@ -1,6 +1,6 @@
 import { Node, Edge } from "reactflow"
 import * as Y from 'yjs'
-import { CommandList, CommandItem, ProjectChanges } from "@/lib/projectDB"
+import { CommandList, CommandItem, ProjectChanges } from "@/types/type"
 import { CommandService } from "./command"
 
 interface UserAction {

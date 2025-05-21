@@ -3,13 +3,12 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
-import ShareModal from '../custom/shareModal';
-import { Node } from 'reactflow';
+import ShareModal from '@/components/custom/modal/shareModal';
 import { useSelf, useOthersMapped } from '@liveblocks/react';
 import Avatar from './avator';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useYjsStore } from '@/lib/useYjsStore';
+import { useYjsStore } from '@/lib/hooks/useYjsStore';
 import { LiveFlowService } from '@/services/liveflow';
 
 interface HeaderProps {

@@ -1,9 +1,9 @@
 'use client'
 import Image from "next/image"
 import { Connection, Node } from 'reactflow'
-import EditSummary from "./edit/editSummary"
+import EditSummary from "../edit/editSummary"
 import { useState } from "react"
-import AddNewResourceModal from "./add/addResoucreModal"
+import AddNewResourceModal from "../add/addResoucreModal"
 import { useDraggable } from '@dnd-kit/core'
 
 interface Resource {

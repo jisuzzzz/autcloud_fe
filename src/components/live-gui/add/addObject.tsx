@@ -1,14 +1,13 @@
 'use client'
 import Image from "next/image"
-import { InfoItem, AttributeSection } from "../attributeBar"
-import SelectBox from "@/components/custom/selectBox"
-import { ObjectStorageAttributeType } from "@/lib/projectDB"
+import { InfoItem, AttributeSection } from "../ui/attributeBar"
+import SelectBox from "@/components/custom/ui/dropDown/selectBox"
+import { ObjectStorageAttributeType } from "@/types/type"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
-import { RegionsArray } from "@/lib/resourceOptions"
 import { Input } from "@/components/ui/input"
 import { useEffect, useState } from "react"
-import { ObjectPlan, ObjectRegion, ObjectStorageOptions } from "@/lib/objectStorageOptions"
+import { ObjectPlan, ObjectRegion, ObjectStorageOptions } from "@/options/objectStorageOptions"
 import { cn } from "@/lib/utils"
 
 interface AddNewObjectStorageProps {

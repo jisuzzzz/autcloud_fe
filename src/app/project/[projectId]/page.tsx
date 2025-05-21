@@ -1,7 +1,7 @@
-import { Room } from "@/components/live-gui/room";
-import { YjsReactFlow } from "@/components/live-gui/yjsRflow";
-import { getProjectById } from "@/lib/projectDB";
-import GetSessionClient from "@/components/custom/getSessionClient";
+import { Room } from "@/components/live-gui/core/room"
+import { LiveFlowMap } from "@/components/live-gui/core/LiveFlowMap"
+import { getProjectById } from "@/lib/db/projectDB"
+import GetSessionClient from "@/lib/hooks/getSessionClient"
 
 export default async function ProjectIdPage({
   params
@@ -15,7 +15,7 @@ export default async function ProjectIdPage({
     <>
       {/* <GetSessionClient project_id={param.projectId} /> */}
       <Room projectId={param.projectId}>
-        <YjsReactFlow 
+        <LiveFlowMap
           project1={project || {
             id: param.projectId,
             name: "project_name",

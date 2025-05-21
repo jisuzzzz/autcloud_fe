@@ -1,8 +1,8 @@
 import Image from "next/image"
-import { InfoItem, AttributeSection, InfoIcon } from "../attributeBar"
-import { BlockStorageAttributeType } from "@/lib/projectDB"
+import { InfoItem, AttributeSection, InfoIcon } from "../ui/attributeBar"
+import { BlockStorageAttributeType } from "@/types/type"
 import { useEffect, useState, useMemo } from "react"
-import { RegionsArray } from "@/lib/resourceOptions"
+import { RegionsArray } from "@/options/resourceOptions"
 
 interface BlockStorageAttributeProps {
   attribute: BlockStorageAttributeType

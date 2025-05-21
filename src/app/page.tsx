@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import DocsHeader from '@/components/custom/docsHeader';
+import DocsHeader from '@/components/custom/ui/header/docsHeader';
 import { Monitor, Cloud } from 'lucide-react';
 
 export default function DocsPage() {

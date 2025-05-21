@@ -7,7 +7,7 @@ import {
   CreateFirewallGroupType, UpdateFirewallGroupType, DeleteFirewallGroupType,
   CreateFirewallRule,
   DeleteFirewallRule,
-} from "@/lib/projectDB"
+} from "@/types/type"
 
 
 export const CommandService = {

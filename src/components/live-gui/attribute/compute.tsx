@@ -1,12 +1,12 @@
 'use client'
-import Image from 'next/image';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { InfoItem, AttributeSection, InfoIcon } from '../attributeBar';
-import { Copy } from 'lucide-react';
-import { ComputeAttributeType } from '@/lib/projectDB';
-import { useEffect, useState, useMemo } from 'react';
-import { RegionsArray } from '@/lib/resourceOptions';
+import Image from 'next/image'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import { InfoItem, AttributeSection, InfoIcon } from '../ui/attributeBar'
+import { Copy } from 'lucide-react'
+import { ComputeAttributeType } from "@/types/type"
+import { useEffect, useState, useMemo } from 'react'
+import { RegionsArray } from '@/options/resourceOptions'
 
 interface ComputeAttributeProps {
   attribute: ComputeAttributeType
@@ -23,10 +23,10 @@ export default function ComputeAttribute({ attribute: initAttribute }: ComputeAt
   const regionInfo = useMemo(() => {
 
     let regionId = attribute.region_id
-    const region = RegionsArray.find(r => r.id === regionId);
+    const region = RegionsArray.find(r => r.id === regionId)
     return {
       flag: region?.flag || '/flag-icn.svg',
-    };
+    }
   }, [attribute.region_id])
   
   return (
@@ -93,5 +93,5 @@ export default function ComputeAttribute({ attribute: initAttribute }: ComputeAt
         </InfoItem>
       </AttributeSection>
     </>
-  );
+  )
 }

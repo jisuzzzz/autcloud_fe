@@ -1,12 +1,12 @@
-'use client';
-import { cn } from '@/lib/utils';
-import ComputeAttribute from './attribute/compute';
-import DatabaseAttribute from './attribute/database';
-import BlockStorageAttribute from './attribute/block-storage';
-import ObjectStorageAttribute from './attribute/object-storage';
-import FirewallAttribute from './attribute/firewall';
-import { useState, useEffect } from 'react';
-import { useSelf } from '@liveblocks/react';
+'use client'
+import { cn } from '@/lib/utils'
+import ComputeAttribute from '../attribute/compute'
+import DatabaseAttribute from '../attribute/database'
+import BlockStorageAttribute from '../attribute/block-storage'
+import ObjectStorageAttribute from '../attribute/object-storage'
+import FirewallAttribute from '../attribute/firewall'
+import { useState, useEffect } from 'react'
+import { useSelf } from '@liveblocks/react'
 import {
   ComputeAttributeType,
   DatabaseAttributeType,
@@ -14,21 +14,21 @@ import {
   ObjectStorageAttributeType,
   FirewallAttributeType,
   ResourceNodeType,
-} from '@/lib/projectDB';
-import Image from 'next/image';
-import StartEditButton from './resourceEdit';
-import { useYjsStore } from '@/lib/useYjsStore';
-import { Edge, Node } from 'reactflow';
-import * as Y from 'yjs';
-import { useStorage } from '@liveblocks/react';
-import { LiveMap } from '@liveblocks/node';
+} from "@/types/type"
+import Image from 'next/image'
+import StartEditButton from '../edit/resourceEdit'
+import { useYjsStore } from '@/lib/hooks/useYjsStore'
+import { Edge, Node } from 'reactflow'
+import * as Y from 'yjs'
+import { useStorage } from '@liveblocks/react'
+import { LiveMap } from '@liveblocks/node'
 
 export function InfoIcon({ label }: { label: string }) {
   return (
     <div className="rounded-full bg-gray-400 w-4 h-4 flex items-center justify-center">
       <p className="text-white text-sm">{label}</p>
     </div>
-  );
+  )
 }
 
 export function InfoItem({
@@ -36,9 +36,9 @@ export function InfoItem({
   children,
   icon,
 }: {
-  label: string;
-  children: React.ReactNode;
-  icon?: React.ReactNode;
+  label: string
+  children: React.ReactNode
+  icon?: React.ReactNode
 }) {
   return (
     <div className="space-y-2">
@@ -52,15 +52,15 @@ export function InfoItem({
         {icon}
       </div>
     </div>
-  );
+  )
 }
 
 export function AttributeSection({
   children,
   className = '',
 }: {
-  children: React.ReactNode;
-  className?: string;
+  children: React.ReactNode
+  className?: string
 }) {
   return (
     <div
@@ -68,7 +68,7 @@ export function AttributeSection({
     >
       {children}
     </div>
-  );
+  )
 }
 
 interface AttributeBarProps {
@@ -78,7 +78,7 @@ interface AttributeBarProps {
 export default function AttributeBar({setEdges}: AttributeBarProps) {
 
   const [selectedResource, setSelectedResource] = useState<Node | null>(null)
-  const me = useSelf();
+  const me = useSelf()
   const  {yDoc} = useYjsStore()
 
   const resourceAttribute = useStorage((root) => {
@@ -159,5 +159,5 @@ export default function AttributeBar({setEdges}: AttributeBarProps) {
         <FirewallAttribute attribute={selectedResource.data.attribute as FirewallAttributeType} />
       )}
     </div>
-  ) : null;
+  ) : null
 }

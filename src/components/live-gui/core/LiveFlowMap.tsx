@@ -6,23 +6,23 @@ import ReactFlow, {
   NodeChange, MarkerType, useReactFlow
 } from 'reactflow'
 import 'reactflow/dist/style.css'
-import ResourceNode from './node'
-import ArrowEdge from './edge'
-import { useYjsStore } from '@/lib/useYjsStore'
+import ResourceNode from '../ui/node'
+import ArrowEdge from '../ui/edge'
+import { useYjsStore } from '@/lib/hooks/useYjsStore'
 import * as Y from 'yjs'
 import { useMyPresence, useSelf } from '@liveblocks/react'
-import ToolBar from './toolBar'
-import AttributeBar from './attributeBar'
-import FlowHeader from './flowHeader'
-import { ResourceConfig, ProjectTemplate, BlockStorageAttributeType, ComputeAttributeType } from '@/lib/projectDB'
+import ToolBar from '../ui/toolBar'
+import AttributeBar from '../ui/attributeBar'
+import FlowHeader from '../ui/flowHeader'
+import { ResourceConfig, ProjectTemplate, BlockStorageAttributeType, ComputeAttributeType } from '@/types/type'
 import { LiveFlowService } from '@/services/liveflow'
-import Loading from '../custom/loading'
+import Loading from '../../custom/panel/loading'
 import { DndContext, DragEndEvent, useDroppable } from '@dnd-kit/core'
-import { useAttributeStore } from '@/lib/useAttributeStore'
+import { useAttributeStore } from '@/lib/hooks/useAttributeStore'
 import { useStorage } from '@liveblocks/react';
 import { LiveMap } from '@liveblocks/node';
 
-interface YjsReactFlowProps {
+interface LiveFlowMapProps {
   project1: ProjectTemplate  
 }
 
@@ -81,7 +81,7 @@ const convertToNodesAndEdges = (resources: ResourceConfig[]): { nodes: Node[], e
   return {nodes, edges}
 }
 
-export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
+export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
 
   const { initial_resources, name, id } = project1
 
@@ -138,31 +138,36 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
     const yEdges = yDoc.getArray<Edge>('edges')
 
     if (!yDoc || !user?.id || !isConnected) return
+    const storeCompute = storeComputeAttribute()
+    const storeDatabase = storeDatabaseAttribute()
+    const storeObject = storeObjectStorageAttribute()
+    const storeBlock = storeBlockStorageAttribute()
 
     if(yNodes.length === 0) {
       const { nodes: initialNodes, edges: initialEdges } = convertToNodesAndEdges(initial_resources)
       setNodes(initialNodes)
       setEdges(initialEdges)
       
-      const storeCompute = storeComputeAttribute()
-      const storeDatabase = storeDatabaseAttribute()
-      const storeObject = storeObjectStorageAttribute()
-      const storeBlock = storeBlockStorageAttribute()
       initialNodes.forEach(node => {
-        if (node.data.type === 'Compute') {
-          storeCompute({ resourceAttribute: node.data.attribute, resourceId: node.id })
-        } else if(node.data.type === 'Database') {
-          storeDatabase({ resourceAttribute: node.data.attribute, resourceId: node.id })
-        } else if(node.data.type === 'ObjectStorage') {
-          storeObject({ resourceAttribute: node.data.attribute, resourceId: node.id })
-        } else if(node.data.type === 'BlockStorage') {
-          storeBlock({ resourceAttribute: node.data.attribute, resourceId: node.id })
+        const payload = { resourceAttribute: node.data.attribute, resourceId: node.id }
+        switch (node.data.type) {
+          case 'Compute':
+            storeCompute(payload)
+            break
+          case 'Database':
+            storeDatabase(payload)
+            break
+          case 'ObjectStorage':
+            storeObject(payload)
+            break
+          case 'BlockStorage':
+            storeBlock(payload)
+            break
         }
       })
       LiveFlowService.initNodes(initialNodes, initialEdges, yDoc)
 
     } else {
-
       const sharedNodes = yNodes.toArray().map(nodeMap => ({
         id: nodeMap.get('id'),
         type: nodeMap.get('type'),
@@ -194,24 +199,25 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
         data: nodeMap.get('data')
       }))
       setNodes(updatedNodes)
-      const storeCompute = storeComputeAttribute()
-      const storeDatabase = storeDatabaseAttribute()
-      const storeObject = storeObjectStorageAttribute()
-      const storeBlock = storeBlockStorageAttribute()
+
       updatedNodes.forEach(node => {
-        if (node.data.type === 'Compute') {
-          storeCompute({ resourceAttribute: node.data.attribute, resourceId: node.id })
-        } else if(node.data.type === 'Database') {
-          storeDatabase({ resourceAttribute: node.data.attribute, resourceId: node.id })
-        } else if(node.data.type === 'ObjectStorage') {
-          storeObject({ resourceAttribute: node.data.attribute, resourceId: node.id })
-        } else if(node.data.type === 'BlockStorage') {
-          storeBlock({ resourceAttribute: node.data.attribute, resourceId: node.id })
+        const payload = { resourceAttribute: node.data.attribute, resourceId: node.id }
+        switch (node.data.type) {
+          case 'Compute':
+            storeCompute(payload)
+            break
+          case 'Database':
+            storeDatabase(payload)
+            break
+          case 'ObjectStorage':
+            storeObject(payload)
+            break
+          case 'BlockStorage':
+            storeBlock(payload)
+            break
         }
-        
       })
     }
-
 
     yNodes.observeDeep(observer)
 

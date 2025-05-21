@@ -1,18 +1,18 @@
-import Image from 'next/image';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { InfoItem, AttributeSection } from '../attributeBar';
-import { DatabaseAttributeType } from '@/lib/projectDB';
-import { useForm } from 'react-hook-form';
-import SelectBox from '@/components/custom/selectBox';
-import { DatabasePlans } from '@/lib/dbOptions';
-import { RegionsArray } from '@/lib/resourceOptions';
-import { useState, useEffect } from 'react';
-import { Input } from '@/components/ui/input';
+import Image from 'next/image'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import { InfoItem, AttributeSection } from '../ui/attributeBar'
+import { DatabaseAttributeType } from "@/types/type"
+import { useForm } from 'react-hook-form'
+import SelectBox from '@/components/custom/ui/dropDown/selectBox'
+import { DatabasePlans } from '@/options/dbOptions'
+import { RegionsArray } from '@/options/resourceOptions'
+import { useState, useEffect } from 'react'
+import { Input } from '@/components/ui/input'
 
 interface DatabaseAttributeProps {
-  onAdd: (data: DatabaseAttributeType) => void;
-  onClose: () => void;
+  onAdd: (data: DatabaseAttributeType) => void
+  onClose: () => void
 }
 
 export default function AddNewDatabase({ onAdd, onClose }: DatabaseAttributeProps) {
@@ -32,7 +32,7 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseAttributeProp
       label: "",
       monthly_cost:""
     }
-  });
+  })
 
   const [filteredDBOptions, setFilteredDBOptions] = useState<any[]>([])
 
@@ -119,9 +119,9 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseAttributeProp
 
   const onSubmit = (data: DatabaseAttributeType) => {
     if (onAdd) {
-      onAdd(data);
+      onAdd(data)
     }
-  };
+  }
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex items-center px-4 py-2 border-b justify-between">
@@ -238,5 +238,5 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseAttributeProp
         </InfoItem>
       </AttributeSection>
     </form>
-  );
+  )
 }

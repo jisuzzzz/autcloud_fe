@@ -1,5 +1,5 @@
-import { InfoItem, AttributeSection } from "../attributeBar"
-import { ObjectStorageAttributeType } from "@/lib/projectDB"
+import { InfoItem, AttributeSection } from "../ui/attributeBar"
+import { ObjectStorageAttributeType } from "@/types/type"
 import { useEffect, useState } from "react"
 
 interface ObectStorageAttributeProps {

@@ -3,8 +3,8 @@
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { getProjectById } from '@/lib/projectDB'
-import ProjectThumbnail from '@/components/live-gui/thumbnail'
+import { getProjectById } from '@/lib/db/projectDB'
+import ProjectThumbnail from '@/components/custom/panel/thumbnail'
 import { motion } from 'framer-motion'
 
 const DIAGRAMS = [

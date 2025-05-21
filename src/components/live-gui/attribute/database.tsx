@@ -1,13 +1,13 @@
-import Image from 'next/image';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { InfoItem, AttributeSection } from '../attributeBar';
-import { DatabaseAttributeType } from '@/lib/projectDB';
+import Image from 'next/image'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import { InfoItem, AttributeSection } from '../ui/attributeBar'
+import { DatabaseAttributeType } from "@/types/type"
 import { useEffect, useState, useMemo } from "react"
-import { RegionsArray } from '@/lib/resourceOptions';
+import { RegionsArray } from '@/options/resourceOptions'
 
 interface DatabaseAttributeProps {
-  attribute: DatabaseAttributeType;
+  attribute: DatabaseAttributeType
 }
 
 export default function DatabaseAttribute({ attribute:localAttribute }: DatabaseAttributeProps) {
@@ -21,11 +21,11 @@ export default function DatabaseAttribute({ attribute:localAttribute }: Database
 
     let regionId = attribute.region_id
     
-    const region = RegionsArray.find(r => r.id === regionId);
+    const region = RegionsArray.find(r => r.id === regionId)
     return {
       flag: region?.flag || '/flag-icn.svg',
-    };
-  }, [attribute.region_id]);
+    }
+  }, [attribute.region_id])
 
   return (
     <>
@@ -72,5 +72,5 @@ export default function DatabaseAttribute({ attribute:localAttribute }: Database
         <InfoItem label="Latest Backup">{attribute.latest_backup}</InfoItem>
       </AttributeSection>
     </>
-  );
+  )
 }

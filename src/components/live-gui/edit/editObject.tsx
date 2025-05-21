@@ -1,13 +1,13 @@
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
-import SelectBox from "@/components/custom/selectBox"
-import { InfoItem, AttributeSection } from "../attributeBar"
-import { ObjectStorageAttributeType } from "@/lib/projectDB"
+import SelectBox from "@/components/custom/ui/dropDown/selectBox"
+import { InfoItem, AttributeSection } from "../ui/attributeBar"
+import { ObjectStorageAttributeType } from "@/types/type"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect } from "react"
-import { ObjectPlan, ObjectStorageOptions } from "@/lib/objectStorageOptions"
+import { ObjectPlan, ObjectStorageOptions } from "@/options/objectStorageOptions"
 
 interface ObectStorageAttributeProps {
   attribute: ObjectStorageAttributeType

@@ -3,7 +3,7 @@
 import { ClientSideSuspense, RoomProvider } from "@liveblocks/react/suspense";
 import { ReactNode } from "react";
 import { LiveMap } from "@liveblocks/core";
-import Loading from "../custom/loading";
+import Loading from "../../custom/panel/loading";
 
 export function Room({ children, projectId }: { children: ReactNode, projectId:string }) {
   const roomId = `proejct-${projectId}`

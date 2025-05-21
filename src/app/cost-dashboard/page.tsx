@@ -17,8 +17,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import CostHeader from '@/components/custom/costHeader';
-import SideBar from '@/components/custom/sidebar';
+import CostHeader from '@/components/custom/ui/header/costHeader';
+import SideBar from '@/components/custom/panel/sidebar';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 

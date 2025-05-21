@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import Modal from './modal';
+import Modal from '../../modal/modal';
 
 export default function SortDropdown() {
   const [isOpen, setIsOpen] = useState(false);

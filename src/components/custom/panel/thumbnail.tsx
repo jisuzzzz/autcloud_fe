@@ -1,11 +1,10 @@
 'use client';
-import React, { useMemo, useRef, useState, useCallback, useEffect } from 'react';
-import { toPng } from 'html-to-image';
-import { Button } from '../ui/button';
-import ReactFlow, { Node,} from 'reactflow';
-import 'reactflow/dist/style.css';
-import { ResourceConfig, ProjectTemplate } from '@/lib/projectDB';
-import Image from 'next/image';
+import React, { useMemo, useRef, useState, useEffect } from 'react'
+import { toPng } from 'html-to-image'
+import ReactFlow, { Node,} from 'reactflow'
+import 'reactflow/dist/style.css'
+import { ResourceConfig, ProjectTemplate } from "@/types/type"
+import Image from 'next/image'
 
 
 const ThumbnailNode = ({ data }:{data:any}) => {
