@@ -24,7 +24,7 @@ export default function EditDatabaseAttribute({ attribute, onEdit, onClose }: Da
   const [filteredDBOptions, setFilteredDBOptions] = useState<any[]>([])
 
   const [selectedAttribute, setSelectedAttribute] = useState({
-    vcpu_count: attribute.vcpu_count,
+    vcpu: attribute.vcpu,
     ram: attribute.ram,
     disk: attribute.disk,
     replica_nodes: attribute.replica_nodes,
@@ -95,14 +95,14 @@ export default function EditDatabaseAttribute({ attribute, onEdit, onClose }: Da
     const selected = filteredDBOptions.find(opt => opt.plan === plan)
     if (selected) {
       setValue('plan', plan)
-      setValue('vcpu_count', selected.vcpu)
+      setValue('vcpu', selected.vcpu)
       setValue('ram', selected.ram)
       setValue('disk', selected.disk)
       setValue('replica_nodes', selected.replica_nodes)
       setValue('monthly_cost', selected.monthly_cost)
 
       setSelectedAttribute({
-        vcpu_count: selected.vcpu,
+        vcpu: selected.vcpu,
         ram: selected.ram,
         disk: selected.disk,
         replica_nodes: selected.replica_nodes,
@@ -202,8 +202,8 @@ export default function EditDatabaseAttribute({ attribute, onEdit, onClose }: Da
       <AttributeSection>
         <InfoItem label="vCPU/s">
           <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
-            isValueChanged('vcpu_count') ? "text-blue-500 font-medium" : "")}>
-            {`${selectedAttribute.vcpu_count} vCPU`}
+            isValueChanged('vcpu') ? "text-blue-500 font-medium" : "")}>
+            {`${selectedAttribute.vcpu} vCPU`}
           </div>
         </InfoItem>
         <InfoItem label="RAM">

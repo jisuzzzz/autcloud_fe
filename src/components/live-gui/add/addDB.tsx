@@ -23,7 +23,7 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseAttributeProp
       db_engine: "",
       db_version: "",
       latest_backup: "2 hours ago",
-      vcpu_count: "", 
+      vcpu: "", 
       ram: "", 
       disk: "",
       replica_nodes: "",
@@ -48,7 +48,7 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseAttributeProp
   }, [region, dbPlan, engine, label])
 
   const [selectedAttribute, setSelectedAttribute] = useState({
-    vcpu_count: '',
+    vcpu: '',
     ram: '',
     disk: '',
     replica_nodes: '',
@@ -96,14 +96,14 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseAttributeProp
     const selected = filteredDBOptions.find(opt => opt.plan === plan)
     if (selected) {
       setValue('plan', plan)
-      setValue('vcpu_count', selected.vcpu)
+      setValue('vcpu', selected.vcpu)
       setValue('ram', selected.ram)
       setValue('disk', selected.disk)
       setValue('replica_nodes', selected.replica_nodes)
       setValue('monthly_cost', selected.monthly_cost)
 
       setSelectedAttribute({
-        vcpu_count: selected.vcpu,
+        vcpu: selected.vcpu,
         ram: selected.ram,
         disk: selected.disk,
         replica_nodes: selected.replica_nodes,
@@ -199,7 +199,7 @@ export default function AddNewDatabase({ onAdd, onClose }: DatabaseAttributeProp
           <AttributeSection>
             <InfoItem label="vCPU/s">
               <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm">
-                {`${selectedAttribute.vcpu_count} vCPU`}
+                {`${selectedAttribute.vcpu} vCPU`}
               </div>
             </InfoItem>
             <InfoItem label="RAM">
