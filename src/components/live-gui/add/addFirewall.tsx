@@ -1,6 +1,6 @@
 import Image from "next/image"
-import { AttributeSection, InfoItem } from "../attributeBar"
-import { FirewallAttributeType, FirewallRuleType } from "@/lib/projectDB"
+import { AttributeSection, InfoItem } from "../ui/attributeBar"
+import { FirewallAttributeType, FirewallRuleType } from "@/types/type"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

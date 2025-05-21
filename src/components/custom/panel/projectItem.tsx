@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useRef } from 'react';
 import { MoreHorizontal } from 'lucide-react';
-import Modal from './modal';
+import Modal from '../modal/modal';
 
 function getTotalMonthlyCost(resources: any[]) {
   return resources.reduce((sum, resource) => {

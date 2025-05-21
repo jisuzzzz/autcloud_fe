@@ -1,5 +1,5 @@
 'use client'
-import Modal from "@/components/custom/modal"
+import Modal from "@/components/custom/modal/modal"
 
 interface ResourceHistory {
   userId: string

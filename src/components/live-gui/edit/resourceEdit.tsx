@@ -2,10 +2,10 @@
 
 import { SquarePen } from 'lucide-react'
 import { useState } from 'react'
-import EditModal from './edit/editModal'
-import { ResourceNodeType } from "@/lib/projectDB"
+import EditModal from './editModal'
+import { ResourceNodeType } from "@/types/type"
 import { Edge } from 'reactflow'
-import { InfoIcon } from './attributeBar'
+import { InfoIcon } from '../ui/attributeBar'
 
 interface StartEditButtonProps{
   resource: ResourceNodeType

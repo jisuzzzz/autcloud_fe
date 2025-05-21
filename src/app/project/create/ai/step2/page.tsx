@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import FormDropdown from '@/components/custom/formDropdown';
+import FormDropdown from '@/components/custom/ui/dropDown/formDropdown';
 
 export default function Step2Page() {
   const router = useRouter();

@@ -1,39 +1,46 @@
 import { Liveblocks } from "@liveblocks/node";
 import { NextRequest } from "next/server";
-import { getRandomUser } from "@/lib/userDB";
-
-// Authenticating your Liveblocks application
-// https://liveblocks.io/docs/authentication
+import { getRandomUser } from "@/lib/db/userDB";
 
 type User = {
   id: string
-  info:any
 }
 
 const liveblocks = new Liveblocks({
   secret: process.env.LIVEBLOCKS_SECRET_KEY!,
-});
+})
 
 export async function POST(request: NextRequest) {
-  // Get the current user's unique id and info from your database
   const user = getRandomUser() as User;
 
-  // Create a session for the current user
-  // userInfo is made available in Liveblocks presence hooks, e.g. useOthers
+  const project_id = "37bfb83b-dd64-410b-81c5-7374b0c453e0"
+  const role = "admin"
+  const roomPrefix = `project-${project_id}`
+
+  // const { proejct_id, user_email, role } = await getUserProjectRole()
+  const userIdx = Math.floor(Math.random() * COLORS.length)
+
   const session = liveblocks.prepareSession(`${user.id}`, {
-    userInfo: user.info,
-    // userInfo: {
-    //   name: NAMES[userIndex],
-    //   avatar: `https://liveblocks.io/avatars/avatar-${Math.floor(
-    //     Math.random() * 30
-    //   )}.png`,
-    // },
-  });
+    userInfo: {
+      id: user.id,
+      name: NAMES[userIdx%5],
+      avatar: `https://liveblocks.io/avatars/avatar-${userIdx+1}.png`,
+      color: COLORS[userIdx]
+    },
+  })
+  if(role === 'admin') {
+    session.allow(`${roomPrefix}:*`, session.FULL_ACCESS)
+  } else if(role === 'editor') {
+    session.allow(`${roomPrefix}:*`, session.FULL_ACCESS)
+  } else if (role === 'viewer') {
+    session.allow(`${roomPrefix}:*`, session.READ_ACCESS)
+  }
 
-  // Use a naming pattern to allow access to rooms with a wildcard
-  session.allow(`*`, session.FULL_ACCESS);
+  session.allow(`*`, session.FULL_ACCESS)
 
-  // Authorize the user and return the result
-  const { body, status } = await session.authorize();
-  return new Response(body, { status });
+  const { body, status } = await session.authorize()
+  return new Response(body, { status })
 }
+
+const COLORS = ["#D583F0", "#F08385", "#F0D885", "#85EED6", "#85BBF0", "#8594F0", "#85DBF0"]
+const NAMES = ["Charlie", "Mislav", "Tatum", "Anjali", "Jody"]

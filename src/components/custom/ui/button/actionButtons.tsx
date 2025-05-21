@@ -1,12 +1,12 @@
-'use client';
-import { useState } from 'react';
-import { ActionButton } from './actionButton';
-import { Plus, Ellipsis } from 'lucide-react';
-import CreateProjectModal from './createProjectModal';
-import MenuModal from './menuModal';
-import AddNewwFirewallRule from '../live-gui/add/addFirewallRule';
-import { Button } from '../ui/button';
-import { FirewallRuleType } from '@/lib/projectDB';
+'use client'
+import { useState } from 'react'
+import { ActionButton } from './actionButton'
+import { Plus, Ellipsis } from 'lucide-react'
+import CreateProjectModal from '../../modal/createProjectModal'
+import MenuModal from '../../modal/menuModal'
+import AddNewwFirewallRule from '../../../live-gui/add/addFirewallRule'
+import { Button } from '../../../ui/button'
+import { FirewallRuleType } from "@/types/type"
 
 
 export function CreateButton() {

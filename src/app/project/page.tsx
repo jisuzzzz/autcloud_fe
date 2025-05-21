@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import Header from '@/components/custom/header';
-import ProjectItem from '@/components/custom/projectItem';
-import { getProjects } from '@/lib/projectDB';
-import ProjectThumbnail from '@/components/live-gui/thumbnail';
+import Header from '@/components/custom/ui/header/header';
+import ProjectItem from '@/components/custom/panel/projectItem';
+import { getProjects } from '@/lib/db/projectDB';
+import ProjectThumbnail from '@/components/custom/panel/thumbnail';
 import Image from 'next/image';
 
 export default async function ProjectPage() {

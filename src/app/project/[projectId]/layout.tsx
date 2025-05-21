@@ -1,4 +1,4 @@
-import { Providers } from "@/components/live-gui/provider";
+import { Providers } from "@/components/live-gui/core/provider";
 import { Suspense } from "react";
 
 export default function LiveLayout({

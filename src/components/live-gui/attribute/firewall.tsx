@@ -1,7 +1,7 @@
 'use client'
-import { InfoItem, AttributeSection } from "../attributeBar"
+import { InfoItem, AttributeSection } from "../ui/attributeBar"
 import { ChevronDown, ChevronUp } from "lucide-react"
-import { FirewallAttributeType } from "@/lib/projectDB"
+import { FirewallAttributeType } from "@/types/type"
 import { useState, useEffect } from "react"
 
 interface FireWallAttributeProps {

@@ -1,7 +1,7 @@
-import { ComputeOptions } from "@/lib/computeOptions"
-import { DatabasePlans } from "@/lib/dbOptions"
-import { ObjectStorageOptions } from "@/lib/objectStorageOptions"
-import { OSArray, RegionsArray } from "@/lib/resourceOptions"
+import { ComputeOptions } from "@/options/computeOptions"
+import { DatabasePlans } from "@/options/dbOptions"
+import { ObjectStorageOptions } from "@/options/objectStorageOptions"
+import { OSArray, RegionsArray } from "@/options/resourceOptions"
 
 const mappingRegion = (region_id: string) => {
   const region = RegionsArray.find(r => r.id === region_id)

@@ -1,5 +1,5 @@
 'use client'
-import { useYjsStore } from "@/lib/useYjsStore"
+import { useYjsStore } from "@/lib/hooks/useYjsStore"
 import { useEffect, useState } from "react"
 import EditLogModal from "./editLogModal"
 

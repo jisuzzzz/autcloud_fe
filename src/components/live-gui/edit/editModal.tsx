@@ -1,8 +1,12 @@
 'use client'
-import Modal from "../../custom/modal"
+import Modal from "../../custom/modal/modal"
 import EditComputeAttribute from "./editCompute"
-import { BlockStorageAttributeType, ComputeAttributeType, DatabaseAttributeType, FirewallAttributeType, ObjectStorageAttributeType, ResourceNodeType } from "@/lib/projectDB"
-import { useYjsStore } from '@/lib/useYjsStore'
+import {
+  BlockStorageAttributeType, ComputeAttributeType, 
+  DatabaseAttributeType, FirewallAttributeType, 
+  ObjectStorageAttributeType, ResourceNodeType 
+} from "@/types/type"
+import { useYjsStore } from '@/lib/hooks/useYjsStore'
 import { useSelf } from "@liveblocks/react"
 import { LiveFlowService } from "@/services/liveflow"
 import EditDatabaseAttribute from "./editDatabase"

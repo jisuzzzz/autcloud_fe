@@ -24,16 +24,24 @@ export default function Header() {
 
       {/* 유저 프로필 */}
       <div
-        className="relative ml-auto"
+        className="relative ml-auto rounded-full border p-1 bg-violet-50"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
-        <button className="w-7 h-7 rounded-full bg-yellow-400 flex items-center justify-center text-black font-medium text-base shadow">
+        {/* <button className="w-7 h-7 rounded-full bg-yellow-400 flex items-center justify-center text-black font-medium text-base shadow">
           K
-        </button>
+        </button> */}
+        <Image
+          src={'/aut-logo-cloud.svg'}
+          alt='user'
+          width={30}
+          height={30}
+        >
+
+        </Image>
 
         {hovered && (
-          <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg p-4 text-sm z-50">
+          <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg px-3 py-2 text-xs z-50">
             <div className="font-medium text-black mb-1">김어진</div>
             <div className="text-gray-600">eojin.kim@example.com</div>
           </div>

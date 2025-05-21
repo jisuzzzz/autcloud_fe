@@ -1,7 +1,12 @@
 'use client'
-import Modal from "../../custom/modal"
-import { BlockStorageAttributeConfig, BlockStorageAttributeType, ComputeAttributeConfig, ComputeAttributeType, DatabaseAttributeConfig, FirewallAttributeType, ObjectStorageAttributConfig } from "@/lib/projectDB"
-import { useYjsStore } from '@/lib/useYjsStore'
+import Modal from "../../custom/modal/modal"
+import { 
+  BlockStorageAttributeConfig, BlockStorageAttributeType, 
+  ComputeAttributeConfig, ComputeAttributeType, 
+  DatabaseAttributeConfig, FirewallAttributeType,
+  ObjectStorageAttributConfig
+} from "@/types/type"
+import { useYjsStore } from '@/lib/hooks/useYjsStore'
 import { useSelf } from "@liveblocks/react"
 import { LiveFlowService } from "@/services/liveflow"
 import AddNewCompute from "./addCompute"
@@ -25,9 +30,9 @@ export default function AddNewResourceModal({onClose, type, onConnect}: EditModa
     if(!yDoc || !me?.id || !me.info?.name) return
     const AllAddedAttribute = addedAttribute
 
-    const centerPosition = {
-      x: window.innerWidth / 2,
-      y: window.innerHeight / 2,
+    const randomPosition = {
+      x: Math.floor(Math.random() * (900 - 500 + 1)) + 500,
+      y: Math.floor(Math.random() * (500 - 280 + 1)) + 280,
     }
 
     switch (type) {
@@ -84,7 +89,7 @@ export default function AddNewResourceModal({onClose, type, onConnect}: EditModa
     const newNode: Node = {
       id: `${type}-${Date.now()}`,
       type: 'resource',
-      position: centerPosition,
+      position: randomPosition,
       data: { 
         type: type,
         status: 'add',

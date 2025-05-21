@@ -20,7 +20,7 @@ export default function Avatar({ src, name, color }: Props) {
       }}
     >
       <Image
-        src={src || '/jisu-profile-b.png'}
+        src={src || '/aut-logo-cloud.svg'}
         height={30}
         width={30}
         alt={name || "user"}

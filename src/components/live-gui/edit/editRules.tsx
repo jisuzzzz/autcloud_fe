@@ -1,13 +1,13 @@
 'use client'
-import Modal from "../../custom/modal"
-import SelectBox from "../../custom/selectBox"
+import Modal from "../../custom/modal/modal"
+import SelectBox from "../../custom/ui/dropDown/selectBox"
 import { Input } from "../../ui/input"
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { FirewallRuleType } from "@/lib/projectDB"
+import { FirewallRuleType } from "@/types/type"
 import { useForm } from 'react-hook-form'
 import { cn } from "@/lib/utils"
-import { AttributeSection, InfoItem } from "../attributeBar"
+import { AttributeSection, InfoItem } from "../ui/attributeBar"
 
 interface FirewallModalProps {
   onClose: () => void
