@@ -22,7 +22,7 @@ interface NodeProps {
   selected: boolean
 }
 
-export default function ResourceNode({ id, data, selected=false }: NodeProps) {
+export default function ResourceNode({ id, data }: NodeProps) {
   const users = useOthers()
   const me = useSelf()
   const myColor = me?.info?.color as string || '#FFCA28'

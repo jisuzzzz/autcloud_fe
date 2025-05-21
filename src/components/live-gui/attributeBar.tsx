@@ -16,10 +16,12 @@ import {
   ResourceNodeType,
 } from '@/lib/projectDB';
 import Image from 'next/image';
-import { StartEditButton } from './resourceEdit';
+import StartEditButton from './resourceEdit';
 import { useYjsStore } from '@/lib/useYjsStore';
 import { Edge, Node } from 'reactflow';
 import * as Y from 'yjs';
+import { useStorage } from '@liveblocks/react';
+import { LiveMap } from '@liveblocks/node';
 
 export function InfoIcon({ label }: { label: string }) {
   return (
@@ -79,6 +81,12 @@ export default function AttributeBar({setEdges}: AttributeBarProps) {
   const me = useSelf();
   const  {yDoc} = useYjsStore()
 
+  const resourceAttribute = useStorage((root) => {
+    const store = root.attributeStore as unknown as LiveMap<string, any>
+    return selectedResource ? store.get(selectedResource.id) : null
+  })
+
+
   useEffect(() => {
     if (!yDoc) return
 
@@ -133,19 +141,18 @@ export default function AttributeBar({setEdges}: AttributeBarProps) {
         />
       </div>
       {selectedResource.data.type === 'Compute' && (
-        <ComputeAttribute attribute={selectedResource.data.attribute as ComputeAttributeType} />
+        <ComputeAttribute attribute={resourceAttribute as ComputeAttributeType} />
       )}
       {selectedResource.data.type === 'Database' && (
-        <DatabaseAttribute attribute={selectedResource.data.attribute as DatabaseAttributeType} />
+        <DatabaseAttribute attribute={resourceAttribute as DatabaseAttributeType} />
       )}
       {selectedResource.data.type === 'BlockStorage' && (
         <BlockStorageAttribute
-          attribute={selectedResource.data.attribute as BlockStorageAttributeType}
-        />
+          attribute={resourceAttribute as BlockStorageAttributeType} />
       )}
       {selectedResource.data.type === 'ObjectStorage' && (
         <ObjectStorageAttribute
-          attribute={selectedResource.data.attribute as ObjectStorageAttributeType}
+          attribute={resourceAttribute as ObjectStorageAttributeType}
         />
       )}
       {selectedResource.data.type === 'FireWall' && (

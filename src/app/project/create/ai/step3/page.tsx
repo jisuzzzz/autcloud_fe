@@ -8,26 +8,26 @@ import ProjectThumbnail from '@/components/live-gui/thumbnail'
 import { motion } from 'framer-motion'
 
 const DIAGRAMS = [
-  getProjectById("9cd47912-c94a-451f-a1a2-ec5b2097c461"),
+  getProjectById("37bfb83b-dd64-410b-81c5-7374b0c453e0"),
   getProjectById("8ab36845-d77c-482f-b9e3-5a4c31f89d52"),
   getProjectById("5cd92f34-a17b-429d-8e35-9bf72c680d13")
 ].filter(Boolean)
 
 function getTotalMonthlyCost(resources: any[]) {
   return resources.reduce((sum, resource) => {
-    const cost = Number(resource?.spec?.monthly_cost || resource?.spec?.price || 0)
+    const cost = Number(resource?.Attribute?.monthly_cost || resource?.attribute?.price || 0)
     return sum + cost
   }, 0)
 }
 
-function getMainSpecInfo(resource: any) {
-  const { type, spec } = resource
+function getMainAttributeInfo(resource: any) {
+  const { type, attribute } = resource
   
   switch(type) {
-    case 'Compute': return `Plan: ${spec.plan} ($${spec.monthly_cost} /month)`
-    case 'Database': return `Plan: ${spec.plan} ($${spec.monthly_cost} /month)`
-    case 'BlockStorage': return `${spec.size}GB • ${spec.type}`
-    case 'ObjectStorage': return `Plan: ${spec.plan} ($${spec.price} /month)`
+    case 'Compute': return `Plan: ${attribute.plan} ($${attribute?.monthly_cost} /month)`
+    case 'Database': return `Plan: ${attribute.plan} ($${attribute?.monthly_cost} /month)`
+    case 'BlockStorage': return `${attribute.size}GB • ${attribute?.type}`
+    case 'ObjectStorage': return `Plan: ${attribute.plan} ($${attribute?.price} /month)`
     case 'FireWall': return 'Security rules'
     default: return ''
   }
@@ -99,7 +99,7 @@ export default function Step3Page() {
                     <div key={resource.id} className="text-xs p-2 sm:p-3 border rounded-md bg-gray-50">
                       <div className="font-medium mb-1">{resource.type}</div>
                       <div className="text-gray-500 truncate">
-                        {getMainSpecInfo(resource)}
+                        {getMainAttributeInfo(resource)}
                       </div>
                     </div>
                   ))}

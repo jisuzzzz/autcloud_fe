@@ -55,9 +55,6 @@ export const LiveFlowService = {
     }
   },
 
-  // 사용자별 undo 스택 초기화 함수, 마지막 액션으로 타임아웃 10분
-  // Y.js의 공유 데이터 구조에서 사용자별 작업 이력을 관리하는 맵을 초기화
-  // todo: 아마 초기화 안될거임... 다시 해야 할 듯
   initUserActionHistory: (userId:string, yDoc:Y.Doc) => {
     if(!yDoc) return
     const userActionHistory = yDoc.getMap<UserStack>('userActionHistory')
@@ -103,11 +100,11 @@ export const LiveFlowService = {
     })
   },
 
-  addNode : (node: Node, userId:string, userName:string, yDoc: Y.Doc) => {
+  addNode : (node: Node, addedAttribute: any, userId:string, userName:string, yDoc: Y.Doc) => {
     if (!yDoc) return
     const yNodes = yDoc.getArray<Y.Map<any>>('nodes')
     const projectHistory = yDoc.getMap<ProjectChanges>('projectHistory')
-
+    console.log(addedAttribute)
     yDoc.transact(() => {
       const yNode = new Y.Map()
       yNode.set('id', node.id)
@@ -128,11 +125,12 @@ export const LiveFlowService = {
         attributeChanges: {}
       }
 
-      const attributeProperties = Object.keys(node.data.attribute)
+      const attributeProperties = Object.keys(addedAttribute)
+      console.log(attributeProperties)
       attributeProperties.forEach(property => {
         changes[node.id].attributeChanges[property] = {
           prevValue: null,
-          currValue: node.data.attribute[property]
+          currValue: addedAttribute[property]
         }
       })
       
@@ -473,7 +471,7 @@ export const LiveFlowService = {
       })
 
     })
-    // console.log(commandList)
+    console.log(commandList)
   },
 
 }

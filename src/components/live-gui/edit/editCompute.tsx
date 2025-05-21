@@ -135,7 +135,7 @@ export default function EditComputeAttribute({
   }
 
   const handleOsChange = (osId: string) => {
-    const selectedOs = OSArray.find(os => String(os.id) === osId)
+    const selectedOs = OSArray.find(os => os.id === Number(osId))
     if (selectedOs) {
       setValue('os_id', String(selectedOs.id))
       setValue('os', selectedOs.name)

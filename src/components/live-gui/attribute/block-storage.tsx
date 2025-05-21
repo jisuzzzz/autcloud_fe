@@ -10,7 +10,7 @@ interface BlockStorageAttributeProps {
 
 export default function BlockStorageAttribute({attribute: localAttribute }:BlockStorageAttributeProps) {
   const [attribute, setAttribute] = useState(localAttribute)
-
+  
   useEffect(() => {
     setAttribute(localAttribute)
   }, [localAttribute])
@@ -42,7 +42,6 @@ export default function BlockStorageAttribute({attribute: localAttribute }:Block
         <div className="space-y-2">
           <h3 className="text-xs text-gray-500">{"Attatch to"}</h3>
           <div className="flex itmes-center">
-            {/* <SelectBox option={attribute.attached_to} className="w-full"/> */}
             <p className="text-xs text-[#8171E8]">{attribute.attached_to}</p>
           </div>
           <p className="text-[12px] text-gray-500">on this page, GB = 1024^3 bytes</p>

@@ -4,33 +4,52 @@ import { SquarePen } from 'lucide-react'
 import { useState } from 'react'
 import EditModal from './edit/editModal'
 import { ResourceNodeType } from "@/lib/projectDB"
-import { Button } from '../ui/button'
-import { Node, Edge } from 'reactflow'
-
-export function SaveEditButton({ formId }: { formId?: string}) {
-  return (
-    <Button 
-      type="submit"
-      form={formId}
-      className="px-3 w-[60px] py-1 rounded-sm h-8 text-xs bg-[#8171E8]">
-      Save
-    </Button>
-  )
-}
+import { Edge } from 'reactflow'
+import { InfoIcon } from './attributeBar'
 
 interface StartEditButtonProps{
   resource: ResourceNodeType
   setEdges: (updater: (prev: Edge[]) => Edge[]) => void 
 }
 
-export function StartEditButton({resource, setEdges }: StartEditButtonProps) {
+export function AlretModal() {
+const [isAlretModalOpen, setIsAlretModalOpen] = useState(false)
+  return (
+    <div
+      onMouseEnter={() => setIsAlretModalOpen(true)}
+      onMouseLeave={() => setIsAlretModalOpen(false)}
+      className='absolute w-48 bg-white border rounded-sm z-50'
+    >
+      <span>
+        <p>
+          Can open Edit
+        </p>
+      </span>
+    </div>
+  )
+}
+
+export default function StartEditButton({resource, setEdges }: StartEditButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isAlretModalOpen, setIsAlretModalOpen] = useState(false)
+  const isRemove = resource.data.status === 'remove'
   return (
     <>
       <button
-        onClick={() => setIsModalOpen(true)}
+        onClick={() => !isRemove && setIsModalOpen(true)}
+        aria-disabled={isRemove}
+        className={`relative ${isRemove ? 'cursor-not-allowed' : ''}`}
+        onMouseEnter={() => isRemove && setIsAlretModalOpen(true)}
+        onMouseLeave={() => setIsAlretModalOpen(false)}
       >
-        <SquarePen size={18} className="text-gray-500 hover:text-[#8171E8] cursor-pointer" />
+        <SquarePen
+          size={18}
+          className={`text-gray-500 ${
+            isRemove
+              ? 'text-gray-300 hover:text-gray-300'
+              : 'hover:text-[#8171E8] cursor-pointer'
+          }`}
+        />
       </button>
       {isModalOpen && (
         <EditModal 
@@ -38,6 +57,15 @@ export function StartEditButton({resource, setEdges }: StartEditButtonProps) {
           onClose={() => setIsModalOpen(false)}
           setEdges={setEdges}
         />
+      )}
+      {isAlretModalOpen && (
+        <div className='absolute w-48 top-3 right-12 bg-gray-50 border rounded-sm shadow-lg z-50 p-2'>
+          <div className='flex items-center px-3 py-2 gap-2'>
+            <InfoIcon label='!'/>
+            <p className='text-[11px] text-gray-800'>This resource is deleted</p>
+          </div>
+          <div className='absolute w-3 h-3 bg-gray-50 border-t border-l transform rotate-135 top-[10px] -right-[6.7px]'></div>
+        </div>
       )}
     </>
   )

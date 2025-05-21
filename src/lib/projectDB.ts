@@ -6,7 +6,8 @@ type ResourceConfig = {
     y: number
   },
   status: 'add' | 'remove' | 'edit' | 'comfirm',
-  attribute: ComputeAttributeType | DatabaseAttributeType | BlockStorageAttributeType | ObjectStorageAttributeType | FirewallAttributeType
+  attribute: ComputeAttributeConfig | DatabaseAttributeConfig | ObjectStorageAttributConfig  
+  | BlockStorageAttributeConfig | FirewallAttributeType
 }
 
 type ResourceNodeType = {
@@ -20,7 +21,8 @@ type ResourceNodeType = {
   data: {
     type: 'Compute' | 'Database' | 'BlockStorage' | 'ObjectStorage' | 'FireWall',
     status: 'add' | 'remove' | 'edit' | 'comfirm',
-    attribute: ComputeAttributeType | DatabaseAttributeType | BlockStorageAttributeType | ObjectStorageAttributeType | FirewallAttributeType
+    attribute: ComputeAttributeConfig | DatabaseAttributeConfig | ObjectStorageAttributConfig  
+    | BlockStorageAttributeConfig | FirewallAttributeType
   }
 }
 
@@ -29,6 +31,42 @@ type ProjectTemplate = {
   name: string,
   description: string,
   initial_resources: ResourceConfig[]
+}
+
+type ComputeAttributeConfig = {
+  plan: string,
+  status: string,
+  region_id: string,
+  ip_address: string,
+  label: string,
+  os_id: string,
+  auto_backups: string,
+  group_id?: string
+}
+
+type DatabaseAttributeConfig = {
+  status: string,
+  plan: string,
+  db_engine: string,
+  db_version: string,
+  latest_backup: string,
+  region_id: string,
+  label: string,
+}
+
+type ObjectStorageAttributConfig = {
+  cluster_id: string,
+  tier_id: string,
+  label: string,
+}
+
+type BlockStorageAttributeConfig = {
+  region_id: string,
+  type: string,
+  mount_id: string,
+  attached_to: string,
+  size: string,
+  label: string,
 }
 
 type ComputeAttributeType = {
@@ -56,7 +94,7 @@ type DatabaseAttributeType = {
   db_version: string,
   latest_backup: string,
   replica_nodes: string,
-  vcpu_count: string, 
+  vcpu: string, 
   ram: string, 
   disk: string,
   region_id: string,
@@ -66,7 +104,6 @@ type DatabaseAttributeType = {
 }
 
 type BlockStorageAttributeType = {
-  id: string,
   region_id: string,
   region: string,
   type: string,
@@ -74,7 +111,6 @@ type BlockStorageAttributeType = {
   attached_to: string,
   size: string,
   label: string,
-  date_created: string
 }
 
 type ObjectStorageAttributeType = {
@@ -291,17 +327,10 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           plan: 'vc2-2c-2gb',
           status: "running",
           region_id: "ewr",
-          region: "New Jersey",
           ip_address: "64.176.217.21",
-          vcpu: "1",
-          ram: "1024.00",
-          disk: "25",
-          bandwidth: "0.34",
           label: "Shopify-Web-Server",
           os_id: "2571",
-          os: "Ubuntu 25.04 x64",
           auto_backups: "enable",
-          monthly_cost: "0",
           group_id: "firewall-1"
         }
       },
@@ -313,14 +342,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         attribute: {
           cluster_id: "2",
           tier_id: "2",
-          plan: "Standard",
           label: "Shopify-Asset-Storage",
-          region: "New Jersey",
-          price: "18",
-          ratelimit_ops_secs: "800",
-          ratelimit_ops_bytes: "629145600",
-          disk_gb_price: "0.018",
-          bw_gb_price: "0.01"
         }
       },
       {
@@ -329,15 +351,12 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 500, y: 400 },
         status: 'add',
         attribute: {
-          id: "bs-chi-001",
           region_id: "ewr",
-          region: "New Jersey",
           type: "NVMe",
           mount_id: "ewr-a23cda1547af4b",
           attached_to: "compute-1",
           size: "1",
           label: "Shopify-Data-Volume",
-          date_created: "04/15/2024 14:49:20"
         }
       },
       {
@@ -347,18 +366,12 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         status: 'add',
         attribute: {
           status: "pending",
-          plan: "vultur-dbaas-startup-cc-1-55-2",
+          plan: "vultr-dbaas-hobbyist-cc-1-25-1",
           db_engine: "pg",
           db_version: "15",
           latest_backup: "2 hours ago",
-          replica_nodes: "1",
-          vcpu_count: "1",
-          ram: "1024",
-          disk: "25",
           region_id: "ewr",
-          region: "New Jersey",
           label: "Shopify-PostgreSQL-DB",
-          monthly_cost: "0"
         }
       },
       {
@@ -409,17 +422,10 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           plan: 'vc2-2c-2gb',
           status: "running",
           region_id: "ewr",
-          region: "New Jersey",
           ip_address: "64.176.217.21",
-          vcpu: "1",
-          ram: "1024.00",
-          disk: "25",
-          bandwidth: "0.34",
           label: "Shopify-Web-Server",
           os_id: "2571",
-          os: "Ubuntu 25.04 x64",
           auto_backups: "enable",
-          monthly_cost: "0",
           group_id: "firewall-1"
         }
       },
@@ -432,17 +438,10 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           plan: 'vc2-4c-8gb',
           status: "running",
           region_id: "ord",
-          region: "Chicago",
           ip_address: "192.168.1.102",
-          vcpu: "4",
-          ram: "8192.00",
-          disk: "80",
-          bandwidth: "5.0",
           label: "Shopify-Web-Server-Secondary",
           os_id: "2571",
-          os: "Ubuntu 25.04 x64",
           auto_backups: "disable",
-          monthly_cost: "0",
           group_id: "firewall-1"
         }
       },
@@ -452,15 +451,12 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 400, y: 300 },
         status: 'add',
         attribute: {
-          id: "bs-chi-001",
           region_id: "ord",
-          region: "Chicago",
           type: "NVMe",
           mount_id: "ord-b47cda1547af9c",
           attached_to: "compute-1",
           size: "500",
           label: "Shopify-Data-Primary",
-          date_created: "06/10/2024 09:12:45"
         }
       },
       {
@@ -469,15 +465,12 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 600, y: 300 },
         status: 'add',
         attribute: {
-          id: "bs-chi-002",
           region_id: "ord",
-          region: "Chicago",
           type: "NVMe",
           mount_id: "ord-c58eda1896af3d",
           attached_to: "compute-2",
           size: "500",
           label: "Shopify-Data-Secondary",
-          date_created: "06/10/2024 09:15:32"
         }
       },
       {
@@ -491,14 +484,8 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           db_engine: "pg",
           db_version: "15",
           latest_backup: "3 hours ago",
-          vcpu_count: "1",
-          ram: "1024",
-          disk: "25",
-          replica_nodes: "2",
           region_id: "ord",
-          region: "Chicago",
           label: "Shopify-PostgreSQL-Cluster",
-          monthly_cost: "0"
         }
       },
       {
@@ -539,17 +526,10 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           plan: 'vc2-2c-4gb',
           status: "running",
           region_id: "sea",
-          region: "Seattle",
           ip_address: "10.0.1.101",
-          vcpu: "2",
-          ram: "4096.00",
-          disk: "50",
-          bandwidth: "3.0",
           label: "Shopify-API-Gateway",
           os_id: "2571",
-          os: "Ubuntu 25.04 x64",
           auto_backups: "enable",
-          monthly_cost: "0",
           group_id: "firewall-1"
         }
       },
@@ -562,17 +542,10 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           plan: 'vc2-2c-4gb',
           status: "running",
           region_id: "sea",
-          region: "Seattle",
           ip_address: "10.0.1.102",
-          vcpu: "2",
-          ram: "4096.00",
-          disk: "50",
-          bandwidth: "3.0",
           label: "Shopify-Auth-Service",
           os_id: "2571",
-          os: "Ubuntu 25.04 x64",
           auto_backups: "enable",
-          monthly_cost: "0",
           group_id: "firewall-1"
         }
       },
@@ -587,14 +560,8 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           db_engine: "pg",
           db_version: "15",
           latest_backup: "1 hour ago",
-          vcpu_count: "1",
-          ram: "1024",
-          disk: "25",
-          replica_nodes: "1",
           region_id: "sea",
-          region: "Seattle",
           label: "Shopify-Product-DB",
-          monthly_cost: "0"
         }
       },
       {
@@ -608,14 +575,8 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           db_engine: "pg",
           db_version: "15",
           latest_backup: "1 hour ago",
-          vcpu_count: "1",
-          ram: "1024",
-          disk: "25",
-          replica_nodes: "1",
           region_id: "sea",
-          region: "Seattle",
           label: "Shopify-Order-DB",
-          monthly_cost: "0"
         }
       },
       {
@@ -626,14 +587,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         attribute: {
           cluster_id: "2",
           tier_id: "3",
-          plan: "Premium",
           label: "Shopify-Media-Storage",
-          region: "Seattle",
-          price: "36",
-          ratelimit_ops_secs: "1000",
-          ratelimit_ops_bytes: "1073741824",
-          disk_gb_price: "0.020",
-          bw_gb_price: "0.019"
         }
       },
       {
@@ -679,6 +633,10 @@ export {
   type ProjectTemplate, 
   type ResourceConfig, 
   type ResourceNodeType,
+  type ComputeAttributeConfig,
+  type DatabaseAttributeConfig,
+  type ObjectStorageAttributConfig, 
+  type BlockStorageAttributeConfig, 
   type ComputeAttributeType,
   type DatabaseAttributeType,
   type BlockStorageAttributeType,

@@ -18,6 +18,9 @@ import { ResourceConfig, ProjectTemplate, BlockStorageAttributeType, ComputeAttr
 import { LiveFlowService } from '@/services/liveflow'
 import Loading from '../custom/loading'
 import { DndContext, DragEndEvent, useDroppable } from '@dnd-kit/core'
+import { useAttributeStore } from '@/lib/useAttributeStore'
+import { useStorage } from '@liveblocks/react';
+import { LiveMap } from '@liveblocks/node';
 
 interface YjsReactFlowProps {
   project1: ProjectTemplate  
@@ -91,6 +94,13 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
 
   const [clipboard, setClipboard] = useState<{nodes: Node[]} | null>(null)
   const [occupiedNode, setoccupiedNode] = useState<Node[]>([])
+  const storage = useStorage((root) => root.attributeStore)
+  // console.log(storage)
+  const { storeComputeAttribute, storeDatabaseAttribute, storeObjectStorageAttribute, storeBlockStorageAttribute } = useAttributeStore()
+  const resourceAttribute = useStorage((root) => {
+    const store = root.attributeStore as unknown as LiveMap<string, any>
+    return clipboard ? store.get(clipboard.nodes[0].id) : null
+  })
 
 
   // const { setNodeRef } = useDroppable({ id: 'flow-drop' })
@@ -134,7 +144,23 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
       setNodes(initialNodes)
       setEdges(initialEdges)
       
+      const storeCompute = storeComputeAttribute()
+      const storeDatabase = storeDatabaseAttribute()
+      const storeObject = storeObjectStorageAttribute()
+      const storeBlock = storeBlockStorageAttribute()
+      initialNodes.forEach(node => {
+        if (node.data.type === 'Compute') {
+          storeCompute({ resourceAttribute: node.data.attribute, resourceId: node.id })
+        } else if(node.data.type === 'Database') {
+          storeDatabase({ resourceAttribute: node.data.attribute, resourceId: node.id })
+        } else if(node.data.type === 'ObjectStorage') {
+          storeObject({ resourceAttribute: node.data.attribute, resourceId: node.id })
+        } else if(node.data.type === 'BlockStorage') {
+          storeBlock({ resourceAttribute: node.data.attribute, resourceId: node.id })
+        }
+      })
       LiveFlowService.initNodes(initialNodes, initialEdges, yDoc)
+
     } else {
 
       const sharedNodes = yNodes.toArray().map(nodeMap => ({
@@ -153,6 +179,7 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
         setEdges(sharedEdges)
       }
     }
+    
     LiveFlowService.initUserActionHistory(user.id, yDoc)
     LiveFlowService.initProjectHistory(yDoc)
 
@@ -167,9 +194,25 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
         data: nodeMap.get('data')
       }))
       setNodes(updatedNodes)
+      const storeCompute = storeComputeAttribute()
+      const storeDatabase = storeDatabaseAttribute()
+      const storeObject = storeObjectStorageAttribute()
+      const storeBlock = storeBlockStorageAttribute()
+      updatedNodes.forEach(node => {
+        if (node.data.type === 'Compute') {
+          storeCompute({ resourceAttribute: node.data.attribute, resourceId: node.id })
+        } else if(node.data.type === 'Database') {
+          storeDatabase({ resourceAttribute: node.data.attribute, resourceId: node.id })
+        } else if(node.data.type === 'ObjectStorage') {
+          storeObject({ resourceAttribute: node.data.attribute, resourceId: node.id })
+        } else if(node.data.type === 'BlockStorage') {
+          storeBlock({ resourceAttribute: node.data.attribute, resourceId: node.id })
+        }
+        
+      })
     }
 
-    // YArray와 내부 데이터 변경 모두 감지
+
     yNodes.observeDeep(observer)
 
     const edgeObserver = (event: Y.YArrayEvent<Edge>, tr: Y.Transaction) => {
@@ -273,7 +316,7 @@ export function YjsReactFlow({ project1 }: YjsReactFlowProps) {
               },
               selected: false
             }
-            LiveFlowService.addNode(newNode, user.id, user.info.name, yDoc)
+            LiveFlowService.addNode(newNode, resourceAttribute, user.id, user.info.name, yDoc)
             LiveFlowService.pushToUndoStack(user.id, {
               type: 'add',
               nodeId: nodeId,

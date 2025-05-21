@@ -59,7 +59,7 @@ export default function DatabaseAttribute({ attribute:localAttribute }: Database
       </AttributeSection>
 
       <AttributeSection>
-        <InfoItem label="vCPU/s">{`${attribute.vcpu_count} vCPU`}</InfoItem>
+        <InfoItem label="vCPU/s">{`${attribute.vcpu} vCPU`}</InfoItem>
         <InfoItem label="RAM">{`${attribute.ram} MB`}</InfoItem>
         <InfoItem label="Disk">{`${attribute.disk} GB`}</InfoItem>
         <InfoItem label="Replica Nodes">

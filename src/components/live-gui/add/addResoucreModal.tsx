@@ -1,6 +1,6 @@
 'use client'
 import Modal from "../../custom/modal"
-import { BlockStorageAttributeType, ComputeAttributeType, DatabaseAttributeType, FirewallAttributeType, ObjectStorageAttributeType } from "@/lib/projectDB"
+import { BlockStorageAttributeConfig, BlockStorageAttributeType, ComputeAttributeConfig, ComputeAttributeType, DatabaseAttributeConfig, FirewallAttributeType, ObjectStorageAttributConfig } from "@/lib/projectDB"
 import { useYjsStore } from '@/lib/useYjsStore'
 import { useSelf } from "@liveblocks/react"
 import { LiveFlowService } from "@/services/liveflow"
@@ -10,8 +10,6 @@ import AddNewBlockStorage from "./addBlock"
 import AddNewObjectStorage from "./addObject"
 import AddNewDatabase from "./addDB"
 import AddNewFirewall from "./addFirewall"
-
-type AttributeType = ComputeAttributeType | DatabaseAttributeType | BlockStorageAttributeType | ObjectStorageAttributeType | FirewallAttributeType
 
 interface EditModalProps{
   onClose: () => void
@@ -23,12 +21,64 @@ export default function AddNewResourceModal({onClose, type, onConnect}: EditModa
   const {yDoc} = useYjsStore() 
   const me = useSelf()
 
-  const handleAdd = (addedAttribute: AttributeType) => {
+  const handleAdd = (addedAttribute: any) => {
     if(!yDoc || !me?.id || !me.info?.name) return
+    const AllAddedAttribute = addedAttribute
 
     const centerPosition = {
       x: window.innerWidth / 2,
       y: window.innerHeight / 2,
+    }
+
+    switch (type) {
+      case 'Compute':
+        addedAttribute = {
+          plan: addedAttribute.plan,
+          status: addedAttribute.status,
+          region_id: addedAttribute.region_id,
+          ip_address: addedAttribute.ip_address,
+          label: addedAttribute.label,
+          os_id: addedAttribute.os_id,
+          auto_backups: addedAttribute.auto_backups,
+          group_id: addedAttribute.group_id
+        } satisfies ComputeAttributeConfig
+        break
+  
+      case 'Database':
+        addedAttribute = {
+          plan: addedAttribute.plan,
+          status: addedAttribute.status,
+          db_engine: addedAttribute.db_engine,
+          db_version: addedAttribute.db_version,
+          latest_backup: addedAttribute.latest_backups,
+          region_id: addedAttribute.region_id,
+          label: addedAttribute.label
+        } satisfies DatabaseAttributeConfig
+        break
+  
+      case 'ObjectStorage':
+        addedAttribute = {
+          cluster_id: addedAttribute.cluster_id,
+          tier_id: addedAttribute.tire_id,
+          label: addedAttribute.label,
+        } satisfies ObjectStorageAttributConfig
+        break
+  
+      case 'BlockStorage':
+        addedAttribute = {
+          region_id: addedAttribute.region_id,
+          type: addedAttribute.type,
+          mount_id: addedAttribute.mount_id,
+          attached_to: addedAttribute.attached_to,
+          size: addedAttribute.size,
+          label: addedAttribute.label,
+        } satisfies BlockStorageAttributeConfig
+        break
+
+      case 'FireWall':
+        addedAttribute = {
+          addedAttribute
+        }
     }
     
     const newNode: Node = {
@@ -42,7 +92,7 @@ export default function AddNewResourceModal({onClose, type, onConnect}: EditModa
       },
     }
     
-    LiveFlowService.addNode(newNode, me.id, me.info.name, yDoc)
+    LiveFlowService.addNode(newNode, AllAddedAttribute, me.id, me.info.name, yDoc)
     
     if(type === 'BlockStorage' && (addedAttribute as BlockStorageAttributeType).attached_to) {
       const computeId = (addedAttribute as BlockStorageAttributeType).attached_to
@@ -104,3 +154,24 @@ export default function AddNewResourceModal({onClose, type, onConnect}: EditModa
   )
 }
 
+
+
+// {
+//   "label": "adfasf",
+//   "rules": [
+//       {
+//           "action": "accept",
+//           "port": "80",
+//           "ip_type": "IPv6",
+//           "protocol": "icmp",
+//           "subnet": "0.0.0.0",
+//           "subnet_size": 10,
+//           "notes": "new rule"
+//       }
+//   ]
+// }
+
+// [
+//   "label",
+//   "rules"
+// ]
