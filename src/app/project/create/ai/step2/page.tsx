@@ -4,33 +4,40 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import FormDropdown from '@/components/custom/formDropdown';
+import { motion } from 'framer-motion';
+import { useState } from 'react';
 
 export default function Step2Page() {
   const router = useRouter();
+  const [selected, setSelected] = useState<string | null>(null);
 
-  const handleNext = () => {
-    router.push('/project/create/ai/step3');
-  };
-
-  const handlePrevious = () => {
-    router.back();
-  };
+  const handleNext = () => router.push('/project/create/ai/step3');
+  const handlePrevious = () => router.back();
 
   return (
-    <div className="flex flex-col min-h-screen bg-white p-10">
-      {/* Back 버튼 */}
-      <Button
-        onClick={() => router.back()}
-        variant="ghost"
-        className="mb-8 w-fit text-gray-500"
+    <div className="min-h-screen bg-[#F8F7FF] flex items-center justify-center">
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: 'easeOut' }}
+        className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-[60px] py-[20px]"
       >
-        ← Back
-      </Button>
+        <div className="grid grid-cols-3 items-center mb-10 pt-4">
+          <button
+            onClick={handlePrevious}
+            className="text-gray-500 text-[14px] justify-self-start hover:text-black cursor-pointer"
+          >
+            ← Back
+          </button>
 
-      {/* 질문 영역 */}
-      <div className="flex flex-1 items-start justify-center pt-8">
-        <div className="max-w-2xl w-full space-y-10">
-          {/* Question 5 */}
+          <h2 className="text-[16px] sm:text-[18px] font-semibold justify-self-center">
+            Step 2
+          </h2>
+
+          <div />
+        </div>
+
+        <div className="max-w-3xl w-full mx-auto space-y-10">
           <div>
             <label className="block text-base font-semibold mb-2">
               Question 5
@@ -38,7 +45,6 @@ export default function Step2Page() {
             <Input placeholder="Place holder" />
           </div>
 
-          {/* Question 6 */}
           <div>
             <label className="block text-base font-semibold mb-2">
               Question 6
@@ -55,7 +61,6 @@ export default function Step2Page() {
             </div>
           </div>
 
-          {/* Question 7 */}
           <div>
             <label className="block text-base font-semibold mb-2">
               Question 7
@@ -63,40 +68,45 @@ export default function Step2Page() {
             <Input placeholder="Place holder" />
           </div>
 
-          {/* Question 8 */}
           <div>
             <label className="block text-base font-semibold mb-2">
               Question 8
             </label>
             <div className="flex gap-4">
-              <Button
-                variant="outline"
-                className="flex-1 w-full text-sm hover:border-gray-400"
-              >
-                Button
-              </Button>
-              <Button
-                variant="outline"
-                className="flex-1 w-full text-sm hover:border-gray-400"
-              >
-                Button
-              </Button>
+              {['Option X', 'Option Y'].map((label, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setSelected(label)}
+                  className={`flex-1 text-sm border rounded-md px-4 py-2 transition-all duration-300 ease-in-out
+                    ${
+                      selected === label
+                        ? 'border-gray-400 bg-gray-50 shadow-md scale-[1.015] ring-1 ring-gray-300 ring-offset-1'
+                        : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
+                    }`}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Previous & Next 버튼 */}
-          <div className="flex justify-end items-center gap-4 mt-8">
+          <div className="flex justify-end items-center gap-4 pt-4">
             <Button
               variant="ghost"
               onClick={handlePrevious}
-              className="text-gray-500"
+              className="text-gray-500 text-sm transition"
             >
               Previous
             </Button>
-            <Button onClick={handleNext}>Next</Button>
+            <Button
+              onClick={handleNext}
+              className="bg-[#7868E6] hover:bg-[#6a5ed4] text-white text-sm transition"
+            >
+              Next
+            </Button>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
