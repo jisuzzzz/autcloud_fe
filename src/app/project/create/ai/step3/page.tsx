@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { getProjectById } from '@/lib/db/projectDB'
 import ProjectThumbnail from '@/components/custom/panel/thumbnail'
 import { motion } from 'framer-motion'
+import { getFilteredOptions } from '@/lib/helpers/getFilteredOptions'
 
 const DIAGRAMS = [
   getProjectById("37bfb83b-dd64-410b-81c5-7374b0c453e0"),
@@ -13,21 +14,42 @@ const DIAGRAMS = [
   getProjectById("5cd92f34-a17b-429d-8e35-9bf72c680d13")
 ].filter(Boolean)
 
-function getTotalMonthlyCost(resources: any[]) {
+function getTotalMonthlyCost(resources: any[]): number {
   return resources.reduce((sum, resource) => {
-    const cost = Number(resource?.Attribute?.monthly_cost || resource?.attribute?.price || 0)
-    return sum + cost
+    const type = resource?.type
+    const attribute = resource?.attribute
+
+    if (!type || !attribute) return sum
+
+    const region_id = attribute.region_id || attribute.cluster_id
+    const plan = attribute.plan || attribute.tier_id
+
+    const cost = getFilteredOptions(type, region_id, plan)
+    return sum + Number(cost || 0)
   }, 0)
+}
+
+function getMonthlyCost(resource: any): number {
+  const type = resource?.type;
+  const attribute = resource?.attribute;
+
+  if (!type || !attribute) return 0;
+
+  const region_id = attribute.region_id || attribute.cluster_id;
+  const plan = attribute.plan || attribute.tier_id;
+
+  const cost = getFilteredOptions(type, region_id, plan);
+  return Number(cost || 0);
 }
 
 function getMainAttributeInfo(resource: any) {
   const { type, attribute } = resource
   
   switch(type) {
-    case 'Compute': return `Plan: ${attribute.plan} ($${attribute?.monthly_cost} /month)`
-    case 'Database': return `Plan: ${attribute.plan} ($${attribute?.monthly_cost} /month)`
+    case 'Compute': return `Plan: ${attribute.plan} ($${getMonthlyCost(resource)} /month)`
+    case 'Database': return `Plan: ${attribute.plan} ($${getMonthlyCost(resource)} /month)`
     case 'BlockStorage': return `${attribute.size}GB • ${attribute?.type}`
-    case 'ObjectStorage': return `Plan: ${attribute.plan} ($${attribute?.price} /month)`
+    case 'ObjectStorage': return `Plan: ${attribute.plan} ($${getMonthlyCost(resource)} /month)`
     case 'FireWall': return 'Security rules'
     default: return ''
   }

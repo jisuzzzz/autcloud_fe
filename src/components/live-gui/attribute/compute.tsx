@@ -6,7 +6,7 @@ import { InfoItem, AttributeSection, InfoIcon } from '../ui/attributeBar'
 import { Copy } from 'lucide-react'
 import { ComputeAttributeType } from "@/types/type"
 import { useEffect, useState, useMemo } from 'react'
-import { RegionsArray } from '@/options/resourceOptions'
+import { getRegionFlag } from '@/lib/helpers/getRegionFlag'
 
 interface ComputeAttributeProps {
   attribute: ComputeAttributeType
@@ -19,14 +19,8 @@ export default function ComputeAttribute({ attribute: initAttribute }: ComputeAt
     setAttribute(initAttribute)
   }, [initAttribute])
 
-  // 지역 ID에서 국기 이미지 경로 매핑
   const regionInfo = useMemo(() => {
-
-    let regionId = attribute.region_id
-    const region = RegionsArray.find(r => r.id === regionId)
-    return {
-      flag: region?.flag || '/flag-icn.svg',
-    }
+    return getRegionFlag(attribute.region_id)
   }, [attribute.region_id])
   
   return (

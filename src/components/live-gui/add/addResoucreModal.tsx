@@ -81,9 +81,8 @@ export default function AddNewResourceModal({onClose, type, onConnect}: EditModa
         break
 
       case 'FireWall':
-        addedAttribute = {
-          addedAttribute
-        }
+        addedAttribute = addedAttribute
+        
     }
     
     const newNode: Node = {
@@ -158,25 +157,3 @@ export default function AddNewResourceModal({onClose, type, onConnect}: EditModa
     </Modal>
   )
 }
-
-
-
-// {
-//   "label": "adfasf",
-//   "rules": [
-//       {
-//           "action": "accept",
-//           "port": "80",
-//           "ip_type": "IPv6",
-//           "protocol": "icmp",
-//           "subnet": "0.0.0.0",
-//           "subnet_size": 10,
-//           "notes": "new rule"
-//       }
-//   ]
-// }
-
-// [
-//   "label",
-//   "rules"
-// ]

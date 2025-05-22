@@ -160,42 +160,34 @@ type ProjectChanges = {
 }
 
 type CreateInstanceType = {
-  data: {
-    region: string,
-    plan: string,
-    label: string,
-    os_id: number,
-    backups: string,
-    hostname: string,
-  }
+  region: string,
+  plan: string,
+  label: string,
+  os_id: number,
+  backups: string,
+  hostname: string,
 }
 
 type UpdateInstanceType = {
-  data: {
-    id: string,
-    backups: string,
-    firewall_group_id: string,
-    os_id: number,
-    plan: string,
-    ddos_protection: boolean,
-    label: string
-  }
+  id: string,
+  backups: string,
+  firewall_group_id: string,
+  os_id: number,
+  plan: string,
+  ddos_protection: boolean,
+  label: string
 }
 
 type DeleteInstanceType = {
-  data: {
-    id: string
-  }
+  id: string
 }
 
 type CreateManagedDatabaseType = {
-  data: {
-      database_engine: DatabaseEngineType,
-      database_engine_version: number
-      region: string,
-      plan: string,
-      label: string,
-  }
+    database_engine: DatabaseEngineType,
+    database_engine_version: number
+    region: string,
+    plan: string,
+    label: string,
 }
 enum DatabaseEngineType {
     mysql,
@@ -203,100 +195,74 @@ enum DatabaseEngineType {
 }
 
 type UpdateManagedDatabaseType = {
-  data: {
-    id: string,
-    plan: string,
-    label: string,
-  }
+  id: string,
+  plan: string,
+  label: string,
 }
 
 type DeleteManagedDatabaseType = {
-  data: {
-    id: string,
-  }
+  id: string,
 }
 
 type CreateObjectStorageType = {
-  data: {
-      cluster_id: number,
-      tier_id: number,
-      label: string,
-  }
+  cluster_id: number,
+  tier_id: number,
+  label: string,
 }
 
 type UpdateObjectStorageType = {
-  data: {
-    id: string,
-    label: string,
-  }
+  id: string,
+  label: string,
 }
 
 type DeleteObjectStorageType = {
-  data: {
-    id: string,
-  }
+  id: string,
 }
 
 type CreateBlockStorageType = {
-  data: {
-    region: string,
-    size_gb: number,
-    label: string,
-  }
+  region: string,
+  size_gb: number,
+  label: string,
 }
 
 type UpdateBlockStorageType = {
-  data: {
-    id: string,
-    region: string,
-    size_gb: number,
-    label: string,
-  }
+  id: string,
+  region: string,
+  size_gb: number,
+  label: string,
 }
 
 type DeleteBlockStorageType = {
-  data: {
-    id: string,
-  }
+  id: string,
 }
 
 type CreateFirewallGroupType = {
-  data: {
-    description: string
-  }
+  description: string
 }
 
 type UpdateFirewallGroupType = {
-  data: {
-    id: string,
-    description: string
-  }
+  id: string,
+  description: string
 }
 
 type DeleteFirewallGroupType = {
-  data: {
-    id: string,
-  }
+  id: string,
 }
 
 
 type CreateFirewallRule = {
-  data: {
-    fire_wall_group_id: string,
-    ip_type: string,
-    protocol: string,
-    port: string,
-    subent: string,
-    subnet_size: number,
-    notes: string
-  }
+  fire_wall_group_id: string,
+  ip_type: string,
+  protocol: string,
+  port: string,
+  subent: string,
+  subnet_size: number,
+  notes: string
 }
 
 type DeleteFirewallRule = {
-  data: {
-    fire_wall_group_id: string,
-    fire_wall_rule_id: number
-  }
+  fire_wall_group_id: string,
+  fire_wall_rule_id: number
 }
 
 type CommandItem = {

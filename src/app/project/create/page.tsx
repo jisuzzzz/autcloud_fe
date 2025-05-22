@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Pencil, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -19,32 +18,22 @@ export default function CreateProjectPage() {
 
   return (
     <motion.div
-      className="flex flex-col min-h-screen bg-white"
+      className="flex flex-col min-h-screen bg-[#F8F7FF]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Back 버튼 */}
-      <div className="p-6">
-        <Button
-          onClick={() => router.back()}
-          variant="ghost"
-          className="text-gray-500 w-fit px-0"
-        >
-          ← Back
-        </Button>
-      </div>
 
       {/* 카드 영역 */}
-      <div className="flex justify-center mt-20 gap-8">
+      <div className="flex justify-center mt-30 gap-8">
         {[
           {
-            icon: <Pencil size={52} className="mb-6 text-black" />,
+            icon: <Pencil size={52} className="mb-6 text-violet-500" />,
             title: 'Start from scratch',
             onClick: handleStartFromScratch,
           },
           {
-            icon: <Sparkles size={52} className="mb-6 text-black" />,
+            icon: <Sparkles size={52} className="mb-6 text-violet-500" />,
             title: 'Create with AI',
             onClick: handleCreateWithAI,
           },
@@ -59,14 +48,13 @@ export default function CreateProjectPage() {
           >
             <Card
               onClick={item.onClick}
-              className="cursor-pointer w-[300px] h-[270px] border border-gray-300 rounded-md hover:border-gray-500 hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md"
+              className="cursor-pointer bg-white w-[300px] h-[270px] border rounded-md hover:border-gray-300 hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md"
             >
               <CardContent className="flex flex-col items-center justify-center text-center p-8 h-full">
                 {item.icon}
-                <h2 className="text-xl font-semibold mb-2 text-black">
+                <h2 className="text-xl font-semibold mb-2 text-violet-600">
                   {item.title}
                 </h2>
-                <p className="text-gray-500 text-sm">Description</p>
               </CardContent>
             </Card>
           </motion.div>

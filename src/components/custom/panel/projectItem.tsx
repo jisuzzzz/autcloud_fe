@@ -1,23 +1,33 @@
-'use client';
+'use client'
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { useState, useRef } from 'react';
-import { MoreHorizontal } from 'lucide-react';
-import Modal from '../modal/modal';
+import Image from 'next/image'
+import Link from 'next/link'
+import { useState, useRef } from 'react'
+import { MoreHorizontal } from 'lucide-react'
+import Modal from '../modal/modal'
+import { getFilteredOptions } from '@/lib/helpers/getFilteredOptions'
 
-function getTotalMonthlyCost(resources: any[]) {
+function getTotalMonthlyCost(resources: any[]): number {
   return resources.reduce((sum, resource) => {
-    const cost = Number(resource?.spec?.monthly_cost || resource?.spec?.price || 0);
-    return sum + cost;
-  }, 0);
+    const type = resource?.type
+    const attribute = resource?.attribute
+
+    if (!type || !attribute) return sum
+
+    const region_id = attribute.region_id || attribute.cluster_id
+    const plan = attribute.plan || attribute.tier_id
+
+    const cost = getFilteredOptions(type, region_id, plan)
+    return sum + Number(cost || 0)
+  }, 0)
 }
 
+
 interface ProjectItemProps {
-  id: string;
-  name: string;
-  description: string;
-  thumbnail: string | React.ReactNode;
+  id: string
+  name: string
+  description: string
+  thumbnail: string | React.ReactNode
   resource: any[]
 }
 
@@ -28,8 +38,8 @@ export default function ProjectItem({
   thumbnail,
   resource
 }: ProjectItemProps) {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef<HTMLButtonElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLButtonElement>(null)
 
   return (
     <div className="group relative bg-white rounded-lg border border-gray-300 hover:border-gray-400 transition-all hover:shadow-lg">
@@ -52,9 +62,9 @@ export default function ProjectItem({
               <button
                 ref={menuRef}
                 onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setMenuOpen(!menuOpen);
+                  e.preventDefault()
+                  e.stopPropagation()
+                  setMenuOpen(!menuOpen)
                 }}
                 className="p-1.5 rounded-full hover:bg-gray-100"
               >
@@ -87,5 +97,5 @@ export default function ProjectItem({
         </div>
       </Link>
     </div>
-  );
+  )
 }

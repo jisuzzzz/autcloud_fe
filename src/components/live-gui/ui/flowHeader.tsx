@@ -1,25 +1,24 @@
-'use client';
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { useState } from 'react';
-import ShareModal from '@/components/custom/modal/shareModal';
-import { useSelf, useOthersMapped } from '@liveblocks/react';
-import Avatar from './avator';
-import Link from 'next/link';
-import Image from 'next/image';
-import { useYjsStore } from '@/lib/hooks/useYjsStore';
-import { LiveFlowService } from '@/services/liveflow';
+'use client'
+import React from 'react'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import { useState } from 'react'
+import ShareModal from '@/components/custom/modal/shareModal'
+import { useSelf, useOthersMapped } from '@liveblocks/react'
+import Avatar from './avator'
+import Link from 'next/link'
+import Image from 'next/image'
+import { useYjsStore } from '@/lib/hooks/useYjsStore'
+import { LiveFlowService } from '@/services/liveflow'
 
 interface HeaderProps {
-  projectId: string;
-  projectName: string;
+  projectId: string
+  projectName: string
 }
 
-// React.memo -> 컴포넌트 자체를 메모이제이션
-const Avatars = React.memo(function Avatars() {
-  const me = useSelf((me) => me.info);
-  const users = useOthersMapped((others) => others.info);
+export const Avatars = React.memo(function Avatars() {
+  const me = useSelf((me) => me.info)
+  const users = useOthersMapped((others) => others.info)
   return (
     <div className="rounded-md min-h-[32px] w-full flex items-center justify-end">
       {users.slice(0, 3).map(([connectionId, info]) => {
@@ -30,7 +29,7 @@ const Avatars = React.memo(function Avatars() {
             name={info?.name}
             color={info?.color as string}
           />
-        );
+        )
       })}
       {me && (
         <Avatar
@@ -41,24 +40,25 @@ const Avatars = React.memo(function Avatars() {
         />
       )}
     </div>
-  );
-});
+  )
+})
 
 export default function FlowHeader({
   projectId,
   projectName,
 }: HeaderProps) {
   const {yDoc} = useYjsStore()
-  const me = useSelf();
-  const [isModalOpen, setIsModalOepn] = useState(false);
+  const me = useSelf()
+  const [isModalOpen, setIsModalOepn] = useState(false)
 
-  const handleOpenModal = () => setIsModalOepn(true);
-  const handleCloseModal = () => setIsModalOepn(false);
+  const handleOpenModal = () => setIsModalOepn(true)
+  const handleCloseModal = () => setIsModalOepn(false)
 
   const handleClickPuhblish = () => {
-    LiveFlowService.CreateCommandList(yDoc, me?.id)
+    const commandList = LiveFlowService.CreateCommandList(yDoc, me?.id)
+    console.log(commandList)
 
-  };
+  }
 
   return (
     <header className="fixed z-50">
@@ -105,5 +105,5 @@ export default function FlowHeader({
         </div>
       </div>
     </header>
-  );
+  )
 }

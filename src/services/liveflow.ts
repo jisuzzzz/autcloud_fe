@@ -2,6 +2,7 @@ import { Node, Edge } from "reactflow"
 import * as Y from 'yjs'
 import { CommandList, CommandItem, ProjectChanges } from "@/types/type"
 import { CommandService } from "./command"
+import { LiveMap } from "@liveblocks/node"
 
 interface UserAction {
   type: 'add' | 'remove' | 'edit'
@@ -104,7 +105,6 @@ export const LiveFlowService = {
     if (!yDoc) return
     const yNodes = yDoc.getArray<Y.Map<any>>('nodes')
     const projectHistory = yDoc.getMap<ProjectChanges>('projectHistory')
-    console.log(addedAttribute)
     yDoc.transact(() => {
       const yNode = new Y.Map()
       yNode.set('id', node.id)
@@ -217,6 +217,18 @@ export const LiveFlowService = {
       let changeFlag = false
       
       Object.entries(changes).forEach(([property, newValue]) => {
+        if (typeof newValue === 'object') {
+          const updatedAttribute = {...prevData.attribute}
+          Object.entries(changes).forEach(([field, newValue]) => {
+            updatedAttribute[field] = newValue
+          })
+          ynode.node.set('data', {
+            ...prevData,
+            status: 'edit',
+            attribute: updatedAttribute
+          })
+          return
+        }
         const oldValue =  prevData.attribute[property]
 
         if(oldValue !== newValue) {
@@ -372,7 +384,7 @@ export const LiveFlowService = {
     })
   },
 
-  initAllYDoc: (yDoc: Y.Doc, yProvider: any) => {
+  initAllYDoc: (yDoc: Y.Doc, yProvider: any, clearStorageMutation: () => void) => {
 
     yDoc.gcFilter = () => true 
     yDoc.transact(() => {
@@ -387,6 +399,7 @@ export const LiveFlowService = {
       userActionHistory.clear()
       projectHistory.clear()
     })
+    clearStorageMutation()
 
     yProvider.disconnect()
     yDoc.destroy()
@@ -446,9 +459,15 @@ export const LiveFlowService = {
         } as Node
 
         const command = commandMap[type]?.[status]
-        if(command) {
-          commandList.push(command(node, userId))
+        if (!command) return
+        
+        if (status === 'edit' || status === 'remove') {
+          const initCreateCommand = commandMap[type]?.['add']
+          if (initCreateCommand) {
+            commandList.push(initCreateCommand(node, node.id))
+          }
         }
+        commandList.push(command(node, userId))
 
         if(node.data.type === 'BlockStorage') {
           const prevAttachTo = changes[node.id]?.attributeChanges?.attached_to?.prevValue?.toString()
@@ -469,9 +488,8 @@ export const LiveFlowService = {
         }
 
       })
-
     })
-    console.log(commandList)
+    return commandList
   },
 
 }

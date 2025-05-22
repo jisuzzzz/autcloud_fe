@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import ReactFlow, {
   Background, useNodesState, useEdgesState, addEdge,
   Connection, Edge, Node, BackgroundVariant, ConnectionMode,
-  NodeChange, MarkerType, useReactFlow
+  NodeChange, MarkerType,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import ResourceNode from '../ui/node'
@@ -17,13 +17,22 @@ import FlowHeader from '../ui/flowHeader'
 import { ResourceConfig, ProjectTemplate, BlockStorageAttributeType, ComputeAttributeType } from '@/types/type'
 import { LiveFlowService } from '@/services/liveflow'
 import Loading from '../../custom/panel/loading'
-import { DndContext, DragEndEvent, useDroppable } from '@dnd-kit/core'
+import { DndContext, DragEndEvent, useDroppable, DragOverlay } from '@dnd-kit/core'
 import { useAttributeStore } from '@/lib/hooks/useAttributeStore'
-import { useStorage } from '@liveblocks/react';
-import { LiveMap } from '@liveblocks/node';
+import { useStorage } from '@liveblocks/react'
+import { LiveMap } from '@liveblocks/node'
+import Image from "next/image"
+import AddNewResourceModal from '../add/addResoucreModal'
+import { useClearStorage } from '@/lib/hooks/useClearStorage'
 
 interface LiveFlowMapProps {
   project1: ProjectTemplate  
+}
+
+interface DragResource {
+  type: 'Compute' | 'BlockStorage' | 'Database' | 'ObjectStorage' | 'FireWall'
+  label: string
+  icon: string
 }
 
 const nodeTypes = { resource: ResourceNode }
@@ -94,44 +103,36 @@ export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
 
   const [clipboard, setClipboard] = useState<{nodes: Node[]} | null>(null)
   const [occupiedNode, setoccupiedNode] = useState<Node[]>([])
-  const storage = useStorage((root) => root.attributeStore)
-  // console.log(storage)
-  const { storeComputeAttribute, storeDatabaseAttribute, storeObjectStorageAttribute, storeBlockStorageAttribute } = useAttributeStore()
+
+  const { storeComputeAttribute,
+    storeDatabaseAttribute, 
+    storeObjectStorageAttribute, 
+    storeBlockStorageAttribute } = useAttributeStore()
+
+  const clearStorageMutation = useClearStorage()
+
   const resourceAttribute = useStorage((root) => {
     const store = root.attributeStore as unknown as LiveMap<string, any>
     return clipboard ? store.get(clipboard.nodes[0].id) : null
   })
 
+  const { setNodeRef } = useDroppable({ id: 'flowMap-drop' })
+  const storage = useStorage((root) => root.attributestore)
+  const [draggingNode, setDraggingNode] = useState<DragResource | null>(null) 
+  const [tempNodeType, setTempNodeType] = useState<string | null>(null)
 
-  // const { setNodeRef } = useDroppable({ id: 'flow-drop' })
+  const handleDragStart = (event: DragEndEvent) => {
+    const resource = event.active.data.current as DragResource
+    setDraggingNode(resource)
+  }
 
-// const { project } = useReactFlow()
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
 
-// function handleDragEnd(event: DragEndEvent) {
-//   const { active, over } = event
-//   if (!over || over.id !== 'canvas-drop') return
-
-//   const resource = active.data.current
-
-//   const position = project({
-//     x: event.delta?.x ?? 200,
-//     y: event.delta?.y ?? 200
-//   })
-
-//   setNodes(prev => [
-//     ...prev,
-//     {
-//       id: `${resource.type}-${Date.now()}`,
-//       type: 'default',
-//       position,
-//       data: {
-//         label: resource.label,
-//         type: resource.type,
-//         attribute: {}
-//       }
-//     }
-//   ])
-// }
+    const resource = active.data.current as DragResource
+    
+    setTempNodeType(resource.type as string)
+  }
   
   useEffect(() => {
     const yNodes = yDoc.getArray<Y.Map<any>>('nodes')
@@ -249,7 +250,6 @@ export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
     }
   }, [onNodesChange, LiveFlowService.updateNodePosition])
 
-  // 노드 선택 처리
   const handleSelectionChange = useCallback(({ nodes: selectedNodes }: { nodes: Node[] }) => {
     if(selectedNodes.length === 0) return
     const nodeIds = selectedNodes.map(node => node.id)
@@ -296,6 +296,7 @@ export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
           case 'v':
             if(!clipboard || !clipboard.nodes[0]) return
             const toPaste = clipboard.nodes[0]
+            if(toPaste.data.type === 'FireWall') return
 
             const nodeId = `${toPaste.id}-${Date.now()}`
             const baseAttribute = {
@@ -352,7 +353,7 @@ export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
             break
 
           case 'k':
-            LiveFlowService.initAllYDoc(yDoc, yProvider)
+            LiveFlowService.initAllYDoc(yDoc, yProvider, clearStorageMutation)
         }
       }
     }
@@ -369,39 +370,61 @@ export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
   }
 
   return (
-      <div className="h-[calc(100vh)] w-full">
-        <FlowHeader 
-          projectId={id}
-          projectName={name} 
-        />
-        <ToolBar 
-          onConnect={onConnect}
-        />
-        <AttributeBar 
-          setEdges={setEdges}
-        />
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onSelectionChange={handleSelectionChange}
-          onNodesChange={handleNodesChange}
-          nodeTypes={nodeTypes}
-          edgeTypes={edgeTypes}
-          onConnect={onConnect}
-          defaultViewport={{ x: 0, y: 0, zoom: 1 }}
-          connectionMode={ConnectionMode.Loose}
-          proOptions={{ hideAttribution: true }}
-          deleteKeyCode={null}
-          selectionKeyCode={null}
-        >
-          <Background 
-            // color="F6F5FD"
-            gap={16}
-            size={1}
-            variant={BackgroundVariant.Dots}
-            
+    <div className="h-[calc(100vh)] w-full">
+      <FlowHeader 
+        projectId={id}
+        projectName={name} 
+      />
+      <AttributeBar 
+        setEdges={setEdges}
+      />
+      <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <ToolBar />
+        <div ref={setNodeRef} className='w-full h-full' >
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onSelectionChange={handleSelectionChange}
+            onNodesChange={handleNodesChange}
+            nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
+            onConnect={onConnect}
+            defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+            connectionMode={ConnectionMode.Loose}
+            proOptions={{ hideAttribution: true }}
+            deleteKeyCode={null}
+            selectionKeyCode={null}
+          >
+            <Background 
+              gap={16}
+              size={1}
+              variant={BackgroundVariant.Dots}
+            />
+          </ReactFlow>
+          {tempNodeType &&(
+          <AddNewResourceModal
+            onClose={() => setTempNodeType(null)} 
+            type={tempNodeType} 
+            onConnect={onConnect}
           />
-        </ReactFlow>
-      </div>
-  );
+        )}
+        </div>
+        <DragOverlay>
+          {draggingNode ? (
+            <div className="flex items-center gap-3 px-3 py-2 border bg-gray-50 rounded shadow-lg">
+              <div className="w-[25px] h-[25px] relative">
+                <Image
+                  src={draggingNode.icon}
+                  alt={draggingNode.type}
+                  fill
+                  className="object-contain rounded-xs"
+                />
+              </div>
+              <span className="text-xs">{draggingNode.label}</span>
+            </div>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
+    </div>
+  )
 }

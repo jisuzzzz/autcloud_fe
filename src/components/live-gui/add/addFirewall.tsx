@@ -78,6 +78,7 @@ export default function AddNewFirewall({ onAdd, onClose }: FireWallAttributeProp
           <Input
             className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm")}
             {...register('label')}
+            placeholder="Input label"
             onChange={() => setHasChanges(true)}
           />
         </InfoItem>

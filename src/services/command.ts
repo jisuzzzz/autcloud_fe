@@ -13,14 +13,12 @@ import {
 export const CommandService = {
   createComputeCommand: (node: Node, userId: string) => {
     const createInstance: CreateInstanceType = {
-      data: {
-        region: node.data.attribute.region_id,
-        plan: node.data.attribute.plan,
-        label: node.data.attribute.label,
-        os_id: node.data.attribute.os,
-        backups: node.data.attribute.auto_backups,
-        hostname: userId
-      }
+      region: node.data.attribute.region_id,
+      plan: node.data.attribute.plan,
+      label: node.data.attribute.label,
+      os_id: node.data.attribute.os,
+      backups: node.data.attribute.auto_backups,
+      hostname: userId
     }
     
     return {
@@ -32,15 +30,13 @@ export const CommandService = {
 
   updateComputeCommand: (node: Node) => {
     const updateInstance: UpdateInstanceType = {
-      data: {
-        id: node.id,
-        backups: node.data.attribute.auto_backups,
-        firewall_group_id: node.data.attribute.firewall_group_id,
-        os_id: node.data.attribute.os_id,
-        plan: node.data.attribute.plan,
-        ddos_protection: true,
-        label: node.data.attribute.label
-      }
+      id: node.id,
+      backups: node.data.attribute.auto_backups,
+      firewall_group_id: node.data.attribute.firewall_group_id,
+      os_id: node.data.attribute.os_id,
+      plan: node.data.attribute.plan,
+      ddos_protection: true,
+      label: node.data.attribute.label
     }
     return {
       command_name: "UpdateInstance",
@@ -51,9 +47,7 @@ export const CommandService = {
 
   deleteComputeCommand: (node: Node) => {
     const deleteInstance: DeleteInstanceType = {
-      data: {
-        id: node.id,
-      }
+      id: node.id,
     }
     return {
       command_name: "DeleteInstance",
@@ -63,13 +57,11 @@ export const CommandService = {
 
   createDBCommand: (node: Node) => {
     const createManagedDatabase: CreateManagedDatabaseType = {
-      data: {
-        database_engine: node.data.attribute.db_engine,
-        database_engine_version: node.data.attribute.db_version,
-        region: node.data.attribute.region_id,
-        plan: node.data.attribute.plan,
-        label: node.data.attribute.label,
-      }
+      database_engine: node.data.attribute.db_engine,
+      database_engine_version: node.data.attribute.db_version,
+      region: node.data.attribute.region_id,
+      plan: node.data.attribute.plan,
+      label: node.data.attribute.label,
     }
     
     return {
@@ -81,11 +73,9 @@ export const CommandService = {
 
   updateDBCommand: (node: Node) => {
     const updateManagedDatabase: UpdateManagedDatabaseType = {
-      data: {
-        id: node.id,
-        plan: node.data.attribute.plan,
-        label: node.data.attribute.label
-      }
+      id: node.id,
+      plan: node.data.attribute.plan,
+      label: node.data.attribute.label
     }
     return {
       command_name: "UpdateManagedDatabase",
@@ -96,9 +86,7 @@ export const CommandService = {
 
   deleteDBCommand: (node: Node) => {
     const deleteManagedDatabase: DeleteManagedDatabaseType = {
-      data: {
-        id: node.id,
-      }
+      id: node.id,
     }
     return {
       command_name: "DeleteManagedDatabase",
@@ -108,11 +96,9 @@ export const CommandService = {
 
   createObjectCommand: (node: Node) => {
     const createObjectStorage: CreateObjectStorageType = {
-      data: {
-        cluster_id: node.data.attribute.cluster_id,
-        tier_id: node.data.attribute.tier_id,
-        label: node.data.attribute.label,
-      }
+      cluster_id: node.data.attribute.cluster_id,
+      tier_id: node.data.attribute.tier_id,
+      label: node.data.attribute.label,
     }
     
     return {
@@ -124,10 +110,8 @@ export const CommandService = {
 
   updateObjectCommand: (node: Node) => {
     const updateObjectStorage: UpdateObjectStorageType = {
-      data: {
-        id: node.id,
-        label: node.data.attribute.label
-      }
+      id: node.id,
+      label: node.data.attribute.label
     }
     return {
       command_name: "UpdateObjectStorage",
@@ -138,9 +122,7 @@ export const CommandService = {
 
   deleteObjectCommand: (node: Node) => {
     const deleteObjectStorage: DeleteObjectStorageType = {
-      data: {
-        id: node.id,
-      }
+      id: node.id,
     }
     return {
       command_name: "DeleteObjectStorage",
@@ -150,11 +132,9 @@ export const CommandService = {
 
   createBlockCommand: (node: Node) => {
     const createBlockStorage: CreateBlockStorageType = {
-      data: {
-        region: node.data.attribute.region_id,
-        size_gb: node.data.attribute.size,
-        label: node.data.attribute.label,
-      }
+      region: node.data.attribute.region_id,
+      size_gb: node.data.attribute.size,
+      label: node.data.attribute.label,
     }
     
     return {
@@ -166,12 +146,10 @@ export const CommandService = {
 
   updateBlockCommand: (node: Node) => {
     const updateBlockStorage: UpdateBlockStorageType = {
-      data: {
-        id: node.id,
-        region: node.data.attribute.region_id,
-        size_gb: node.data.attribute.size,
-        label: node.data.attribute.label,
-      }
+      id: node.id,
+      region: node.data.attribute.region_id,
+      size_gb: node.data.attribute.size,
+      label: node.data.attribute.label,
     }
     return {
       command_name: "UpdateBlockStorage",
@@ -182,9 +160,7 @@ export const CommandService = {
 
   deleteBlockCommand: (node: Node) => {
     const deleteBlockStorage: DeleteBlockStorageType = {
-      data: {
-        id: node.id,
-      }
+      id: node.id,
     }
     return {
       command_name: "DeleteBlockStorage",
@@ -194,11 +170,9 @@ export const CommandService = {
 
   attachCommand: (node: Node, attached_to: string) => {
     const attachedTo = {
-      data: {
-        id: node.id,
-        instance_id: attached_to,
-        live: true
-      }
+      id: node.id,
+      instance_id: attached_to,
+      live: true
     }
     return {
       command_name: "AttachBlockStorageToInstance",
@@ -208,10 +182,8 @@ export const CommandService = {
 
   detachCommand: (node: Node) => {
     const detachFrom = {
-      data: {
-        id: node.id,
-        live: true
-      }
+      id: node.id,
+      live: true
     }
     return {
       command_name: "DetachBlockStorageFromInstance",
@@ -221,9 +193,7 @@ export const CommandService = {
 
   createFirewallCommand: (node: Node) => {
     const createFirewall: CreateFirewallGroupType = {
-      data: {
-        description: node.data.attribute.label
-      }
+      description: node.data.attribute.label
     }
     return {
       command_name: "CreateFirewallGroup",
@@ -234,10 +204,8 @@ export const CommandService = {
 
   updateFirewallCommand: (node: Node) => {
     const updateFirewall: UpdateFirewallGroupType = {
-      data: {
-        id: node.id,
-        description: node.data.attribute.label
-      }
+      id: node.id,
+      description: node.data.attribute.label
     }
     return {
       command_name: "UpdateFirewallGroup",
@@ -248,9 +216,7 @@ export const CommandService = {
 
   deleteFirewallCommand: (node: Node) => {
     const deleteFirewall: DeleteFirewallGroupType = {
-      data: {
-        id: node.id
-      }
+      id: node.id
     }
     return {
       command_name: "DeleteDirewallGroup",
@@ -260,7 +226,7 @@ export const CommandService = {
 
   createRuleCommands: (node: Node) => {
   const rules = node.data.attribute.rules || []
-    return rules.map((rule: CreateFirewallRule['data']) => ({
+    return rules.map((rule: CreateFirewallRule) => ({
       command_name: "CreateFirewallRule",
       data: {
         fire_wall_group_id: node.id,
@@ -276,10 +242,8 @@ export const CommandService = {
   
   deleteRuleCommand: (node: Node) => {
     const deleteRuel: DeleteFirewallRule = {
-      data: {
-        fire_wall_group_id: node.id,
-        fire_wall_rule_id: node.data.attribute.rules.rule_id
-      }
+      fire_wall_group_id: node.id,
+      fire_wall_rule_id: node.data.attribute.rules.rule_id
     }
     return {
       command_name: "DeleteFirewallRule",

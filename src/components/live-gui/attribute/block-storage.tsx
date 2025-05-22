@@ -2,7 +2,7 @@ import Image from "next/image"
 import { InfoItem, AttributeSection, InfoIcon } from "../ui/attributeBar"
 import { BlockStorageAttributeType } from "@/types/type"
 import { useEffect, useState, useMemo } from "react"
-import { RegionsArray } from "@/options/resourceOptions"
+import { getRegionFlag } from '@/lib/helpers/getRegionFlag'
 
 interface BlockStorageAttributeProps {
   attribute: BlockStorageAttributeType
@@ -16,12 +16,7 @@ export default function BlockStorageAttribute({attribute: localAttribute }:Block
   }, [localAttribute])
 
   const regionInfo = useMemo(() => {
-
-    let regionId = attribute.region_id
-    const region = RegionsArray.find(r => r.id === regionId)
-    return {
-      flag: region?.flag || '/flag-icn.svg',
-    };
+    return getRegionFlag(attribute.region_id)
   }, [attribute.region_id])
   
   return (

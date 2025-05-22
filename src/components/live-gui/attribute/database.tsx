@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 import { InfoItem, AttributeSection } from '../ui/attributeBar'
 import { DatabaseAttributeType } from "@/types/type"
 import { useEffect, useState, useMemo } from "react"
-import { RegionsArray } from '@/options/resourceOptions'
+import { getRegionFlag } from '@/lib/helpers/getRegionFlag'
 
 interface DatabaseAttributeProps {
   attribute: DatabaseAttributeType
@@ -16,17 +16,11 @@ export default function DatabaseAttribute({ attribute:localAttribute }: Database
   useEffect(() => {
     setAttribute(localAttribute)
   }, [localAttribute])
-  // 지역 ID에서 국기 이미지 경로 매핑
+
   const regionInfo = useMemo(() => {
-
-    let regionId = attribute.region_id
-    
-    const region = RegionsArray.find(r => r.id === regionId)
-    return {
-      flag: region?.flag || '/flag-icn.svg',
-    }
+    return getRegionFlag(attribute.region_id)
   }, [attribute.region_id])
-
+  
   return (
     <>
       <div className="flex justify-between items-center px-4 py-2.5 border-b">

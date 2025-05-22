@@ -42,7 +42,6 @@ export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageP
     attached_to: '',
     size: "1",
     label: '',
-    date_created: "05/12/2025 07:31:20"
   }
 
   const { register, handleSubmit, setValue, watch } = useForm({

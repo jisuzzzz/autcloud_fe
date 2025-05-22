@@ -1,18 +1,70 @@
-'use client';
+'use client'
 
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import FormDropdown from '@/components/custom/ui/dropDown/formDropdown';
-import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { motion } from 'framer-motion'
+import { useForm, useFieldArray } from 'react-hook-form'
+import SelectBox from '@/components/custom/ui/dropDown/selectBox'
+import { useState } from 'react'
+
+const target_stability = [
+  { value: "Low", label: "Low (~99%)"},
+  { value: "Medium", label: "Medium (~99.9%)"},
+  { value: "High", label: "High (~99.99%)"}
+]
+
+const anticipated_rps = [
+  { value: "10", label: "10 RPS" },
+  { value: "50", label: "50 RPS" },
+  { value: "100", label: "100 RPS" },
+  { value: "200", label: "200 RPS" },
+  { value: "500", label: "500 RPS" }
+]
+
+const requirements_for_data_processing = [
+  { value: "Simple", label: "Simple (Minimal data processing)" },
+  { value: "Standard", label: "Standard (Text or small file processing)" },
+  { value: "Large", label: "Large (Image or document handling)" },
+  { value: "Extremely_Large", label: "Extremely Large (Video, streaming, or large-scale batch processing)" }
+]
 
 export default function Step2Page() {
-  const router = useRouter();
-  const [selected, setSelected] = useState<string | null>(null);
+  const router = useRouter()
 
-  const handleNext = () => router.push('/project/create/ai/step3');
-  const handlePrevious = () => router.back();
+  const [selectedStability, setSelectedStability] = useState('')
+  const [selectedProcessing, setSelectedProcessing] = useState('')
+
+  const numberOfInstances = parseInt(sessionStorage.getItem('numberOfInstances') || '1', 10)
+
+  const { handleSubmit, control, setValue } = useForm({
+    defaultValues: {
+      instance_requirements: Array.from({ length: numberOfInstances }, () => ({
+        target_stability: '',
+        anticipated_rps: '',
+        requirements_for_data_processing: ''
+      }))
+    }
+  })
+
+  const { fields } = useFieldArray({
+    control,
+    name: "instance_requirements"
+  })
+
+  const onSubmit = (data: any) => {
+    const combinedData = {
+      location: sessionStorage.getItem('selectedRegion'),
+      service_type: sessionStorage.getItem('selectedService'),
+      computing_service_model: sessionStorage.getItem('computeModel'),
+      additional_requirements: sessionStorage.getItem('requirements'),
+      instance_requirements: data.instance_requirements
+    }
+
+    console.log(combinedData)
+    router.push('/project/create/ai/step3')
+  }
+
+  const handlePrevious = () => router.back()
 
   return (
     <div className="min-h-screen bg-[#F8F7FF] flex items-center justify-center">
@@ -20,93 +72,103 @@ export default function Step2Page() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
-        className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-[60px] py-[20px]"
+        className="w-full max-w-[600px] p-6 bg-white rounded-md border"
       >
-        <div className="grid grid-cols-3 items-center mb-10 pt-4">
-          <button
-            onClick={handlePrevious}
-            className="text-gray-500 text-[14px] justify-self-start hover:text-black cursor-pointer"
-          >
-            ← Back
-          </button>
-
-          <h2 className="text-[16px] sm:text-[18px] font-semibold justify-self-center">
-            Step 2
-          </h2>
-
-          <div />
+        <div className="flex justify-center items-center mb-8">
+          <h2 className="text-sm font-semibold text-gray-800 justify-self-center">Step 2: Instance Requirements</h2>
         </div>
 
-        <div className="max-w-3xl w-full mx-auto space-y-10">
-          <div>
-            <label className="block text-base font-semibold mb-2">
-              Question 5
-            </label>
-            <Input placeholder="Place holder" />
-          </div>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {fields.map((item, index) => (
+            <div key={item.id} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  1. Choose the required level of system stability.
+                </label>
+                <div className="grid grid-cols-3 gap-3">
+                  {target_stability.map((velue) => (
+                    <button
+                      type='button'
+                      key={velue.label}
+                      onClick={() => {
+                        setSelectedStability(velue.value)
+                        setValue(`instance_requirements.${index}.target_stability`, velue.value)
+                      }}
+                      className={`text-xs font-medium px-4 py-2 rounded border transition-all
+                        ${
+                          selectedStability === velue.value
+                            ? 'bg-violet-100 border-violet-300 text-violet-800 font-semibold'
+                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                        }`}
+                    >
+                      {velue.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-          <div>
-            <label className="block text-base font-semibold mb-2">
-              Question 6
-            </label>
-            <div className="flex gap-4">
-              <FormDropdown
-                placeholder="Place holder"
-                options={['Option 1', 'Option 2', 'Option 3']}
-              />
-              <FormDropdown
-                placeholder="Place holder"
-                options={['Option A', 'Option B', 'Option C']}
-              />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  2. Choose your data processing requirements.
+                </label>
+                <div className="grid grid-cols-4 gap-3">
+                  {requirements_for_data_processing.map((velue) => (
+                    <button
+                      type='button'
+                      key={velue.label}
+                      onClick={() => {
+                        setSelectedProcessing(velue.value)
+                        setValue(`instance_requirements.${index}.requirements_for_data_processing`, velue.value)
+                      }}
+                      className={`text-xs font-medium px-4 py-2 rounded border transition-all
+                        ${
+                          selectedProcessing === velue.value
+                            ? 'bg-violet-100 border-violet-300 text-violet-800 font-semibold'
+                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                        }`}
+                    >
+                      {velue.value}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  3. Choose the expected number of requests per second (RPS).
+                </label>
+                <SelectBox
+                  placeholder="Select expected RPS"
+                  onChange={(value) => {
+                    setValue(`instance_requirements.${index}.anticipated_rps`, value)
+                  }}
+                  option={anticipated_rps}
+                  className="w-full"
+                />
+              </div>
+
+              {index < fields.length - 1 && <hr className="my-8 border-gray-300" />}
             </div>
-          </div>
+          ))}
 
-          <div>
-            <label className="block text-base font-semibold mb-2">
-              Question 7
-            </label>
-            <Input placeholder="Place holder" />
-          </div>
-
-          <div>
-            <label className="block text-base font-semibold mb-2">
-              Question 8
-            </label>
-            <div className="flex gap-4">
-              {['Option X', 'Option Y'].map((label, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setSelected(label)}
-                  className={`flex-1 text-sm border rounded-md px-4 py-2 transition-all duration-300 ease-in-out
-                    ${
-                      selected === label
-                        ? 'border-gray-400 bg-gray-50 shadow-md scale-[1.015] ring-1 ring-gray-300 ring-offset-1'
-                        : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
-                    }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex justify-end items-center gap-4 pt-4">
+          <div className="flex justify-end items-center gap-4">
             <Button
+              type="button"
               variant="ghost"
               onClick={handlePrevious}
-              className="text-gray-500 text-sm transition"
+              className="px-4 rounded-sm h-8 bg-gray-50 hover:bg-violet-50 text-black border"
             >
-              Previous
+              <p className="text-black font-normal">Previous</p>
             </Button>
             <Button
-              onClick={handleNext}
-              className="bg-[#7868E6] hover:bg-[#6a5ed4] text-white text-sm transition"
+              type="submit"
+              className="px-3 rounded-sm h-8 w-[75px] bg-[#7868E6] border border-[#6035BE] hover:bg-[#8474FF] cursor-pointer"
             >
               Next
             </Button>
           </div>
-        </div>
+        </form>
       </motion.div>
     </div>
-  );
+  )
 }

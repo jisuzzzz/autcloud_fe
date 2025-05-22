@@ -1,7 +1,12 @@
 import { useMutation } from "@liveblocks/react/suspense"
 import { LiveMap } from "@liveblocks/client"
 import { AttributeService } from "@/services/attribute"
-import { BlockStorageAttributeType, ComputeAttributeType, DatabaseAttributeType, ObjectStorageAttributeType } from "@/types/type"
+import { 
+BlockStorageAttributeType, 
+ComputeAttributeType, 
+DatabaseAttributeType, 
+ObjectStorageAttributeType
+} from "@/types/type"
 
 export function useAttributeStore() {
 

@@ -1,18 +1,62 @@
-'use client';
+'use client'
 
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import FormDropdown from '@/components/custom/ui/dropDown/formDropdown';
-import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { motion } from 'framer-motion'
+import { useForm } from 'react-hook-form'
+import { useState } from 'react'
+import SelectBox from '@/components/custom/ui/dropDown/selectBox'
+
+const locations = [
+  { value: "ewr", label: "New Jersey (ewr)" },
+  { value: "sjc", label: "Silicon Valley (sjc)" },
+  { value: "ams", label: "Amsterdam (ams)" },
+  { value: "lhr", label: "London (lhr)" },
+  { value: "sqp", label: "Singapore (sqp)" },
+  { value: "icn", label: "South Korea (icn)" },
+  { value: "mel", label: "Melbourne (mel)" },
+  { value: "sao", label: "São Paulo (sao)" },
+  { value: "scl", label: "Santiago (scl)" },
+  { value: "jnb", label: "Johannesburg (jnb)" },
+]
+
+const serviceTypes = ["Web", "App", "AI", "Game"]
+
+const computingServiceModels = [
+  {value: "IaaS", label: "IaaS (Infrastructure as a Service)"},
+  {value: "PaaS", label: "PaaS (Platform as a Service)"}, 
+  {value: "SaaS", label: "SaaS (Software as a Service)"}, 
+  {value: "FaaS", label: "FaaS (Function as a Service)"},
+]
 
 export default function Step1Page() {
-  const router = useRouter();
-  const [selectedBtn, setSelectedBtn] = useState<string | null>(null);
+  const router = useRouter()
+  const [selectedService, setSelectedService] = useState('Web')
+  const [selectedServiceModels, setSelectedServiceModels] = useState('')
+  const [numberOfInstances, setNumberOfInstances] = useState(0)
 
-  const handleNext = () => router.push('/project/create/ai/step2');
-  const handlePrevious = () => router.back();
+  const { register, handleSubmit, setValue } = useForm({
+    defaultValues: {
+      selectedService: '',
+      selectedRegion: '',
+      computeModel: '',
+      requirements: '',
+      numberOfInstances: 1,
+    }
+  })
+
+  const onSubmit = (data: any) => {
+    sessionStorage.setItem('selectedService', data.selectedService)
+    sessionStorage.setItem('selectedRegion', data.selectedRegion)
+    sessionStorage.setItem('computeModel', data.computeModel)
+    sessionStorage.setItem('requirements', data.requirements)
+    console.log(data.numberOfInstances)
+    sessionStorage.setItem('numberOfInstances', data.numberOfInstances)
+    
+    router.push('/project/create/ai/step2')
+  }
+  const handlePrevious = () => router.back()
 
   return (
     <div className="min-h-screen bg-[#F8F7FF] flex items-center justify-center">
@@ -20,45 +64,45 @@ export default function Step1Page() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: 'easeOut' }}
-        className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 md:px-[60px] py-[20px]"
+        className="w-full max-w-[600px] p-6 bg-white rounded-md border"
       >
-        <div className="grid grid-cols-3 items-center mb-10 pt-4">
-          <button
-            onClick={handlePrevious}
-            className="text-gray-500 text-[14px] justify-self-start hover:text-black cursor-pointer"
-          >
-            ← Back
-          </button>
 
-          <h2 className="text-[16px] sm:text-[18px] font-semibold justify-self-center">
-            Step 1
-          </h2>
-
-          <div />
+        <div className="flex justify-center items-center mb-8">
+          <h2 className="text-sm font-semibold text-gray-800 justify-self-center">Step 1: Service Basics</h2>
         </div>
 
-        <div className="max-w-3xl w-full mx-auto space-y-10">
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
-            <label className="block text-base font-semibold mb-2">
-              Question 1
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              1. Choose the region for deployment.
             </label>
-            <Input placeholder="Place holder" />
+            <SelectBox
+              placeholder="Select a region"
+              onChange={(value) => setValue('selectedRegion', value)}
+              option={locations}
+              className="w-full"
+            />
           </div>
 
           <div>
-            <label className="block text-base font-semibold mb-2">
-              Question 2
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              2. Choose the type of service you are building.
             </label>
-            <div className="flex gap-4">
-              {['Button A', 'Button B', 'Button C'].map((label, idx) => (
+            <div className="grid grid-cols-4 gap-3">
+              {serviceTypes.map((label) => (
                 <button
-                  key={idx}
-                  onClick={() => setSelectedBtn(label)}
-                  className={`flex-1 text-sm border rounded-md px-4 py-2 transition-all duration-300 ease-in-out
+                  type='button'
+                  key={label}
+                  onClick={() => {
+                    setSelectedService(label)
+                    setValue('selectedService', label)
+                  }}
+                  className={`text-xs font-medium px-4 py-2 rounded border transition-all
                     ${
-                      selectedBtn === label
-                        ? 'border-gray-400 bg-gray-50 shadow-md scale-[1.015] ring-1 ring-gray-300 ring-offset-1'
-                        : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
+                      selectedService === label
+                        ? 'bg-violet-100 border-violet-300 text-violet-800 font-semibold'
+                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                     }`}
                 >
                   {label}
@@ -68,38 +112,87 @@ export default function Step1Page() {
           </div>
 
           <div>
-            <label className="block text-base font-semibold mb-2">
-              Question 3
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              3. Choose your preferred cloud service model.
             </label>
-            <div className="flex gap-4">
-              <FormDropdown
-                placeholder="Place holder"
-                options={['Option 1', 'Option 2', 'Option 3']}
-              />
-              <FormDropdown
-                placeholder="Place holder"
-                options={['Option A', 'Option B', 'Option C']}
-              />
+            <div className='grid grid-cols-4 gap-3'>
+              {computingServiceModels.map((value) => 
+                <button
+                  type='button'
+                  key={value.label}
+                  onClick={() => {
+                    setSelectedServiceModels(value.value)
+                    setValue('computeModel', value.value)
+                  }}
+                  className={`text-xs font-medium px-4 py-2 rounded border transition-all
+                    ${
+                      selectedServiceModels === value.value
+                        ? 'bg-violet-100 border-violet-300 text-violet-800 font-semibold'
+                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }`}
+                >
+                  {value.value}
+                </button>
+              )}
+            </div>
+
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              4. Choose the number of instances you plan to deploy.
+            </label>
+            <div className='grid grid-cols-3 gap-3'>
+              {[1, 2, 3].map(num => (
+                <button
+                  type='button'
+                  key={num}
+                  onClick={() => {
+                    setNumberOfInstances(num) 
+                    setValue('numberOfInstances', num)
+                  }}
+                  className={`text-xs font-mediumpx-4 py-2 rounded-full border transition-all
+                    ${
+                      numberOfInstances === num
+                        ? 'bg-violet-100 border-violet-300 text-violet-800 font-semibold'
+                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }`}
+                >
+                  {`Instance : ${num}`}
+                </button>
+              ))}
             </div>
           </div>
 
           <div>
-            <label className="block text-base font-semibold mb-2">
-              Question 4
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              5. Enter any additional requirements or special considerations for your service. 
             </label>
-            <Input placeholder="Place holder" />
+            <Input
+              {...register('requirements')}
+              placeholder="e.g., Real-time game processing"
+              className='h-10'
+            />
           </div>
 
-          <div className="flex justify-end pt-4">
+          <div className="flex justify-end items-center gap-4">
             <Button
-              onClick={handleNext}
-              className="bg-[#7868E6] hover:bg-[#6a5ed4] text-white text-sm transition"
+              type="button"
+              variant="ghost"
+              onClick={handlePrevious}
+              className="px-4 rounded-sm h-8 bg-gray-50 hover:bg-violet-50 text-black border"
+            >
+              <p className="text-black font-normal">Previous</p>
+            </Button>
+            <Button
+              type="submit"
+              className="px-3 rounded-sm h-8 w-[75px] bg-[#7868E6] border border-[#6035BE] hover:bg-[#8474FF] cursor-pointer"
             >
               Next
             </Button>
           </div>
-        </div>
+        </form>
       </motion.div>
     </div>
-  );
+  )
 }

@@ -16,6 +16,7 @@ export default function EditSummary() {
     const history = yDoc.getMap('projectHistory')
     const updateHistory = () => {
       const historyData = history.get('nodes') || {}
+      // console.log(historyData)
       setProjectHistory(historyData)
     }
     
@@ -29,7 +30,9 @@ export default function EditSummary() {
 
   return (
     <div className="mt-13 px-2 py-2 space-y-2 overflow-y-auto max-h-[calc(100vh-410px)] scrollbar-thin">
-      {projectHistory && Object.entries(projectHistory).map(([nodeId, data]: [string, any]) => (
+      {projectHistory && Object.entries(projectHistory)
+      .filter(([nodeId]) => nodeId.split('-')[0] !== 'firewall')
+      .map(([nodeId, data]: [string, any]) => (
 
         <div key={nodeId} className="px-3 py-2 border rounded-md mb-3 text-xs bg-gray-50/70 hover:bg-violet-50 transition-colors duration-200 cursor-pointer"
           onClick={() => {
@@ -44,7 +47,7 @@ export default function EditSummary() {
             <span className={`rounded-md text-xs px-2 py-0.5 ${
               data.status === 'added' ? 'bg-green-100 text-green-800' : 
               data.status === 'modified' ? 'bg-blue-100 text-blue-800' : 
-              'bg-red-100 text-red-800'
+              data.status === 'removed' ? 'bg-red-100 text-red-800' : ''
             }`}>
               {data.status}
             </span>
@@ -65,7 +68,9 @@ export default function EditSummary() {
         />
       )}
       
-      {(!projectHistory || Object.keys(projectHistory).length === 0) && (
+      {(!projectHistory || 
+        Object.keys(projectHistory).length === 0 ||  
+        Object.keys(projectHistory).every((key) => key.startsWith('firewall'))) && (
         <p className="text-xs text-gray-500">No history available...</p>
       )}
     </div>

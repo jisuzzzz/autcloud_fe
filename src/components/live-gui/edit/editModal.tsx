@@ -55,12 +55,13 @@ export default function EditModal({onClose, resource, setEdges }: EditModalProps
         me.info.name,
         yDoc
       )
-
-      LiveFlowService.pushToUndoStack(me.id, {
-        nodeId: selectedNodeId,
-        type:"edit",
-        timestamp: Date.now() 
-      }, yDoc)
+      if (!('rules' in changes)) {
+        LiveFlowService.pushToUndoStack(me.id, {
+          nodeId: selectedNodeId,
+          type: "edit",
+          timestamp: Date.now()
+        }, yDoc)
+      }
     }
     setTimeout(() => {
       onClose()

@@ -81,16 +81,6 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
               subnet_size: 0,
               notes: "Public HTTP access"
             },
-            {
-              rule_id: "2",
-              action: "accept",
-              port: "443",
-              ip_type: "v4",
-              protocol: "tcp",
-              subnet: "0.0.0.0",
-              subnet_size: 0,
-              notes: "Public HTTPS access"
-            }
           ]
         }
       }
