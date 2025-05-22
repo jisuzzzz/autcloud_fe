@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function Header() {
   const [hovered, setHovered] = useState(false);
@@ -9,18 +10,22 @@ export default function Header() {
   return (
     <header className="flex items-center w-screen justify-between border-b px-10 py-4 relative bg-white h-[55px]">
       {/* 로고 + 검색창 */}
-      <div className="flex items-center gap-16 w-full">
-        <div className='flex items-center gap-2'>
-          <Image
-            alt='logo'
-            src={'/aut-cloud-logo.svg'}
-            width={50}
-            height={50}
-          >
-          </Image>
-          <div className="text-md font-medium text-black">AutCloud</div>
+      <Link
+        href={'/'}
+      >
+        <div className="flex items-center gap-16 w-full">
+          <div className='flex items-center gap-2'>
+            <Image
+              alt='logo'
+              src={'/aut-cloud-logo.svg'}
+              width={50}
+              height={50}
+            >
+            </Image>
+            <div className="text-md font-medium text-black">AutCloud</div>
+          </div>
         </div>
-      </div>
+      </Link>
 
       {/* 유저 프로필 */}
       <div
@@ -28,9 +33,6 @@ export default function Header() {
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
-        {/* <button className="w-7 h-7 rounded-full bg-yellow-400 flex items-center justify-center text-black font-medium text-base shadow">
-          K
-        </button> */}
         <Image
           src={'/aut-logo-cloud.svg'}
           alt='user'

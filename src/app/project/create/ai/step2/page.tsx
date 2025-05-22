@@ -33,14 +33,15 @@ export default function Step2Page() {
 
   const [selectedStability, setSelectedStability] = useState('')
   const [selectedProcessing, setSelectedProcessing] = useState('')
-  const [numberOfInstances, setNumberOfInstances] = useState(1)
+  // const [numberOfInstances, setNumberOfInstances] = useState(0)
 
-  useEffect(() => {
+  const [numberOfInstances] = useState(() => {
     if (typeof window !== 'undefined') {
       const tmp = sessionStorage.getItem('numberOfInstances')
-      setNumberOfInstances(parseInt(tmp || '1', 10))
+      return parseInt(tmp || '1', 10)
     }
-  }, [])
+    return 1
+  })
 
   const { handleSubmit, control, setValue } = useForm({
     defaultValues: {
