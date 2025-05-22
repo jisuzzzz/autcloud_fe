@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
 import { useForm, useFieldArray } from 'react-hook-form'
 import SelectBox from '@/components/custom/ui/dropDown/selectBox'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const target_stability = [
   { value: "Low", label: "Low (~99%)"},
@@ -33,10 +33,14 @@ export default function Step2Page() {
 
   const [selectedStability, setSelectedStability] = useState('')
   const [selectedProcessing, setSelectedProcessing] = useState('')
+  const [numberOfInstances, setNumberOfInstances] = useState(1)
 
-  const tmp = sessionStorage.getItem('numberOfInstances')
-
-  const numberOfInstances = parseInt(tmp || '1', 10)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const tmp = sessionStorage.getItem('numberOfInstances')
+      setNumberOfInstances(parseInt(tmp || '1', 10))
+    }
+  }, [])
 
   const { handleSubmit, control, setValue } = useForm({
     defaultValues: {
