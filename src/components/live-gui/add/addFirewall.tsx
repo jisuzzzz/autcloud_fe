@@ -52,7 +52,7 @@ export default function AddNewFirewall({ onAdd, onClose }: FireWallAttributeProp
         <div className="gap-3 flex items-center">
           <Image
             alt="firewall"
-            src={"/aut-firewall.svg"}
+            src={"/aut-firewallgroup.svg"}
             width={23.5}
             height={23.5}
             className="rounded-xs"

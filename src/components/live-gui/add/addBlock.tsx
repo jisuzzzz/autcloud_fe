@@ -39,8 +39,8 @@ export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageP
     region_id: '',
     type: "NVMe",
     mount_id: "ewr-a23cda1547af4b",
-    attached_to: '',
-    size: "1",
+    attached_to_instance: '',
+    size_gb: "1",
     label: '',
   }
 
@@ -51,11 +51,11 @@ export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageP
 
   const region = watch('region')
   const label = watch('label')
-  const attached_to = watch('attached_to')
+  const attached_to_instance = watch('attached_to_instance')
   
   useEffect(() => {
-    setIsFormValid(!!region && !!label && !!attached_to)
-  }, [region, label, attached_to])
+    setIsFormValid(!!region && !!label && !!attached_to_instance)
+  }, [region, label, attached_to_instance])
 
   const connectedComputeIds = edges.map(edge => edge.target)
 
@@ -71,7 +71,7 @@ export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageP
     }))
 
   const handleAttachChange = (computeId: string) => {
-    setValue('attached_to', computeId)
+    setValue('attached_to_instance', computeId)
   }
 
   const regionOptions = RegionsArray.map(region => ({
@@ -139,11 +139,11 @@ export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageP
           <h3 className="text-xs text-gray-500">{"Attatch to"}</h3>
           <SelectBox
             option={computeNodes}
-            placeholder={"Select compute"}
+            placeholder={"Select Compute"}
             className="h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full"
             onChange={handleAttachChange}
           />
-          {!attached_to && <p className="text-xs text-blue-400 mt-1">* Required field</p>}
+          {!attached_to_instance && <p className="text-xs text-blue-400 mt-1">* Required field</p>}
           <p className="text-[11px] text-gray-500">on this page, GB = 1024^3 bytes</p>
         </div>
         </AttributeSection>
@@ -159,7 +159,7 @@ export default function AddNewBlockStorage({onClose, onAdd}: AddNewBlockStorageP
           <p className="text-xs">{defaultValues.mount_id}</p>
         </div>
         <InfoItem label="Size">
-          <p className="text-xs">{defaultValues.size}</p>
+          <p className="text-xs">{defaultValues.size_gb}</p>
         </InfoItem>
 
       </AttributeSection>

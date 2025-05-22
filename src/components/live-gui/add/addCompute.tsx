@@ -3,7 +3,6 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { InfoItem, AttributeSection, InfoIcon } from '../ui/attributeBar'
-import { Copy } from 'lucide-react'
 import { ComputeAttributeType } from "@/types/type"
 import { useForm } from 'react-hook-form'
 import { Input } from '@/components/ui/input'
@@ -42,13 +41,14 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
       vcpu: '',
       ram: '',
       disk: '',
+      disk_type: '',
       bandwidth: '',
       status: 'running',
-      ip_address: '64.176.217.21',
+      main_ip: '64.176.217.21',
       label: '',
       auto_backups: 'enable',
       monthly_cost: '',
-      group_id: '',
+      firewall_group_id: '',
     },
     mode: "onChange"
   })
@@ -76,13 +76,14 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
     }))
 
   const handleFirewallChange = (firewallId: string) => {
-    setValue('group_id', firewallId)
+    setValue('firewall_group_id', firewallId)
   }
 
   const [selectedAttribute, setSelectedAttribute] = useState({
     vcpu: '',
     ram: '',
     disk: '',
+    disk_type: '',
     bandwidth: '',
     monthly_cost: ''
   })
@@ -143,6 +144,7 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
       setValue('vcpu', selected.vcpu)
       setValue('ram', selected.ram)
       setValue('disk', selected.disk)
+      setValue('disk_type', selected.disk_type)
       setValue('bandwidth', selected.bandwidth)
       setValue('monthly_cost', selected.monthly_cost)
 
@@ -150,6 +152,7 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
         vcpu: selected.vcpu,
         ram: selected.ram,
         disk: selected.disk,
+        disk_type: selected.disk_type,
         bandwidth: selected.bandwidth,
         monthly_cost: selected.monthly_cost,
       })
@@ -173,7 +176,7 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
             height={23.5}
             className="rounded-xs"
           ></Image>
-          <h3 className="text-xs font-medium">Instance</h3>
+          <h3 className="text-xs font-medium">Compute</h3>
         </div>
         <div className='flex items-center gap-3'>
           <Button type='button' onClick={onClose} className='px-3 py-1 h-[30px] rounded-sm text-xs bg-gray-50 hover:bg-violet-50 text-black border'>
@@ -232,12 +235,6 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
           </div>
         </InfoItem>
 
-        <InfoItem label="IP Address">
-          <div className="flex w-full justify-between items-center">
-            <p className="text-xs">{"64.176.217.21"}</p>
-            <Copy size={18} className="text-gray-500" />
-          </div>
-        </InfoItem>
       </AttributeSection>
         
       {region && computePlan && os && (
@@ -255,7 +252,7 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
             </InfoItem>
             <InfoItem label="Disk">
               <div className="h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm">
-                {`${selectedAttribute.disk} GB`}
+                {selectedAttribute.disk_type} {`${selectedAttribute.disk} GB`}
               </div>
             </InfoItem>
             <InfoItem label="Bandwidth">

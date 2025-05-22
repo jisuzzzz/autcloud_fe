@@ -7,12 +7,7 @@ import { getProjectById } from '@/lib/db/projectDB'
 import ProjectThumbnail from '@/components/custom/panel/thumbnail'
 import { motion } from 'framer-motion'
 import { getFilteredOptions } from '@/lib/helpers/getFilteredOptions'
-
-const DIAGRAMS = [
-  getProjectById("37bfb83b-dd64-410b-81c5-7374b0c453e0"),
-  getProjectById("8ab36845-d77c-482f-b9e3-5a4c31f89d52"),
-  getProjectById("5cd92f34-a17b-429d-8e35-9bf72c680d13")
-].filter(Boolean)
+import { getProjects } from '@/lib/db/projectDB'
 
 function getTotalMonthlyCost(resources: any[]): number {
   return resources.reduce((sum, resource) => {
@@ -58,6 +53,7 @@ function getMainAttributeInfo(resource: any) {
 export default function Step3Page() {
   const router = useRouter()
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const DIAGRAMS = getProjects()
 
   const handlePrevious = () => router.back()
   const handleConfirm = () => {
@@ -118,7 +114,7 @@ export default function Step3Page() {
 
                 <div className="space-y-1.5 sm:space-y-2 scrollbar-thin">
                   {diagram.initial_resources.map(resource => (
-                    <div key={resource.id} className="text-xs p-2 sm:p-3 border rounded-md bg-gray-50">
+                    <div key={resource.temp_id} className="text-xs p-2 sm:p-3 border rounded-md bg-gray-50">
                       <div className="font-medium mb-1">{resource.type}</div>
                       <div className="text-gray-500 truncate">
                         {getMainAttributeInfo(resource)}

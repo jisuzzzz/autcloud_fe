@@ -29,8 +29,12 @@ export const CommandService = {
   },
 
   updateComputeCommand: (node: Node) => {
+    let temp_id = node.id
+    if(node.id.split('-')[0] === 'instance') {
+      temp_id = ''
+    }
     const updateInstance: UpdateInstanceType = {
-      id: node.id,
+      id: temp_id,
       backups: node.data.attribute.auto_backups,
       firewall_group_id: node.data.attribute.firewall_group_id,
       os_id: node.data.attribute.os_id,
@@ -46,8 +50,12 @@ export const CommandService = {
   },
 
   deleteComputeCommand: (node: Node) => {
+    let temp_id = node.id
+    if(node.id.split('-')[0] === 'instance') {
+      temp_id = ''
+    }
     const deleteInstance: DeleteInstanceType = {
-      id: node.id,
+      id: temp_id,
     }
     return {
       command_name: "DeleteInstance",
@@ -72,8 +80,12 @@ export const CommandService = {
   },
 
   updateDBCommand: (node: Node) => {
+    let temp_id = node.id
+    if(node.id.split('-')[0] === 'database') {
+      temp_id = ''
+    }
     const updateManagedDatabase: UpdateManagedDatabaseType = {
-      id: node.id,
+      id: temp_id,
       plan: node.data.attribute.plan,
       label: node.data.attribute.label
     }
@@ -85,8 +97,12 @@ export const CommandService = {
   },
 
   deleteDBCommand: (node: Node) => {
+    let temp_id = node.id
+    if(node.id.split('-')[0] === 'database') {
+      temp_id = ''
+    }
     const deleteManagedDatabase: DeleteManagedDatabaseType = {
-      id: node.id,
+      id: temp_id,
     }
     return {
       command_name: "DeleteManagedDatabase",
@@ -109,8 +125,12 @@ export const CommandService = {
   },
 
   updateObjectCommand: (node: Node) => {
+    let temp_id = node.id
+    if(node.id.split('-')[0] === 'objectstorage') {
+      temp_id = ''
+    }
     const updateObjectStorage: UpdateObjectStorageType = {
-      id: node.id,
+      id: temp_id,
       label: node.data.attribute.label
     }
     return {
@@ -121,8 +141,12 @@ export const CommandService = {
   },
 
   deleteObjectCommand: (node: Node) => {
+    let temp_id = node.id
+    if(node.id.split('-')[0] === 'objectstorage') {
+      temp_id = ''
+    }
     const deleteObjectStorage: DeleteObjectStorageType = {
-      id: node.id,
+      id: temp_id,
     }
     return {
       command_name: "DeleteObjectStorage",
@@ -145,8 +169,12 @@ export const CommandService = {
   },
 
   updateBlockCommand: (node: Node) => {
+    let temp_id = node.id
+    if(node.id.split('-')[0] === 'blockstorage') {
+      temp_id = ''
+    }
     const updateBlockStorage: UpdateBlockStorageType = {
-      id: node.id,
+      id: temp_id,
       region: node.data.attribute.region_id,
       size_gb: node.data.attribute.size,
       label: node.data.attribute.label,
@@ -159,8 +187,12 @@ export const CommandService = {
   },
 
   deleteBlockCommand: (node: Node) => {
+    let temp_id = node.id
+    if(node.id.split('-')[0] === 'blockstorage') {
+      temp_id = ''
+    }
     const deleteBlockStorage: DeleteBlockStorageType = {
-      id: node.id,
+      id: temp_id,
     }
     return {
       command_name: "DeleteBlockStorage",
@@ -203,8 +235,12 @@ export const CommandService = {
   },
 
   updateFirewallCommand: (node: Node) => {
+    let temp_id = node.id
+    if(node.id.split('-')[0] === 'firewall') {
+      temp_id = ''
+    }
     const updateFirewall: UpdateFirewallGroupType = {
-      id: node.id,
+      id: temp_id,
       description: node.data.attribute.label
     }
     return {
@@ -215,8 +251,12 @@ export const CommandService = {
   },
 
   deleteFirewallCommand: (node: Node) => {
+    let temp_id = node.id
+    if(node.id.split('-')[0] === 'firewall') {
+      temp_id = ''
+    }
     const deleteFirewall: DeleteFirewallGroupType = {
-      id: node.id
+      id: temp_id
     }
     return {
       command_name: "DeleteDirewallGroup",
@@ -225,18 +265,18 @@ export const CommandService = {
   },
 
   createRuleCommands: (node: Node) => {
-  const rules = node.data.attribute.rules || []
-    return rules.map((rule: CreateFirewallRule) => ({
-      command_name: "CreateFirewallRule",
-      data: {
-        fire_wall_group_id: node.id,
-        ip_type: rule.ip_type,
-        protocol: rule.protocol,
-        port: rule.port,
-        subent: rule.subent,
-        subnet_size: rule.subnet_size,
-        notes: rule.notes
-      }
+    const rules = node.data.attribute.rules || []
+      return rules.map((rule: CreateFirewallRule) => ({
+        command_name: "CreateFirewallRule",
+        data: {
+          fire_wall_group_id: node.id,
+          ip_type: rule.ip_type,
+          protocol: rule.protocol,
+          port: rule.port,
+          subent: rule.subent,
+          subnet_size: rule.subnet_size,
+          notes: rule.notes
+        }
     }))
   },
   

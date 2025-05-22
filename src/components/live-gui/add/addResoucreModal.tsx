@@ -41,15 +41,15 @@ export default function AddNewResourceModal({onClose, type, onConnect}: EditModa
           plan: addedAttribute.plan,
           status: addedAttribute.status,
           region_id: addedAttribute.region_id,
-          ip_address: addedAttribute.ip_address,
+          main_ip: addedAttribute.main_ip,
           label: addedAttribute.label,
           os_id: addedAttribute.os_id,
           auto_backups: addedAttribute.auto_backups,
-          group_id: addedAttribute.group_id
+          firewall_group_id: addedAttribute.firewall_group_id
         } satisfies ComputeAttributeConfig
         break
   
-      case 'Database':
+      case 'ManagedDatabase':
         addedAttribute = {
           plan: addedAttribute.plan,
           status: addedAttribute.status,
@@ -74,19 +74,19 @@ export default function AddNewResourceModal({onClose, type, onConnect}: EditModa
           region_id: addedAttribute.region_id,
           type: addedAttribute.type,
           mount_id: addedAttribute.mount_id,
-          attached_to: addedAttribute.attached_to,
-          size: addedAttribute.size,
+          attached_to_instance: addedAttribute.attached_to_instance,
+          size_gb: addedAttribute.size_gb,
           label: addedAttribute.label,
         } satisfies BlockStorageAttributeConfig
         break
 
-      case 'FireWall':
+      case 'FirewallGroup':
         addedAttribute = addedAttribute
         
     }
-    
+
     const newNode: Node = {
-      id: `${type}-${Date.now()}`,
+      id: `${type.toLowerCase()}-${Date.now()}`,
       type: 'resource',
       position: randomPosition,
       data: { 
@@ -98,8 +98,8 @@ export default function AddNewResourceModal({onClose, type, onConnect}: EditModa
     
     LiveFlowService.addNode(newNode, AllAddedAttribute, me.id, me.info.name, yDoc)
     
-    if(type === 'BlockStorage' && (addedAttribute as BlockStorageAttributeType).attached_to) {
-      const computeId = (addedAttribute as BlockStorageAttributeType).attached_to
+    if(type === 'BlockStorage' && (addedAttribute as BlockStorageAttributeType).attached_to_instance) {
+      const computeId = (addedAttribute as BlockStorageAttributeType).attached_to_instance
       const connection: Connection = {
         source: newNode.id,
         target: computeId,
@@ -109,8 +109,8 @@ export default function AddNewResourceModal({onClose, type, onConnect}: EditModa
       onConnect(connection)
     }
 
-    if (type === 'Compute' && (addedAttribute as ComputeAttributeType).group_id !== '') {
-      const firewallId = (addedAttribute as ComputeAttributeType).group_id
+    if (type === 'Compute' && (addedAttribute as ComputeAttributeType).firewall_group_id !== '') {
+      const firewallId = (addedAttribute as ComputeAttributeType).firewall_group_id
       if(!firewallId) return
       const connection: Connection = {
         source: newNode.id,
@@ -136,13 +136,13 @@ export default function AddNewResourceModal({onClose, type, onConnect}: EditModa
     switch(type) {
       case 'Compute':
         return <AddNewCompute onAdd={handleAdd} onClose={onClose} />
-      case 'Database':
+      case 'ManagedDatabase':
         return <AddNewDatabase onAdd={handleAdd} onClose={onClose} />
       case 'BlockStorage':
         return <AddNewBlockStorage onAdd={handleAdd} onClose={onClose} />
       case 'ObjectStorage':
         return <AddNewObjectStorage onAdd={handleAdd} onClose={onClose} />
-      case 'FireWall':
+      case 'FirewallGroup':
         return <AddNewFirewall onAdd={handleAdd} onClose={onClose} />
     }
   }

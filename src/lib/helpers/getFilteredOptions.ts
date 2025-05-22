@@ -4,7 +4,7 @@ import { ObjectStorageOptions } from "@/options/objectStorageOptions"
 
 export function getFilteredOptions(type: string, region_id: string, plan: string): number | undefined {
   switch (type) {
-    case 'Compute': {
+    case 'Instance': {
       const option = ComputeOptions
         .filter(option => option.regions.includes(region_id))
         .find(option => option.plan === plan)

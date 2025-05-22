@@ -49,6 +49,7 @@ export default function EditComputeAttribute({
     vcpu: attribute.vcpu,
     ram: attribute.ram,
     disk: attribute.disk,
+    disk_type: attribute.disk_type,
     bandwidth: attribute.bandwidth,
     monthly_cost: attribute.monthly_cost
   })
@@ -74,7 +75,7 @@ export default function EditComputeAttribute({
   }))
 
   const handleFirewallChange = (firewallId: string) => {
-    setValue('group_id', firewallId)
+    setValue('firewall_group_id', firewallId)
   }
 
 
@@ -129,7 +130,6 @@ export default function EditComputeAttribute({
       setValue('region_id', region_id)
       setValue('region', selectedRegion.city)
     }
-    // setValue('plan', '')
 
     filterComputeOptions(region_id)
   }
@@ -150,6 +150,7 @@ export default function EditComputeAttribute({
       setValue('vcpu', selected.vcpu)
       setValue('ram', selected.ram)
       setValue('disk', selected.disk)
+      setValue('disk_type', selected.disk_type)
       setValue('bandwidth', selected.bandwidth)
       setValue('monthly_cost', selected.monthly_cost)
 
@@ -157,6 +158,7 @@ export default function EditComputeAttribute({
         vcpu: selected.vcpu,
         ram: selected.ram,
         disk: selected.disk,
+        disk_type: selected.disk_type,
         bandwidth: selected.bandwidth,
         monthly_cost: selected.monthly_cost
       })
@@ -166,15 +168,15 @@ export default function EditComputeAttribute({
   const onSubmit = (data: ComputeAttributeType) => {
     if (onEdit) {
       onEdit(data)
-      const firewallId = data.group_id
+      const firewallId = data.firewall_group_id
       if((firewallId === '') || !firewallId) return
       setEdges(prev => {
-        const existingEdge = prev.find(edge => edge.target === attribute.group_id)
+        const existingEdge = prev.find(edge => edge.target === attribute.firewall_group_id)
 
         if (existingEdge) {
           // 원래 엣지가 있으면 그거 업데이트
           return prev.map(edge =>
-            edge.target === attribute.group_id
+            edge.target === attribute.firewall_group_id
               ? { ...edge, target: firewallId }
               : edge
           )
@@ -207,13 +209,13 @@ export default function EditComputeAttribute({
       <div className="flex justify-between items-center px-4 py-2 border-b">
         <div className="gap-3 flex items-center">
           <Image
-            alt="compute instance"
+            alt="compute compute"
             src={'/aut-compute.svg'}
             width={23.5}
             height={23.5}
             className="rounded-xs"
           ></Image>
-          <h3 className="text-xs font-medium">Instance</h3>
+          <h3 className="text-xs font-medium">Compute</h3>
         </div>
         <div className='flex items-center gap-3'>
           <Button type='button' onClick={onClose} className='px-3 py-1 h-[30px] rounded-sm text-xs bg-gray-50 hover:bg-violet-50 text-black border'>
@@ -280,7 +282,7 @@ export default function EditComputeAttribute({
 
         <InfoItem label="IP Address">
           <div className="flex w-full justify-between items-center">
-            <p className="text-xs">{attribute.ip_address}</p>
+            <p className="text-xs">{attribute.main_ip}</p>
             <Copy size={18} className="text-gray-500" />
           </div>
         </InfoItem>
@@ -302,7 +304,7 @@ export default function EditComputeAttribute({
         <InfoItem label="Disk">
           <div className={cn("h-9 w-full flex items-center px-3 text-xs bg-white shadow-none border rounded-sm", 
             isValueChanged('disk') ? "text-blue-500 font-medium" : "")}>
-            {`${selectedAttribute.disk} GB`}
+            {attribute.disk_type} {`${selectedAttribute.disk} GB`}
           </div>
         </InfoItem>
         <InfoItem label="Bandwidth">
@@ -326,7 +328,7 @@ export default function EditComputeAttribute({
         <InfoItem label='Firewall'>
           <SelectBox
             option={firewallGroup}
-            placeholder={attribute.group_id || 'Select firewall group'}
+            placeholder={attribute.firewall_group_id || 'Select firewall group'}
             className="h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full"
             onChange={handleFirewallChange}
           >

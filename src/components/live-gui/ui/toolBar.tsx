@@ -4,17 +4,17 @@ import EditSummary from "../edit/editSummary"
 import { useDraggable } from '@dnd-kit/core'
 
 interface Resource {
-  type: 'Compute' | 'BlockStorage' | 'Database' | 'ObjectStorage' | 'FireWall'
+  type: 'Compute' | 'BlockStorage' | 'ManagedDatabase' | 'ObjectStorage' | 'FirewallGroup'
   label: string
   icon: string
 }
 
 const resources: Resource[] = [
   { type: 'Compute', label: 'Compute', icon: '/aut-compute.svg' },
-  { type: 'Database', label: 'Database', icon: '/aut-database.svg' },
+  { type: 'ManagedDatabase', label: 'ManagedDatabase', icon: '/aut-manageddatabase.svg' },
   { type: 'BlockStorage', label: 'BlockStorage', icon: '/aut-blockstorage.svg' },
   { type: 'ObjectStorage', label: 'ObjectStorage', icon: '/aut-objectstorage.svg' },
-  { type: 'FireWall', label: 'Firewall', icon: '/aut-firewall.svg' },
+  { type: 'FirewallGroup', label: 'Firewall', icon: '/aut-firewallgroup.svg' },
 ]
 
 function DraggableResource({ resource }: { resource: Resource }) {
@@ -28,7 +28,7 @@ function DraggableResource({ resource }: { resource: Resource }) {
       ref={setNodeRef}
       {...attributes}
       {...listeners}
-      className="flex items-center gap-3 px-3 py-2 hover:bg-violet-50 rounded cursor-pointer"
+      className="flex items-center gap-3 px-3 py-2 font-mono hover:bg-violet-50 rounded cursor-pointer"
     >
       <div className="w-[25px] h-[25px] relative">
         <Image 
@@ -49,7 +49,7 @@ export default function ToolBar() {
     <>
       <div className="md:block hidden fixed top-[55px] left-0 bg-white border-r w-[256px] h-screen z-40">
         <div className="flex justify-between items-center px-4 py-[14px] border-b">
-          <h3 className="text-[13px] font-medium">Objects</h3>
+          <h3 className="text-[12px] font-medium font-mono">Objects</h3>
         </div>
 
         <div className="px-4 py-3 space-y-2 border-b">
@@ -61,7 +61,7 @@ export default function ToolBar() {
           ))}
         </div>
         <div className="fixed bg-white border-b px-4 py-[14px] w-[254px]">
-            <h3 className="text-[13px] font-medium">Project History</h3>
+            <h3 className="text-[12px] font-medium font-mono">Project History</h3>
         </div>
         <EditSummary />
       </div>

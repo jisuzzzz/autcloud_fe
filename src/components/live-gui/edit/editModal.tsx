@@ -13,7 +13,9 @@ import EditDatabaseAttribute from "./editDatabase"
 import EditBlockStorageAttribute from "./editBlock"
 import EditObjectStorageAttribute from "./editObject"
 import EditFirewallAttribute from "./editFirewall"
-import { Node, Edge } from "reactflow"
+import { Edge } from "reactflow"
+import { useStorage } from "@liveblocks/react"
+import { LiveMap } from "@liveblocks/node"
 
 export type AttributeType = ComputeAttributeType | DatabaseAttributeType | BlockStorageAttributeType | ObjectStorageAttributeType | FirewallAttributeType
 
@@ -27,12 +29,18 @@ export default function EditModal({onClose, resource, setEdges }: EditModalProps
   const {yDoc} = useYjsStore() 
   const me = useSelf()
 
+
+  const selectedNodeId = (me?.presence.selectedNodes as string[])?.[0]
+  if(!selectedNodeId) return
+
+  const resourceAttribute = useStorage((root) => {
+    const store = root.attributeStore as unknown as LiveMap<string, any>
+    return selectedNodeId ? store.get(selectedNodeId) : null
+  })
+
   const handleEdit = (updateAttribute: AttributeType) => {
 
     if(!yDoc || !me?.id || !me.info?.name) return
-    
-    const selectedNodeId = (me?.presence.selectedNodes as string[])?.[0]
-    if(!selectedNodeId) return
     
     const changes: Record<string, string> = {}
 
@@ -53,6 +61,7 @@ export default function EditModal({onClose, resource, setEdges }: EditModalProps
         changes,
         me.id,
         me.info.name,
+        resourceAttribute,
         yDoc
       )
       if (!('rules' in changes)) {
@@ -71,14 +80,14 @@ export default function EditModal({onClose, resource, setEdges }: EditModalProps
   const renderEditComponent = () => {
     switch(resource.data.type) {
       case 'Compute':
-        return <EditComputeAttribute attribute={resource.data.attribute as ComputeAttributeType} onEdit={handleEdit} onClose={onClose} setEdges={setEdges} id={resource.id} />
-      case 'Database':
-        return <EditDatabaseAttribute attribute={resource.data.attribute as DatabaseAttributeType} onEdit={handleEdit} onClose={onClose} />
+        return <EditComputeAttribute attribute={resourceAttribute as ComputeAttributeType} onEdit={handleEdit} onClose={onClose} setEdges={setEdges} id={resource.id} />
+      case 'ManagedDatabase':
+        return <EditDatabaseAttribute attribute={resourceAttribute as DatabaseAttributeType} onEdit={handleEdit} onClose={onClose} />
       case 'BlockStorage':
-        return <EditBlockStorageAttribute attribute={resource.data.attribute as BlockStorageAttributeType} onEdit={handleEdit} onClose={onClose} setEdges={setEdges} id={resource.id} />
+        return <EditBlockStorageAttribute attribute={resourceAttribute as BlockStorageAttributeType} onEdit={handleEdit} onClose={onClose} setEdges={setEdges} id={resource.id} />
       case 'ObjectStorage':
-        return <EditObjectStorageAttribute attribute={resource.data.attribute as ObjectStorageAttributeType} onEdit={handleEdit}  onClose={onClose} />
-      case 'FireWall':
+        return <EditObjectStorageAttribute attribute={resourceAttribute as ObjectStorageAttributeType} onEdit={handleEdit}  onClose={onClose} />
+      case 'FirewallGroup':
         return <EditFirewallAttribute attribute={resource.data.attribute as FirewallAttributeType} onEdit={handleEdit} onClose={onClose}/>
     }
   }

@@ -8,17 +8,18 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 
 const projectSchema = z.object({
-  name: z.string().min(10, '프로젝트 이름을 입력해주세요'),
-  description: z.string().min(1, '프로젝트 설명을 입력해주세요'),
+  name: z.string().min(10, 'Please enter a project name'),
+  description: z.string().min(1, 'Please enter a project description'),
 })
 
 type ProjectFormData = z.infer<typeof projectSchema>
 
 interface CreateProjectModalProps {
   onClose: () => void
+  onSuccess: () => void
 }
 
-export default function CreateProjectModal({ onClose }: CreateProjectModalProps) {
+export default function CreateProjectModal({ onClose, onSuccess }: CreateProjectModalProps) {
   const {
     register,
     handleSubmit,
@@ -38,31 +39,32 @@ export default function CreateProjectModal({ onClose }: CreateProjectModalProps)
       })
 
       if (!response.ok) {
-        throw new Error('프로젝트 생성에 실패했습니다')
+        throw new Error('Failed to create project')
       }
 
-      onClose()
+      onSuccess()
     } catch (error) {
-      console.error('프로젝트 생성 에러:', error)
+      console.error('Error creating project:', error)
     }
   }
 
   return (
     <Modal
       onClose={onClose}
-      className="fixed inset-0 flex items-center justify-center bg-black/50 z-50"
+      className="fixed inset-0 flex items-center justify-center bg-black/30 z-50"
     >
-      <div className="bg-white rounded-lg p-6 w-[500px] max-w-[90%]">
-        <h2 className="text-2xl font-bold mb-4">새 프로젝트 만들기</h2>
+      <div className="bg-[#F8F7FF] rounded-sm p-6 w-[500px] border max-w-[90%]">
+        <h2 className="text-md font-semibold mb-4">Create New Project</h2>
         
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">
-              프로젝트 이름
+              Project Name
             </label>
             <Input
               {...register('name')}
-              placeholder="프로젝트 이름을 입력하세요"
+              placeholder="Enter project name"
+              className="text-sm shadow-none bg-gray-50" 
             />
             {errors.name && (
               <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
@@ -71,13 +73,13 @@ export default function CreateProjectModal({ onClose }: CreateProjectModalProps)
 
           <div>
             <label className="block text-sm font-medium mb-1">
-              프로젝트 설명
+              Project Description
             </label>
             <Textarea
               {...register('description')}
-              placeholder="프로젝트에 대한 설명을 입력하세요"
+              placeholder="Enter project description"
               rows={4}
-              className='outline-none resize-none'
+              className='outline-none resize-none text-sm shadow-none bg-gray-50'
             />
             {errors.description && (
               <p className="text-red-500 text-sm mt-1">
@@ -89,13 +91,17 @@ export default function CreateProjectModal({ onClose }: CreateProjectModalProps)
           <div className="flex justify-end gap-2 mt-6">
             <Button
               type="button"
-              variant="outline"
+              variant="ghost"
               onClick={onClose}
+              className="px-4 rounded-sm h-8 bg-gray-50 hover:bg-violet-50 text-black border"
             >
-              취소
+              Cancel
             </Button>
-            <Button type="submit">
-              생성하기
+            <Button
+              type="submit"
+              className="px-3 rounded-sm h-8 w-[75px] bg-[#7868E6] border border-[#6035BE] hover:bg-[#8474FF] cursor-pointer"
+            >
+              Create
             </Button>
           </div>
         </form>

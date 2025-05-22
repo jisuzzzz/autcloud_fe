@@ -28,7 +28,7 @@ export const AttributeService = {
       region_id: resourceAttribute.region_id,
       region: mappingRegion(resourceAttribute.region_id),
       status: resourceAttribute.status,
-      ip_address: resourceAttribute.ip_address,
+      main_ip: resourceAttribute.main_ip,
       vcpu: attribute.vcpu_count,
       ram: attribute.ram,
       disk: attribute.disk,
@@ -39,7 +39,7 @@ export const AttributeService = {
       os_id: resourceAttribute.os_id,
       os: mappingOs(resourceAttribute.os_id),
       auto_backups: resourceAttribute.auto_backups,
-      group_id: resourceAttribute.group_id,
+      firewall_group_id: resourceAttribute.firewall_group_id,
     } : undefined
   },
 
@@ -53,15 +53,15 @@ export const AttributeService = {
       region_id: resourceAttribute.region_id,
       region: mappingRegion(resourceAttribute.region_id),
       status: resourceAttribute.status,
-      engine: resourceAttribute.db_engine,
-      version: resourceAttribute.db_version,
+      db_engine: resourceAttribute.db_engine,
+      db_version: resourceAttribute.db_version,
       vcpu: attribute.attribute.vcpu_count,
       ram: attribute.attribute.ram,
       disk: attribute.attribute.disk,
       monthly_cost: attribute.monthly_cost,
       replica_nodes: attribute.numbers_of_node,
       label: resourceAttribute.label,
-      latset_backup: resourceAttribute.latset_backup
+      latest_backup: resourceAttribute.latest_backup
     } : undefined
   },
 
@@ -93,12 +93,12 @@ export const AttributeService = {
       region_id: resourceAttribute.region_id,
       type: resourceAttribute.type,
       mount_id: resourceAttribute.mount_id,
-      attached_to: resourceAttribute.attached_to,
-      size: resourceAttribute.size,
+      attached_to_instance: resourceAttribute.attached_to_instance,
+      size_gb: resourceAttribute.size_gb,
       label: resourceAttribute.label
     }
 
-    return attribute ? { attribute } : undefined
+    return attribute ?  attribute : undefined
   },
 
 }

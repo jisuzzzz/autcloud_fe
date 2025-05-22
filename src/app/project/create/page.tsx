@@ -4,17 +4,30 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Pencil, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
+import CreateProjectModal from '@/components/custom/modal/createProjectModal';
 
 export default function CreateProjectPage() {
   const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const handleStartFromScratch = () => {
-    console.log('Start from scratch');
+    // console.log('Start from scratch');
+    setIsModalOpen(true)
   };
 
   const handleCreateWithAI = () => {
-    router.push('/project/create/ai/step1');
+    setIsModalOpen(true)
   };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false)
+  }
+
+  const handleModalSuccess = () => {
+    setIsModalOpen(false)
+    router.push('/project/create/ai/step1')
+  }
 
   return (
     <motion.div
@@ -60,6 +73,7 @@ export default function CreateProjectPage() {
           </motion.div>
         ))}
       </div>
+      {isModalOpen && <CreateProjectModal onClose={handleModalClose} onSuccess={handleModalSuccess} />}
     </motion.div>
   );
 }

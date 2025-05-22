@@ -7,9 +7,9 @@ import { Handle, Position } from 'reactflow'
 const resourceIcons = {
   Compute: '/aut-compute.svg',
   ObjectStorage: '/aut-objectstorage.svg',
-  Database: '/aut-database.svg',
+  ManagedDatabase: '/aut-manageddatabase.svg',
   BlockStorage: '/aut-blockstorage.svg',
-  FireWall: '/aut-firewall.svg'
+  FirewallGroup: '/aut-firewallgroup.svg'
 }
 
 interface NodeProps {
@@ -58,7 +58,7 @@ export default function ResourceNode({ id, data }: NodeProps) {
           priority
           className="object-contain rounded-xs"
         />
-        <div className="fixed top-[60px] w-[200px] text-xs font-medium text-gray-700 text-center mt-1">
+        <div className="fixed top-[60px] font-mono w-[200px] text-xs font-medium text-gray-700 text-center mt-1">
           {data.attribute.label}
         </div>
       </div>

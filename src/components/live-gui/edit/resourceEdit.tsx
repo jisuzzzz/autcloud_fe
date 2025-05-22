@@ -29,10 +29,10 @@ const [isAlretModalOpen, setIsAlretModalOpen] = useState(false)
   )
 }
 
-export default function StartEditButton({resource, setEdges }: StartEditButtonProps) {
+export default function StartEditButton({ resource, setEdges }: StartEditButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isAlretModalOpen, setIsAlretModalOpen] = useState(false)
-  const isRemove = resource.data.status === 'remove'
+  const isRemove = (resource.data.status === 'remove')
   return (
     <>
       <button

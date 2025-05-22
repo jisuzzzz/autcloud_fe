@@ -127,7 +127,7 @@ export default function EditDatabaseAttribute({ attribute, onEdit, onClose }: Da
         <div className='gap-3 flex items-center'>
           <Image
             alt="managed database"
-            src={'/aut-database.svg'}
+            src={'/aut-manageddatabase.svg'}
             width={23.5}
             height={23.5}
             className="rounded-xs"

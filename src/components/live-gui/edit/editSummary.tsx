@@ -29,7 +29,7 @@ export default function EditSummary() {
   }, [yDoc])
 
   return (
-    <div className="mt-13 px-2 py-2 space-y-2 overflow-y-auto max-h-[calc(100vh-410px)] scrollbar-thin">
+    <div className="mt-13 px-2 py-2 space-y-2 overflow-y-auto max-h-[calc(100vh-410px)] scrollbar-thin font-mono">
       {projectHistory && Object.entries(projectHistory)
       .filter(([nodeId]) => nodeId.split('-')[0] !== 'firewall')
       .map(([nodeId, data]: [string, any]) => (

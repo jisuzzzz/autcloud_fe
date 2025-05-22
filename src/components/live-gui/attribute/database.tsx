@@ -62,6 +62,7 @@ export default function DatabaseAttribute({ attribute:localAttribute }: Database
         <InfoItem label="Monthly Cost">{`$${attribute.monthly_cost} per Month`}</InfoItem>
         
       </AttributeSection>
+
       <AttributeSection>
         <InfoItem label="Latest Backup">{attribute.latest_backup}</InfoItem>
       </AttributeSection>

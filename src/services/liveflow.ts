@@ -2,7 +2,6 @@ import { Node, Edge } from "reactflow"
 import * as Y from 'yjs'
 import { CommandList, CommandItem, ProjectChanges } from "@/types/type"
 import { CommandService } from "./command"
-import { LiveMap } from "@liveblocks/node"
 
 interface UserAction {
   type: 'add' | 'remove' | 'edit'
@@ -126,7 +125,6 @@ export const LiveFlowService = {
       }
 
       const attributeProperties = Object.keys(addedAttribute)
-      console.log(attributeProperties)
       attributeProperties.forEach(property => {
         changes[node.id].attributeChanges[property] = {
           prevValue: null,
@@ -189,7 +187,7 @@ export const LiveFlowService = {
     })
   },
 
-  editNodeV2: (nodeId:string, changes: Record<string, string>, userId: string, userName:string, yDoc: Y.Doc) => {
+  editNodeV2: (nodeId:string, changes: Record<string, string>, userId: string, userName:string, attribute: any, yDoc: Y.Doc) => {
     if (!yDoc) return
     const yNodes = yDoc.getArray<Y.Map<any>>('nodes')
     const yEdges = yDoc.getArray<Edge>('edges')
@@ -200,6 +198,7 @@ export const LiveFlowService = {
       if(!ynode) return
 
       const prevData = ynode.node.get('data')
+      // console.log(prevData)
 
       const edges = yEdges.toArray() as Edge[]
       const historyChanges = projectHistory.get('nodes') || {}
@@ -217,6 +216,7 @@ export const LiveFlowService = {
       let changeFlag = false
       
       Object.entries(changes).forEach(([property, newValue]) => {
+
         if (typeof newValue === 'object') {
           const updatedAttribute = {...prevData.attribute}
           Object.entries(changes).forEach(([field, newValue]) => {
@@ -227,9 +227,11 @@ export const LiveFlowService = {
             status: 'edit',
             attribute: updatedAttribute
           })
-          return
+          return 
         }
-        const oldValue =  prevData.attribute[property]
+
+        // const oldValue =  prevData.attribute[property]
+        const oldValue= attribute[property]
 
         if(oldValue !== newValue) {
           changeFlag = true
@@ -251,7 +253,9 @@ export const LiveFlowService = {
 
         const updatedAttribute = {...prevData.attribute}
         Object.entries(changes).forEach(([field, newValue]) => {
-          updatedAttribute[field] = newValue
+          if (field in updatedAttribute) {
+            updatedAttribute[field] = newValue
+          }
         })
 
         ynode.node.set('data', {
@@ -260,8 +264,8 @@ export const LiveFlowService = {
           attribute: updatedAttribute
         })
 
-        if(prevData.type === 'BlockStorage' && 'attached_to' in changes) {
-          const newComputeId = changes['attached_to']
+        if(prevData.type === 'BlockStorage' && 'attached_to_instance' in changes) {
+          const newComputeId = changes['attached_to_instance']
           const prevEdge = edges.find(e => e.source === nodeId)
           if(prevEdge) {
             const edgeIndex = edges.findIndex(e => e.id === prevEdge.id)
@@ -414,13 +418,13 @@ export const LiveFlowService = {
     const commandMap: Record<string, 
       Record<string, (node: Node, userId?: string) => CommandItem>> = {
 
-      Compute: {
+      Instance: {
         add: (node, userId) => CommandService.createComputeCommand(node, userId!),
         edit: (node) => CommandService.updateComputeCommand(node),
         remove: (node) => CommandService.deleteComputeCommand(node),
       },
 
-      Database: {
+      ManagedDatabase: {
         add: (node) => CommandService.createDBCommand(node),
         edit: (node) => CommandService.updateDBCommand(node),
         remove: (node) => CommandService.deleteDBCommand(node),
@@ -438,7 +442,7 @@ export const LiveFlowService = {
         remove: (node) => CommandService.deleteBlockCommand(node),
       },
 
-      FireWall: {
+      FirewallGroup: {
         add: (node) => CommandService.createFirewallCommand(node),
         edit: (node) => CommandService.updateFirewallCommand(node),
         remove: (node) => CommandService.deleteFirewallCommand(node),
@@ -470,19 +474,19 @@ export const LiveFlowService = {
         commandList.push(command(node, userId))
 
         if(node.data.type === 'BlockStorage') {
-          const prevAttachTo = changes[node.id]?.attributeChanges?.attached_to?.prevValue?.toString()
+          const prevAttachTo = changes[node.id]?.attributeChanges?.attached_to_instance?.prevValue?.toString()
           if(prevAttachTo) {
             const firstAttach = CommandService.attachCommand(node,prevAttachTo)
             commandList.push(firstAttach)
             const detachCommand = CommandService.detachCommand(node)
             commandList.push(detachCommand)
           }
-          const currAttachTo = node.data.attribute.attached_to
+          const currAttachTo = node.data.attribute.attached_to_instance
           const attachCommand = CommandService.attachCommand(node, currAttachTo)
           commandList.push(attachCommand)
         }
 
-        if (node.data.type === 'FireWall' && node.data.attribute.rules) {
+        if (node.data.type === 'FirewallGroup' && node.data.attribute.rules) {
           const ruleCommands = CommandService.createRuleCommands(node)
           commandList.push(...ruleCommands)
         }

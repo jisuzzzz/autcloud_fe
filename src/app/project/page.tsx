@@ -7,7 +7,7 @@ import Image from 'next/image';
 
 export default async function ProjectPage() {
   
-  const projects = getProjects();
+  const projects = getProjects()
 
   return (
     <div className="min-h-screen bg-[#F8F7FF]">

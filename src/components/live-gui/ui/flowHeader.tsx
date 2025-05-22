@@ -10,6 +10,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useYjsStore } from '@/lib/hooks/useYjsStore'
 import { LiveFlowService } from '@/services/liveflow'
+import GetVultrAPIModal from '@/components/custom/modal/getVultrAPIModal'
 
 interface HeaderProps {
   projectId: string
@@ -49,15 +50,63 @@ export default function FlowHeader({
 }: HeaderProps) {
   const {yDoc} = useYjsStore()
   const me = useSelf()
-  const [isModalOpen, setIsModalOepn] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isGetAPIModalOpen, setIsGetAPIModalOpen] = useState(false)
+  const [publicKey, setPublicKey] = useState('')
 
-  const handleOpenModal = () => setIsModalOepn(true)
-  const handleCloseModal = () => setIsModalOepn(false)
+  const handleOpenModal = () => setIsModalOpen(true)
+  const handleCloseModal = () => setIsModalOpen(false)
 
-  const handleClickPuhblish = () => {
+  const handleOpenGetAPIModal = async () => {
+    await getPublicKey()
+    setIsGetAPIModalOpen(true)
+  }
+  const handleCloseGetAPIModal = () => setIsGetAPIModalOpen(false)
+
+
+  const handleSuccess = async () => {
+    // await handlePublish()
+    setIsGetAPIModalOpen(false)
+  }
+
+  const getPublicKey = async () => {
+    try {
+      const response = await fetch('/api/project/public-key', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      if (!response.ok) {
+        throw new Error('Failed to get public key')
+      }
+      const res = await response.json()
+      setPublicKey(res.public_key)
+    } catch (error) {
+      console.error('Error get public key:', error)
+    }
+  }
+
+  const handlePublish = async () => {
     const commandList = LiveFlowService.CreateCommandList(yDoc, me?.id)
-    console.log(commandList)
 
+    try {
+      const response = await fetch('/api/project/deploy', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          project_id: projectId,
+          commandList: commandList,
+        }),
+      })
+      if (!response.ok) {
+        throw new Error('Failed to deploy commands')
+      }
+    } catch (error) {
+      console.error('Error deploying commands:', error)
+    }
   }
 
   return (
@@ -75,32 +124,36 @@ export default function FlowHeader({
               height={45}
             >
             </Image>
-            <h1 className="text-lg font-bold">AutCloud</h1>
+            <h1 className="text-lg font-bold font-mono">AutCloud</h1>
           </Link>
-          <div className="flex gap-2 text-[15px]">
+          <div className="flex gap-2 text-[15px] font-mono">
             <p className="text-gray-500">{'Project'}</p>
             <p className='text-gray-500'>|</p>
             <p>{projectName}</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 font-mono">
           <Avatars />
           <Button
             className={cn('px-3 rounded-sm h-8 bg-gray-50 hover:bg-violet-50 text-black border')}
             onClick={handleOpenModal}
           >
-            <p className="text-black font-normal">Share</p>
+            <p className="text-black text-xs font-normal">Share</p>
           </Button>
           <Button
-            onClick={handleClickPuhblish}
-            className={cn('px-3 rounded-sm h-8 bg-[#7868E6] border border-[#6035BE] hover:bg-[#8474FF] cursor-pointer')}
+            onClick={handleOpenGetAPIModal}
+            className={cn('px-3 rounded-sm h-8 text-xs bg-[#7868E6] border border-[#6035BE] hover:bg-[#8474FF] cursor-pointer')}
           >
             Publish
           </Button>
 
           {isModalOpen && (
             <ShareModal projectId={projectId} onClose={handleCloseModal} />
+          )}
+
+          {isGetAPIModalOpen && (
+            <GetVultrAPIModal projectId={projectId} public_key={publicKey} onClose={handleCloseGetAPIModal} />
           )}
         </div>
       </div>

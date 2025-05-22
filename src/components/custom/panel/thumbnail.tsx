@@ -26,9 +26,9 @@ const ThumbnailNode = ({ data }:{data:any}) => {
 const resourceIcons = {
   Compute: '/aut-compute.svg',
   ObjectStorage: '/aut-objectstorage.svg',
-  Database: '/aut-database.svg',
+  ManagedDatabase: '/aut-manageddatabase.svg',
   BlockStorage: '/aut-blockstorage.svg',
-  FireWall: '/aut-firewall.svg'
+  FirewallGroup: '/aut-firewallgroup.svg'
 };
 
 const nodeTypes = { 
@@ -51,7 +51,7 @@ const ProjectThumbnail: React.FC<ProjectThumbnailProps> = ({
   
   const nodes: Node[] = useMemo(() => {
     return project.initial_resources.map((resource: ResourceConfig) => ({
-      id: resource.id,
+      id: resource.id ? resource.id : resource.temp_id,
       type: 'resource',
       position: {
         x: resource.position.x * (width / 300),

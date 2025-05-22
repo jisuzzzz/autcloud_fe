@@ -64,7 +64,7 @@ export function AttributeSection({
 }) {
   return (
     <div
-      className={cn('flex flex-col space-y-2 px-4 py-4 border-b', className)}
+      className={cn('flex flex-col font-mono text-xs space-y-2 px-4 py-4 border-b', className)}
     >
       {children}
     </div>
@@ -122,7 +122,7 @@ export default function AttributeBar({setEdges}: AttributeBarProps) {
 
   return selectedResource ? (
     <div className="md:block hidden  fixed top-[55px] right-0 bg-white border-l w-[256px] h-screen z-40">
-      <div className="flex justify-between items-center px-4 py-3 border-b">
+      <div className="flex justify-between items-center px-4 py-3 border-b font-mono">
         <div className="gap-3 flex items-center">
           <Image
             alt="compute instance"
@@ -141,10 +141,12 @@ export default function AttributeBar({setEdges}: AttributeBarProps) {
         />
       </div>
       {selectedResource.data.type === 'Compute' && (
-        <ComputeAttribute attribute={resourceAttribute as ComputeAttributeType} />
+        <ComputeAttribute 
+          attribute={resourceAttribute as ComputeAttributeType} />
       )}
-      {selectedResource.data.type === 'Database' && (
-        <DatabaseAttribute attribute={resourceAttribute as DatabaseAttributeType} />
+      {selectedResource.data.type === 'ManagedDatabase' && (
+        <DatabaseAttribute 
+          attribute={resourceAttribute as DatabaseAttributeType} />
       )}
       {selectedResource.data.type === 'BlockStorage' && (
         <BlockStorageAttribute
@@ -155,7 +157,7 @@ export default function AttributeBar({setEdges}: AttributeBarProps) {
           attribute={resourceAttribute as ObjectStorageAttributeType}
         />
       )}
-      {selectedResource.data.type === 'FireWall' && (
+      {selectedResource.data.type === 'FirewallGroup' && (
         <FirewallAttribute attribute={selectedResource.data.attribute as FirewallAttributeType} />
       )}
     </div>

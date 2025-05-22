@@ -1,33 +1,47 @@
+import { CommandList } from "@/types/type"
+
 interface CreateProjectData {
   name: string
   description: string
-  accessToken?: string
+  accessToken: string
 }
 
 interface DeleteProjectData {
   project_id:string
-  accessToken?: string
+  accessToken: string
 }
 
 interface KickMemberData {
   project_id:string
   email:string
-  accessToken?: string
+  accessToken: string
 }
 
 interface AssginRoleData {
   invitee_email: string
   project_id: string
   role:string
-  accessToken?: string
+  accessToken: string
 }
-// todo: Add error message logging code
+
+interface DeployData {
+  project_id: string,
+  commandList: CommandList,
+  accessToken: string,
+}
+
+interface SendVultrApiKeyData {
+  project_id: string,
+  api_key: any
+  accessToken: string
+}
+
+
 export class ProjectService {
   private static API_URL = 'http://64.176.217.21:80/command_server/api/v1/external/project'
 
   static async createProject(data: CreateProjectData) {
     const { accessToken, ...projectData } = data
-    // console.log(data.accessToken)
     const response = await fetch(`${this.API_URL}`, {
       method: 'POST',
       headers: {
@@ -58,7 +72,7 @@ export class ProjectService {
     if (!response.ok) {
       throw new Error('External API error')
     }
-    return response
+    return response.json()
   }
 
   static async kickMember(data: KickMemberData) {
@@ -75,7 +89,7 @@ export class ProjectService {
     if (!response.ok) {
       throw new Error('External API error')
     }
-    return response
+    return response.json()
   }
   
   static async assignRole(data: AssginRoleData) {
@@ -92,11 +106,73 @@ export class ProjectService {
     if (!response.ok) {
       throw new Error('External API error')
     }
-    return response
+    return response.json()
   }
 
-  // static async createCommandList() {
-  //   const { accessToken } = data
-  // }
+  static async deployCommand(data: DeployData) {
+    const { accessToken, ...deployData } = data
+    const response = await fetch(`${this.API_URL}/deploy`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      },
+      body: JSON.stringify(deployData)
+    }) 
+    if(!response.ok) {
+      throw new Error('External API error')
+    }
+    return response.json()
+  }
 
+  static async getPublicKey(accessToken: string) {
+    const response = await fetch(`${this.API_URL}/public-key`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      },
+    })
+    if(!response.ok) {
+      throw new Error('External API error')
+    }
+    return response.json()
+  }
+
+  static async sendVultrApiKey(data: SendVultrApiKeyData) {
+    const { accessToken, api_key, project_id } = data
+
+    let apiKeyArray: number[]
+    if (Array.isArray((api_key as any)?.data)) {
+      // 이미 Buffer-like 객체일 경우
+      apiKeyArray = (api_key as any).data
+    } else if (Buffer.isBuffer(api_key)) {
+      // 실제 Buffer 인스턴스일 경우
+      apiKeyArray = Array.from(api_key)
+    } else {
+      throw new Error("Invalid api_key format")
+    }
+  
+    console.log(apiKeyArray)
+
+    const response = await fetch(`${this.API_URL}/vultr-api-key`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      },
+      body: JSON.stringify({
+        api_key: apiKeyArray,
+        project_id
+      })
+    })
+    console.log(response)
+    if(!response.ok) {
+      throw new Error('External API error')
+    }
+    return response.json()
+  }
 }

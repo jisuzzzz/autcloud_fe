@@ -67,12 +67,12 @@ export default function Step1Page() {
         className="w-full max-w-[600px] p-6 bg-white rounded-md border"
       >
 
-        <div className="flex justify-center items-center mb-8">
+        <div className="flex justify-center items-center pb-2">
           <h2 className="text-sm font-semibold text-gray-800 justify-self-center">Step 1: Service Basics</h2>
         </div>
 
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">
               1. Choose the region for deployment.

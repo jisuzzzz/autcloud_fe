@@ -1,6 +1,7 @@
 type ResourceConfig = {
   id: string,
-  type: 'Compute' | 'Database' | 'BlockStorage' | 'ObjectStorage' | 'FireWall',
+  temp_id: string,
+  type: 'Compute' | 'ManagedDatabase' | 'BlockStorage' | 'ObjectStorage' | 'FirewallGroup',
   position: {
     x: number,
     y: number
@@ -19,7 +20,7 @@ type ResourceNodeType = {
   },
   status: 'add' | 'remove' | 'edit' | 'comfirm',
   data: {
-    type: 'Compute' | 'Database' | 'BlockStorage' | 'ObjectStorage' | 'FireWall',
+    type: 'Compute' | 'ManagedDatabase' | 'BlockStorage' | 'ObjectStorage' | 'FirewallGroup',
     status: 'add' | 'remove' | 'edit' | 'comfirm',
     attribute: ComputeAttributeConfig | DatabaseAttributeConfig | ObjectStorageAttributConfig  
     | BlockStorageAttributeConfig | FirewallAttributeType
@@ -37,11 +38,11 @@ type ComputeAttributeConfig = {
   plan: string,
   status: string,
   region_id: string,
-  ip_address: string,
+  main_ip: string,
   label: string,
   os_id: string,
   auto_backups: string,
-  group_id?: string
+  firewall_group_id?: string
 }
 
 type DatabaseAttributeConfig = {
@@ -64,8 +65,8 @@ type BlockStorageAttributeConfig = {
   region_id: string,
   type: string,
   mount_id: string,
-  attached_to: string,
-  size: string,
+  attached_to_instance: string,
+  size_gb: string,
   label: string,
 }
 
@@ -74,7 +75,7 @@ type ComputeAttributeType = {
   status: string,
   region_id: string,
   region: string,
-  ip_address: string,
+  main_ip: string,
   vcpu: string,
   ram: string,
   disk: string,
@@ -83,8 +84,9 @@ type ComputeAttributeType = {
   os_id: string,
   os: string,
   auto_backups: string,
+  disk_type: string,
   monthly_cost: string,
-  group_id?: string
+  firewall_group_id?: string
 }
 
 type DatabaseAttributeType = {
@@ -108,8 +110,8 @@ type BlockStorageAttributeType = {
   region: string,
   type: string,
   mount_id: string,
-  attached_to: string,
-  size: string,
+  attached_to_instance: string,
+  size_gb: string,
   label: string,
 }
 

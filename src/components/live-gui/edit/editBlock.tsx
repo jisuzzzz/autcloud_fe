@@ -57,7 +57,7 @@ export default function EditBlockStorageAttribute({attribute, onEdit, onClose, s
   }))
 
   const handleAttachChange = (computeId: string) => {
-    setValue('attached_to', computeId)
+    setValue('attached_to_instance', computeId)
   }
 
   const isValueChanged = (property: keyof BlockStorageAttributeType) => {
@@ -83,13 +83,13 @@ export default function EditBlockStorageAttribute({attribute, onEdit, onClose, s
     if(onEdit) {
       onEdit(data)
       
-      const computeId = data.attached_to
+      const computeId = data.attached_to_instance
       if(!computeId && (computeId === '')) return
       setEdges(prev => {
-        const existingEdge = prev.find(edge => edge.target === attribute.attached_to)
+        const existingEdge = prev.find(edge => edge.target === attribute.attached_to_instance)
         if(existingEdge) {
           return prev.map(edge =>
-            edge.target === attribute.attached_to
+            edge.target === attribute.attached_to_instance
               ? {...edge, target: computeId}
               : edge
           )
@@ -159,9 +159,9 @@ export default function EditBlockStorageAttribute({attribute, onEdit, onClose, s
           <h3 className="text-xs text-gray-500">{"Attatch to"}</h3>
           <SelectBox
             option={computeNodes}
-            placeholder={nodes.find(node => node.id === attribute.attached_to)?.data.attribute.label || "Select compute"}
+            placeholder={nodes.find(node => node.id === attribute.attached_to_instance)?.data.attribute.label || "Select compute"}
             className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm w-full", 
-              isValueChanged('attached_to') ? "text-blue-500 font-medium" : "")}
+              isValueChanged('attached_to_instance') ? "text-blue-500 font-medium" : "")}
             onChange={handleAttachChange}
           />
           <p className="text-xs text-gray-500">on this page, GB = 1024^3 bytes</p>
@@ -179,7 +179,7 @@ export default function EditBlockStorageAttribute({attribute, onEdit, onClose, s
         </div>
 
         <InfoItem label="Size">
-          <p className="text-xs text-[#8171E8]">{`${attribute.size} GB`}</p>
+          <p className="text-xs text-[#8171E8]">{`${attribute.size_gb} GB`}</p>
         </InfoItem>
       </AttributeSection>
 

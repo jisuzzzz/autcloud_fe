@@ -24,14 +24,37 @@ interface LogCardProps {
   status: 'added' | 'modified' | 'removed'
 }
 
-function LogCard({ title, prev, curr, status }: LogCardProps) {
-  const renderValue = (value: any) => {
-    if (value === null || value === undefined) return "-"
-    if (typeof value === 'boolean') return value ? 'Yes' : 'No'
-    if (typeof value === 'object') return JSON.stringify(value, null, 2)
-    return value
-  }
+function renderValue(value: any, key: string): string {
+  if (value === null || value === undefined) return "-"
+  if (typeof value === 'boolean') return value ? 'Yes' : 'No'
+  if (typeof value === 'object') return JSON.stringify(value, null, 2)
 
+  switch (key) {
+    case 'vcpu':
+      return `${value} vCPU/s`
+    case 'ram':
+      return `${value} MB`
+    case 'disk':
+    case 'size':
+    case 'bandwidth':
+      return `${value} GB`
+    case 'monthly_cost':
+    case 'price':
+    case 'disk_gb_price':
+    case 'bw_gb_price':
+      return `$${value} /month`
+    case 'replica_nodes':
+      return `${value} node`
+    case 'ratelimit_ops_secs':
+      return `${value} ops/sec`
+    case 'ratelimit_ops_bytes':
+      return `${value} bytes`
+    default:
+      return String(value)
+  }
+}
+
+function LogCard({ title, prev, curr, status }: LogCardProps) {
   const statusMap = {
     added: {
       label: 'added',
@@ -53,7 +76,7 @@ function LogCard({ title, prev, curr, status }: LogCardProps) {
     <div className="border rounded-sm bg-[#FAFAFA] text-xs">
       <div className="px-4 py-[9px] border-b items-center">
         <div className="flex items-center justify-between">
-          <p className="font-semibold">{title}</p>
+          <p className="font-mono font-semibold">{title}</p>
           <p className={`rounded-lg text-xs px-2 py-0.5 font-medium  ${statusInfo.color}`}>
             {statusInfo.label}
           </p>
@@ -64,17 +87,17 @@ function LogCard({ title, prev, curr, status }: LogCardProps) {
         <div className="bg-[#FFFBFB] w-1/2 px-4 py-3 border-r space-y-2">
           <div className="flex items-center gap-2">
             <div className="rounded-full w-2 h-2 bg-red-400" />
-            <p className="font-medium">Previous Value:</p>
+            <p className="font-mono">Previous Value:</p>
           </div>
-          <pre className="whitespace-pre-wrap break-words text-xs font-mono">{renderValue(prev)}</pre>
+          <pre className="whitespace-pre-wrap break-words text-xs font-mono">{prev}</pre>
         </div>
 
         <div className="bg-[#FAFEFC] w-1/2 px-4 py-3 space-y-2">
           <div className="flex items-center gap-2">
             <div className="rounded-full w-2 h-2 bg-green-400" />
-            <p className="font-medium">Current Value:</p>
+            <p className="font-mono">Current Value:</p>
           </div>
-          <pre className="whitespace-pre-wrap break-words text-xs font-mono">{renderValue(curr)}</pre>
+          <pre className="whitespace-pre-wrap break-words text-xs font-mono">{curr}</pre>
         </div>
       </div>
     </div>
@@ -88,7 +111,7 @@ export default function EditLogModal({ resourceHistory, onClose }: EditLogModalP
 
   return (
     <Modal className="fixed top-[70px] left-[268px]">
-      <div className="w-[550px] max-h-[90vh] bg-white rounded-md border shadow-lg overflow-y-hidden">
+      <div className="w-[550px] max-h-[90vh] bg-white rounded-md border shadow-lg overflow-y-hidden font-mono">
         <div className="sticky top-0 p-4 border-b bg-white z-10 flex justify-between items-center">
           <h2 className="text-xs font-semibold">Detailed Change Log</h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
@@ -116,23 +139,23 @@ export default function EditLogModal({ resourceHistory, onClose }: EditLogModalP
               if (value && typeof value === 'object' && ('prevValue' in value || 'currValue' in value)) {
                 return (
                   <LogCard
-                    key={key}
+                    key={`${key}-${resourceHistory.status}`}
                     title={title}
-                    prev={value.prevValue}
-                    curr={value.currValue}
+                    prev={renderValue(value.prevValue, key)}
+                    curr={renderValue(value.currValue, key)}
                     status={resourceHistory.status}
                   />
-                );
+                )
               } else {
                 return (
                   <LogCard
-                    key={key}
+                    key={`${key}-${resourceHistory.status}`}
                     title={title}
-                    prev={resourceHistory.status === 'removed' ? value : undefined}
-                    curr={resourceHistory.status === 'added' ? value : undefined}
+                    prev={resourceHistory.status === 'removed' ? renderValue(value, key) : undefined}
+                    curr={resourceHistory.status === 'added' ? renderValue(value, key) : undefined}
                     status={resourceHistory.status}
                   />
-                );
+                )
               }
             })}
           </div>

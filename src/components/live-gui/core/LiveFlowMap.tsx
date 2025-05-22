@@ -30,7 +30,7 @@ interface LiveFlowMapProps {
 }
 
 interface DragResource {
-  type: 'Compute' | 'BlockStorage' | 'Database' | 'ObjectStorage' | 'FireWall'
+  type: 'Compute' | 'BlockStorage' | 'ManagedDatabase' | 'ObjectStorage' | 'FirewallGroup'
   label: string
   icon: string
 }
@@ -40,13 +40,28 @@ const edgeTypes = { edge: ArrowEdge }
 
 const convertToNodesAndEdges = (resources: ResourceConfig[]): { nodes: Node[], edges: Edge[] } => {
   const edges: Edge[] = []
-  const nodes = resources.map(resource => {
-    if(resource.type === 'BlockStorage' && (resource.attribute as BlockStorageAttributeType).attached_to) {
-    
-      const newEdge: Edge = {
-        id: `e-${resource.id}-${Date.now()}`,
-        source: resource.id,
-        target: (resource.attribute as BlockStorageAttributeType).attached_to!,
+  const nodes: Node[] = []
+
+  resources.forEach(resource => {
+    const nodeId = resource.id ? resource.id : resource.temp_id
+    const newNode: Node = {
+      id: nodeId,
+      type: 'resource',
+      position: { x: resource.position.x, y: resource.position.y },
+      data: {
+        type: resource.type,
+        status: resource.status,
+        attribute: resource.attribute
+      }
+    }
+    nodes.push(newNode)
+
+    if (resource.type === 'BlockStorage' && (resource.attribute as BlockStorageAttributeType).attached_to_instance) {
+      const targetId = (resource.attribute as BlockStorageAttributeType).attached_to_instance!
+      edges.push({
+        id: `e-${nodeId}-${targetId}`,
+        source: nodeId,
+        target: targetId,
         sourceHandle: 'right',
         targetHandle: 'left',
         type: 'edge',
@@ -55,15 +70,16 @@ const convertToNodesAndEdges = (resources: ResourceConfig[]): { nodes: Node[], e
           width: 20,
           height: 20,
           color: '#6E6E6E'
-        },
-      }
-      edges.push(newEdge)
+        }
+      })
     }
-    if (resource.type === 'Compute' && (resource.attribute as ComputeAttributeType).group_id !== '') {
-      const newEdge: Edge = {
-        id: `e-${resource.id}-${Date.now()}`,
-        source: resource.id,
-        target: (resource.attribute as ComputeAttributeType).group_id!,
+
+    if (resource.type === 'Compute' && (resource.attribute as ComputeAttributeType).firewall_group_id !== '') {
+      const targetId = (resource.attribute as ComputeAttributeType).firewall_group_id!
+      edges.push({
+        id: `e-${nodeId}-${targetId}`,
+        source: nodeId,
+        target: targetId,
         sourceHandle: 'top',
         targetHandle: 'bottom',
         type: 'edge',
@@ -72,22 +88,12 @@ const convertToNodesAndEdges = (resources: ResourceConfig[]): { nodes: Node[], e
           width: 20,
           height: 20,
           color: '#6E6E6E'
-        },
-      }
-      edges.push(newEdge)
-    }
-    return {
-      id: resource.id,
-      type: 'resource',
-      position: { x: resource.position.x, y: resource.position.y },
-      data: { 
-        type: resource.type,
-        status: resource.status,
-        attribute: resource.attribute
-      }
+        }
+      })
     }
   })
-  return {nodes, edges}
+
+  return { nodes, edges }
 }
 
 export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
@@ -117,7 +123,6 @@ export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
   })
 
   const { setNodeRef } = useDroppable({ id: 'flowMap-drop' })
-  const storage = useStorage((root) => root.attributestore)
   const [draggingNode, setDraggingNode] = useState<DragResource | null>(null) 
   const [tempNodeType, setTempNodeType] = useState<string | null>(null)
 
@@ -155,7 +160,7 @@ export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
           case 'Compute':
             storeCompute(payload)
             break
-          case 'Database':
+          case 'ManagedDatabase':
             storeDatabase(payload)
             break
           case 'ObjectStorage':
@@ -207,7 +212,7 @@ export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
           case 'Compute':
             storeCompute(payload)
             break
-          case 'Database':
+          case 'ManagedDatabase':
             storeDatabase(payload)
             break
           case 'ObjectStorage':
@@ -296,7 +301,7 @@ export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
           case 'v':
             if(!clipboard || !clipboard.nodes[0]) return
             const toPaste = clipboard.nodes[0]
-            if(toPaste.data.type === 'FireWall') return
+            if(toPaste.data.type === 'FirewallGroup') return
 
             const nodeId = `${toPaste.id}-${Date.now()}`
             const baseAttribute = {
@@ -304,7 +309,7 @@ export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
               label: `${toPaste.data.attribute.label}-copy`,
             }
             if(toPaste.data.type === 'Compute') {
-              baseAttribute.group_id = ''
+              baseAttribute.firewall_group_id = ''
             }
             if(toPaste.data.type === 'BlockStorage') {
               baseAttribute.attach_to = ''

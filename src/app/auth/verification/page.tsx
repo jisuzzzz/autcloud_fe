@@ -122,7 +122,7 @@ export default function VerificationPage() {
         <div className="w-[320px] text-center">
           <div className="w-16 h-16 mx-auto mb-4 rounded flex items-center justify-center text-gray-400 font-bold">
             <Image
-              src={'/aut-logo.svg'}
+              src={'/aut-cloud-logo.svg'}
               alt='logo'
               width={76}
               height={76}

@@ -3,12 +3,14 @@ import { ProjectTemplate } from "@/types/type";
 
 const PROJECT_TEMPLATES: ProjectTemplate[] = [
   {
-    id: "37bfb83b-dd64-410b-81c5-7374b0c453e0",
+    // id: "37bfb83b-dd64-410b-81c5-7374b0c453e0",
+    id:"4eea717b-23d1-4ff5-9884-da937356e79e",
     name: "Shopify+",
     description: "e-commerce platform infrastructure design",
     initial_resources: [
       {
-        id: "compute-1",
+        id: "",
+        temp_id: "compute-1",
         type: "Compute",
         position: { x: 500, y: 250 },
         status: 'add', 
@@ -16,15 +18,16 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           plan: 'vc2-2c-2gb',
           status: "running",
           region_id: "ewr",
-          ip_address: "64.176.217.21",
+          main_ip: "64.176.217.21",
           label: "Shopify-Web-Server",
           os_id: "2571",
           auto_backups: "enable",
-          group_id: "firewall-1"
+          firewall_group_id: "firewall-1"
         }
       },
       {
-        id: "storage-1",
+        id: "",
+        temp_id: "objectstorage-1",
         type: "ObjectStorage",
         position: { x: 350, y: 400 },
         status: 'add',
@@ -35,7 +38,8 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         }
       },
       {
-        id: "block-1",
+        id: "",
+        temp_id: "blockstorage-1",
         type: "BlockStorage",
         position: { x: 500, y: 400 },
         status: 'add',
@@ -43,14 +47,15 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           region_id: "ewr",
           type: "NVMe",
           mount_id: "ewr-a23cda1547af4b",
-          attached_to: "compute-1",
-          size: "1",
+          attached_to_instance: "compute-1",
+          size_gb: "1",
           label: "Shopify-Data-Volume",
         }
       },
       {
-        id: "db-1",
-        type: "Database",
+        id: "",
+        temp_id: "database-1",
+        type: "ManagedDatabase",
         position: { x: 650, y: 400 },
         status: 'add',
         attribute: {
@@ -64,8 +69,9 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         }
       },
       {
-        id: "firewall-1",
-        type: "FireWall",
+        id: "",
+        temp_id: "firewall-1",
+        type: "FirewallGroup",
         position: { x: 500, y: 100 },
         status: 'add',
         attribute: {
@@ -93,7 +99,8 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
     description: "e-commerce platform infrastructure design with high availability",
     initial_resources: [
       {
-        id: "compute-1",
+        id: "",
+        temp_id: "compute-1",
         type: "Compute",
         position: { x: 500, y: 250 },
         status: 'add', 
@@ -101,15 +108,16 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           plan: 'vc2-2c-2gb',
           status: "running",
           region_id: "ewr",
-          ip_address: "64.176.217.21",
+          main_ip: "64.176.217.21",
           label: "Shopify-Web-Server",
           os_id: "2571",
           auto_backups: "enable",
-          group_id: "firewall-1"
+          firewall_group_id: "firewall-1"
         }
       },
       {
-        id: "compute-2",
+        id: "",
+        temp_id: "compute-2",
         type: "Compute",
         position: { x: 600, y: 150 },
         status: 'add', 
@@ -117,15 +125,16 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           plan: 'vc2-4c-8gb',
           status: "running",
           region_id: "ord",
-          ip_address: "192.168.1.102",
+          main_ip: "192.168.1.102",
           label: "Shopify-Web-Server-Secondary",
           os_id: "2571",
           auto_backups: "disable",
-          group_id: "firewall-1"
+          firewall_group_id: "firewall-1"
         }
       },
       {
-        id: "block-1",
+        id: "",
+        temp_id: "block-1",
         type: "BlockStorage",
         position: { x: 400, y: 300 },
         status: 'add',
@@ -133,13 +142,14 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           region_id: "ord",
           type: "NVMe",
           mount_id: "ord-b47cda1547af9c",
-          attached_to: "compute-1",
-          size: "500",
+          attached_to_instance: "compute-1",
+          size_gb: "500",
           label: "Shopify-Data-Primary",
         }
       },
       {
-        id: "block-2",
+        id: "",
+        temp_id: "block-2",
         type: "BlockStorage",
         position: { x: 600, y: 300 },
         status: 'add',
@@ -147,14 +157,15 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           region_id: "ord",
           type: "NVMe",
           mount_id: "ord-c58eda1896af3d",
-          attached_to: "compute-2",
-          size: "500",
+          attached_to_instance: "compute-2",
+          size_gb: "500",
           label: "Shopify-Data-Secondary",
         }
       },
       {
-        id: "db-1",
-        type: "Database",
+        id: "",
+        temp_id: "database-1",
+        type: "ManagedDatabase",
         position: { x: 500, y: 450 },
         status: 'add',
         attribute: {
@@ -168,8 +179,9 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         }
       },
       {
-        id: "firewall-1",
-        type: "FireWall",
+        id: "",
+        temp_id: "firewall-1",
+        type: "FirewallGroup",
         position: { x: 500, y: 50 },
         status: 'add',
         attribute: {
@@ -197,7 +209,8 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
     description: "e-commerce platform infrastructure design with microservices architecture",
     initial_resources: [
       {
-        id: "compute-1",
+        id: "",
+        temp_id: "compute-1",
         type: "Compute",
         position: { x: 400, y: 200 },
         status: 'add', 
@@ -205,15 +218,16 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           plan: 'vc2-2c-4gb',
           status: "running",
           region_id: "sea",
-          ip_address: "10.0.1.101",
+          main_ip: "10.0.1.101",
           label: "Shopify-API-Gateway",
           os_id: "2571",
           auto_backups: "enable",
-          group_id: "firewall-1"
+          firewall_group_id: "firewall-1"
         }
       },
       {
-        id: "compute-2",
+        id: "",
+        temp_id: "compute-2",
         type: "Compute",
         position: { x: 600, y: 200 },
         status: 'add', 
@@ -221,16 +235,17 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
           plan: 'vc2-2c-4gb',
           status: "running",
           region_id: "sea",
-          ip_address: "10.0.1.102",
+          main_ip: "10.0.1.102",
           label: "Shopify-Auth-Service",
           os_id: "2571",
           auto_backups: "enable",
-          group_id: "firewall-1"
+          firewall_group_id: "firewall-1"
         }
       },
       {
-        id: "db-1",
-        type: "Database",
+        id: "",
+        temp_id: "database-1",
+        type: "ManagedDatabase",
         position: { x: 400, y: 380 },
         status: 'add',
         attribute: {
@@ -244,8 +259,9 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         }
       },
       {
-        id: "db-2",
-        type: "Database",
+        id: "",
+        temp_id: "database-2",
+        type: "ManagedDatabase",
         position: { x: 600, y: 380 },
         status: 'add',
         attribute: {
@@ -259,7 +275,8 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         }
       },
       {
-        id: "storage-1",
+        id: "",
+        temp_id: "storage-1",
         type: "ObjectStorage",
         position: { x: 500, y: 550 },
         status: 'add',
@@ -270,8 +287,9 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         }
       },
       {
-        id: "firewall-1",
-        type: "FireWall",
+        id: "",
+        temp_id: "firewall-1",
+        type: "FirewallGroup",
         position: { x: 500, y: 100 },
         status: 'add',
         attribute: {

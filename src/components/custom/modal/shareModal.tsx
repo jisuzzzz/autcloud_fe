@@ -115,9 +115,8 @@ export default function ShareModal({ onClose, projectId }: ShareModalProps) {
     >
       <div className="space-y-4">
         <div className="flex items-center justify-between border-b pb-4">
-          <h2 className="text-md font-semibold">Invite</h2>
+          <h2 className="text-sm font-semibold">Invite</h2>
           <div className="flex items-center gap-4 text-gray-600">
-            <p className="text-md">Copy Link</p>
             <button
               className="hover:text-gray-400"
               onClick={onClose}
@@ -154,12 +153,15 @@ export default function ShareModal({ onClose, projectId }: ShareModalProps) {
                   }}
                   onKeyDown={handleKeyDown}
                   placeholder={emailList.length === 0 ? "example@email.com" : ""}
-                  className="flex-1 outline-none min-w-[200px] text-sm"
+                  className="flex-1 outline-none min-w-[200px] text-sm h-5"
                 />
               </div>
-              {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+              {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
             </div>
-            <Button onClick={handleInvite}>
+            <Button 
+              className='px-3 rounded-sm h-9 text-xs bg-[#7868E6] border border-[#6035BE] hover:bg-[#8474FF] cursor-pointer'
+              onClick={handleInvite}
+            >
               <Send size={16}/>
               Invite
             </Button>
@@ -177,7 +179,7 @@ export default function ShareModal({ onClose, projectId }: ShareModalProps) {
                 className={`rounded-full ${!user.accepted && 'filter grayscale'}`}
               />
               <div className="flex justify-between flex-1">
-                <span className="text-md">
+                <span className="text-sm">
                   {user.name}
                   {user.isOwner && <span className="text-sm text-gray-500 ml-1">(you)</span>}
                 </span>
