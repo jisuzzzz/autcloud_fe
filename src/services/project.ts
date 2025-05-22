@@ -145,17 +145,15 @@ export class ProjectService {
     const { accessToken, api_key, project_id } = data
 
     let apiKeyArray: number[]
-    if (Array.isArray((api_key as any)?.data)) {
-      // 이미 Buffer-like 객체일 경우
-      apiKeyArray = (api_key as any).data
-    } else if (Buffer.isBuffer(api_key)) {
-      // 실제 Buffer 인스턴스일 경우
-      apiKeyArray = Array.from(api_key)
+    if (typeof api_key === 'object' && api_key !== null && 'data' in api_key && Array.isArray(api_key.data)) {
+      // Handle Buffer-like object format
+      apiKeyArray = api_key.data
+    } else if (Array.isArray(api_key)) {
+      // Handle direct array input
+      apiKeyArray = api_key
     } else {
       throw new Error("Invalid api_key format")
     }
-  
-    console.log(apiKeyArray)
 
     const response = await fetch(`${this.API_URL}/vultr-api-key`, {
       method: 'PUT',
