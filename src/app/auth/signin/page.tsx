@@ -36,7 +36,7 @@ export default function SigninPage() {
 
       if (res.ok) {
         alert('로그인 성공!');
-        router.push('/project');
+        router.push('https://autcloud-fe.vercel.app/project');
       } else {
         const data = await res.json();
         alert(`로그인 실패: ${data.error}`);
