@@ -25,9 +25,6 @@ import Image from "next/image"
 import AddNewResourceModal from '../add/addResoucreModal'
 import { useClearStorage } from '@/lib/hooks/useClearStorage'
 
-interface LiveFlowMapProps {
-  project1: ProjectTemplate  
-}
 
 interface DragResource {
   type: 'Compute' | 'BlockStorage' | 'ManagedDatabase' | 'ObjectStorage' | 'FirewallGroup'
@@ -118,8 +115,13 @@ const convertToNodesAndEdges = (resources: ResourceConfig[]): { nodes: Node[], e
   return { nodes, edges }
 }
 
-export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
-  const [selectedArchitecture, setSelectedArchitecture] = useState(project1)
+export function LiveFlowMap() {
+  const [selectedArchitecture, setSelectedArchitecture] = useState<ProjectTemplate>({
+    id: '',
+    name: '',
+    description: '',
+    initial_resources: []
+  })
 
   const { yDoc, isConnected, yProvider }  = useYjsStore()
   const user = useSelf()
@@ -167,7 +169,7 @@ export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
     }
   }, [])
   
-  const { initial_resources, name, id } = selectedArchitecture
+  const { initial_resources, name, id } = selectedArchitecture as ProjectTemplate
 
   
   
