@@ -42,7 +42,6 @@ export default function CreateProjectModal({ onClose, onSuccess }: CreateProject
         throw new Error('Failed to create project')
       }
       const res = await response.json()
-      console.log(res)
       onSuccess(res.project_id)
     } catch (error) {
       console.error('Error creating project:', error)
