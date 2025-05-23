@@ -9,23 +9,23 @@ import { Button } from '../../../ui/button'
 import { FirewallRuleType } from "@/types/type"
 
 
-export function CreateButton() {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+// export function CreateButton() {
+//   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  return (
-    <>
-      <ActionButton
-        icon={<Plus size={20} />}
-        label="Create"
-        onClick={() => setIsModalOpen(true)}
-        variant="default"
-      />
-      {isModalOpen && (
-        <CreateProjectModal onClose={() => setIsModalOpen(false)} />
-      )}
-    </>
-  )
-}
+//   return (
+//     <>
+//       <ActionButton
+//         icon={<Plus size={20} />}
+//         label="Create"
+//         onClick={() => setIsModalOpen(true)}
+//         variant="default"
+//       />
+//       {isModalOpen && (
+//         <CreateProjectModal onClose={() => setIsModalOpen(false)} />
+//       )}
+//     </>
+//   )
+// }
 
 interface addRuleProps {
   onSave: (rule: FirewallRuleType) => void
