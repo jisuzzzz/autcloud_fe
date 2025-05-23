@@ -32,6 +32,10 @@ interface DragResource {
   icon: string
 }
 
+interface LiveFlowMapProps {
+  project1: ProjectTemplate
+}
+
 const nodeTypes = { resource: ResourceNode }
 const edgeTypes = { edge: ArrowEdge }
 
@@ -115,13 +119,8 @@ const convertToNodesAndEdges = (resources: ResourceConfig[]): { nodes: Node[], e
   return { nodes, edges }
 }
 
-export function LiveFlowMap() {
-  const [selectedArchitecture, setSelectedArchitecture] = useState<ProjectTemplate>({
-    id: '',
-    name: '',
-    description: '',
-    initial_resources: []
-  })
+export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
+  const [selectedArchitecture, setSelectedArchitecture] = useState<ProjectTemplate>(project1)
 
   const { yDoc, isConnected, yProvider }  = useYjsStore()
   const user = useSelf()
