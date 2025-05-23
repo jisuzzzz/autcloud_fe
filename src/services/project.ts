@@ -26,7 +26,7 @@ interface AssginRoleData {
 
 interface DeployData {
   project_id: string,
-  commandList: CommandList,
+  command_list: CommandList,
   accessToken: string,
 }
 
@@ -36,6 +36,19 @@ interface SendVultrApiKeyData {
   accessToken: string
 }
 
+interface GetArchitectureSuggestionData {
+  additional_requirements: string;
+  computing_service_model: string;
+  instance_requirements: Array<{
+    anticipated_rps: number;
+    requirements_for_data_processing: string;
+    target_stability: string;
+  }>;
+  location: string;
+  service_type: string;
+  accessToken: string;
+  project_id: string
+}
 
 export class ProjectService {
   private static API_URL = 'http://64.176.217.21:80/command_server/api/v1/external/project'
@@ -112,7 +125,7 @@ export class ProjectService {
   static async deployCommand(data: DeployData) {
     const { accessToken, ...deployData } = data
     const response = await fetch(`${this.API_URL}/deploy`, {
-      method: 'DELETE',
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -120,6 +133,7 @@ export class ProjectService {
       },
       body: JSON.stringify(deployData)
     }) 
+    console.log(response)
     if(!response.ok) {
       throw new Error('External API error')
     }
@@ -143,34 +157,37 @@ export class ProjectService {
 
   static async sendVultrApiKey(data: SendVultrApiKeyData) {
     const { accessToken, api_key, project_id } = data
-
-    let apiKeyArray: number[]
-    if (Array.isArray((api_key as any)?.data)) {
-      // 이미 Buffer-like 객체일 경우
-      apiKeyArray = (api_key as any).data
-    } else if (Buffer.isBuffer(api_key)) {
-      // 실제 Buffer 인스턴스일 경우
-      apiKeyArray = Array.from(api_key)
-    } else {
-      throw new Error("Invalid api_key format")
-    }
-  
-    console.log(apiKeyArray)
+    console.log(api_key)
 
     const response = await fetch(`${this.API_URL}/vultr-api-key`, {
       method: 'PUT',
+      headers: {
+        'Content-Type': 'application/octet-stream',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      },
+      body: JSON.stringify({api_key, project_id})
+    })
+
+    if(!response.ok) {
+      throw new Error('External API error');
+    }
+    return response.json();
+  }
+
+  static async getArchitectureSuggestion(data: GetArchitectureSuggestionData) {
+    const { accessToken, project_id, ...suggestionData } = data
+    const response = await fetch(`${this.API_URL}/${project_id}/architecture/suggestion`, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Authorization': `Bearer ${accessToken}`
       },
-      body: JSON.stringify({
-        api_key: apiKeyArray,
-        project_id
-      })
+      body: JSON.stringify(suggestionData)
     })
-    console.log(response)
-    if(!response.ok) {
+
+    if (!response.ok) {
       throw new Error('External API error')
     }
     return response.json()

@@ -12,29 +12,29 @@ import {
 
 export const CommandService = {
   createComputeCommand: (node: Node, userId: string) => {
+    
     const createInstance: CreateInstanceType = {
+      id: node.data.uu_id,
       region: node.data.attribute.region_id,
       plan: node.data.attribute.plan,
       label: node.data.attribute.label,
-      os_id: node.data.attribute.os,
+      os_id: node.data.attribute.os_id,
       backups: node.data.attribute.auto_backups,
       hostname: userId
     }
     
     return {
-      command_name: "CreateInstance",
+      temp_id: node.id,
+      command_name: "CreateCompute",
       position: { x: node.position.x, y: node.position.y },
       data: createInstance
     }
   },
 
   updateComputeCommand: (node: Node) => {
-    let temp_id = node.id
-    if(node.id.split('-')[0] === 'instance') {
-      temp_id = ''
-    }
+
     const updateInstance: UpdateInstanceType = {
-      id: temp_id,
+      id: node.data.uu_id,
       backups: node.data.attribute.auto_backups,
       firewall_group_id: node.data.attribute.firewall_group_id,
       os_id: node.data.attribute.os_id,
@@ -43,28 +43,28 @@ export const CommandService = {
       label: node.data.attribute.label
     }
     return {
-      command_name: "UpdateInstance",
+      temp_id: node.id,
+      command_name: "UpdateCompute",
       position: { x: node.position.x, y: node.position.y },
       data: updateInstance
     }
   },
 
   deleteComputeCommand: (node: Node) => {
-    let temp_id = node.id
-    if(node.id.split('-')[0] === 'instance') {
-      temp_id = ''
-    }
     const deleteInstance: DeleteInstanceType = {
-      id: temp_id,
+      id: node.data.uu_id,
     }
     return {
-      command_name: "DeleteInstance",
+      temp_id: node.id,
+      command_name: "DeleteCompute",
+      position: { x: node.position.x, y: node.position.y },
       data: deleteInstance
     }
   },
 
   createDBCommand: (node: Node) => {
     const createManagedDatabase: CreateManagedDatabaseType = {
+      id: node.data.uu_id,
       database_engine: node.data.attribute.db_engine,
       database_engine_version: node.data.attribute.db_version,
       region: node.data.attribute.region_id,
@@ -73,6 +73,7 @@ export const CommandService = {
     }
     
     return {
+      temp_id: node.id,
       command_name: "CreateManagedDatabase",
       position: { x: node.position.x, y: node.position.y },
       data: createManagedDatabase
@@ -80,16 +81,13 @@ export const CommandService = {
   },
 
   updateDBCommand: (node: Node) => {
-    let temp_id = node.id
-    if(node.id.split('-')[0] === 'database') {
-      temp_id = ''
-    }
     const updateManagedDatabase: UpdateManagedDatabaseType = {
-      id: temp_id,
+      id: node.data.uu_id,
       plan: node.data.attribute.plan,
       label: node.data.attribute.label
     }
     return {
+      temp_id: node.id,
       command_name: "UpdateManagedDatabase",
       position: { x: node.position.x, y: node.position.y },
       data: updateManagedDatabase
@@ -97,27 +95,27 @@ export const CommandService = {
   },
 
   deleteDBCommand: (node: Node) => {
-    let temp_id = node.id
-    if(node.id.split('-')[0] === 'database') {
-      temp_id = ''
-    }
     const deleteManagedDatabase: DeleteManagedDatabaseType = {
-      id: temp_id,
+      id: node.data.uu_id,
     }
     return {
+      temp_id: node.id,
       command_name: "DeleteManagedDatabase",
+      position: { x: node.position.x, y: node.position.y },
       data: deleteManagedDatabase
     }
   },
 
   createObjectCommand: (node: Node) => {
     const createObjectStorage: CreateObjectStorageType = {
+      id: node.data.uu_id,
       cluster_id: node.data.attribute.cluster_id,
       tier_id: node.data.attribute.tier_id,
       label: node.data.attribute.label,
     }
     
     return {
+      temp_id: node.id,
       command_name: "CreateObjectStorage",
       position: { x: node.position.x, y: node.position.y },
       data: createObjectStorage
@@ -125,15 +123,12 @@ export const CommandService = {
   },
 
   updateObjectCommand: (node: Node) => {
-    let temp_id = node.id
-    if(node.id.split('-')[0] === 'objectstorage') {
-      temp_id = ''
-    }
     const updateObjectStorage: UpdateObjectStorageType = {
-      id: temp_id,
+      id: node.data.uu_id,
       label: node.data.attribute.label
     }
     return {
+      temp_id: node.id,
       command_name: "UpdateObjectStorage",
       position: { x: node.position.x, y: node.position.y },
       data: updateObjectStorage
@@ -141,27 +136,27 @@ export const CommandService = {
   },
 
   deleteObjectCommand: (node: Node) => {
-    let temp_id = node.id
-    if(node.id.split('-')[0] === 'objectstorage') {
-      temp_id = ''
-    }
     const deleteObjectStorage: DeleteObjectStorageType = {
-      id: temp_id,
+      id: node.data.uu_id,
     }
     return {
+      temp_id: node.id,
       command_name: "DeleteObjectStorage",
+      position: { x: node.position.x, y: node.position.y },
       data: deleteObjectStorage
     }
   },
 
   createBlockCommand: (node: Node) => {
     const createBlockStorage: CreateBlockStorageType = {
+      id: node.data.uu_id,
       region: node.data.attribute.region_id,
-      size_gb: node.data.attribute.size,
+      size_gb: node.data.attribute.size_gb,
       label: node.data.attribute.label,
     }
     
     return {
+      temp_id: node.id,
       command_name: "CreateBlockStorage",
       position: { x: node.position.x, y: node.position.y },
       data: createBlockStorage
@@ -169,17 +164,14 @@ export const CommandService = {
   },
 
   updateBlockCommand: (node: Node) => {
-    let temp_id = node.id
-    if(node.id.split('-')[0] === 'blockstorage') {
-      temp_id = ''
-    }
     const updateBlockStorage: UpdateBlockStorageType = {
-      id: temp_id,
+      id: node.data.uu_id,
       region: node.data.attribute.region_id,
-      size_gb: node.data.attribute.size,
+      size_gb: node.data.attribute.size_gb,
       label: node.data.attribute.label,
     }
     return {
+      temp_id: node.id,
       command_name: "UpdateBlockStorage",
       position: { x: node.position.x, y: node.position.y },
       data: updateBlockStorage
@@ -187,47 +179,51 @@ export const CommandService = {
   },
 
   deleteBlockCommand: (node: Node) => {
-    let temp_id = node.id
-    if(node.id.split('-')[0] === 'blockstorage') {
-      temp_id = ''
-    }
     const deleteBlockStorage: DeleteBlockStorageType = {
-      id: temp_id,
+      id: node.data.uu_id,
     }
     return {
+      temp_id: node.id,
       command_name: "DeleteBlockStorage",
+      position: { x: node.position.x, y: node.position.y },
       data: deleteBlockStorage
     }
   },
 
   attachCommand: (node: Node, attached_to: string) => {
     const attachedTo = {
-      id: node.id,
-      instance_id: attached_to,
+      id: node.data.uu_id,
+      attached_to_instance: attached_to,
       live: true
     }
     return {
-      command_name: "AttachBlockStorageToInstance",
+      temp_id: node.id,
+      command_name: "AttachBlockStorageToCompute",
+      position: { x: node.position.x, y: node.position.y },
       data: attachedTo
     }
   },
 
   detachCommand: (node: Node) => {
     const detachFrom = {
-      id: node.id,
+      id: node.data.uu_id,
       live: true
     }
     return {
-      command_name: "DetachBlockStorageFromInstance",
+      temp_id: node.id,
+      command_name: "DetachBlockStorageFromCompute",
+      position: { x: node.position.x, y: node.position.y },
       data: detachFrom
     }
   },
 
   createFirewallCommand: (node: Node) => {
     const createFirewall: CreateFirewallGroupType = {
+      id: node.data.uu_id,
       description: node.data.attribute.label
     }
     return {
+      temp_id: node.id,
       command_name: "CreateFirewallGroup",
       position: { x: node.position.x, y: node.position.y },
       data: createFirewall
@@ -235,15 +231,12 @@ export const CommandService = {
   },
 
   updateFirewallCommand: (node: Node) => {
-    let temp_id = node.id
-    if(node.id.split('-')[0] === 'firewall') {
-      temp_id = ''
-    }
     const updateFirewall: UpdateFirewallGroupType = {
-      id: temp_id,
+      id: node.data.uu_id,
       description: node.data.attribute.label
     }
     return {
+      temp_id: node.id,
       command_name: "UpdateFirewallGroup",
       position: { x: node.position.x, y: node.position.y },
       data: updateFirewall
@@ -251,15 +244,13 @@ export const CommandService = {
   },
 
   deleteFirewallCommand: (node: Node) => {
-    let temp_id = node.id
-    if(node.id.split('-')[0] === 'firewall') {
-      temp_id = ''
-    }
     const deleteFirewall: DeleteFirewallGroupType = {
-      id: temp_id
+      id: node.data.uu_id,
     }
     return {
+      temp_id: node.id,
       command_name: "DeleteDirewallGroup",
+      position: { x: node.position.x, y: node.position.y },
       data: deleteFirewall
     }
   },
@@ -267,13 +258,15 @@ export const CommandService = {
   createRuleCommands: (node: Node) => {
     const rules = node.data.attribute.rules || []
       return rules.map((rule: CreateFirewallRule) => ({
+        temp_id: node.id,
         command_name: "CreateFirewallRule",
+        position: { x: node.position.x, y: node.position.y },
         data: {
-          fire_wall_group_id: node.id,
+          firewall_group_id: node.id,
           ip_type: rule.ip_type,
           protocol: rule.protocol,
           port: rule.port,
-          subent: rule.subent,
+          subnet: rule.subnet,
           subnet_size: rule.subnet_size,
           notes: rule.notes
         }
@@ -282,8 +275,8 @@ export const CommandService = {
   
   deleteRuleCommand: (node: Node) => {
     const deleteRuel: DeleteFirewallRule = {
-      fire_wall_group_id: node.id,
-      fire_wall_rule_id: node.data.attribute.rules.rule_id
+      firewall_group_id: node.id,
+      firewall_rule_id: node.data.attribute.rules.rule_id
     }
     return {
       command_name: "DeleteFirewallRule",

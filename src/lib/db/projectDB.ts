@@ -4,12 +4,12 @@ import { ProjectTemplate } from "@/types/type";
 const PROJECT_TEMPLATES: ProjectTemplate[] = [
   {
     // id: "37bfb83b-dd64-410b-81c5-7374b0c453e0",
-    id:"4eea717b-23d1-4ff5-9884-da937356e79e",
+    id:"2972a3e0-dff6-4c0e-bb35-5ad939e2793c",
     name: "Shopify+",
     description: "e-commerce platform infrastructure design",
     initial_resources: [
       {
-        id: "",
+        id: "37bfb83b-dd64-410b-81c5-7374b0c453e0",
         temp_id: "compute-1",
         type: "Compute",
         position: { x: 500, y: 250 },
@@ -94,7 +94,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
   },
 
   {
-    id: "8ab36845-d77c-482f-b9e3-5a4c31f89d52",
+    id: "2972a3e0-dff6-4c0e-bb35-5ad939e2793c",
     name: "Shopify+ HA",
     description: "e-commerce platform infrastructure design with high availability",
     initial_resources: [
@@ -204,7 +204,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
   },
   
   {
-    id: "5cd92f34-a17b-429d-8e35-9bf72c680d13",
+    id: "2972a3e0-dff6-4c0e-bb35-5ad939e2793c",
     name: "Shopify+ Microservices",
     description: "e-commerce platform infrastructure design with microservices architecture",
     initial_resources: [

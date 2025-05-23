@@ -7,25 +7,26 @@ import { X } from "lucide-react"
 import { publicEncrypt, constants } from "crypto"
 
 interface GetVultrAPIModalProps {
-  public_key: string
+  // public_key: string
   projectId: string
   onClose: () => void
+  onSuccess: () => void
 }
 
-export default function GetVultrAPIModal({public_key, projectId, onClose }: GetVultrAPIModalProps) {
+export default function GetVultrAPIModal({ projectId, onClose, onSuccess }: GetVultrAPIModalProps) {
   const {register, handleSubmit} = useForm({
     defaultValues: { vultr_api_key: '' } 
   })
   
   const onSubmit = async (data: { vultr_api_key: string }) => {
     try {
-      const encrypted = publicEncrypt(
-        {
-          key: public_key,
-          padding: constants.RSA_PKCS1_PADDING
-        },
-        Buffer.from(data.vultr_api_key)
-      )
+      // const encrypted = publicEncrypt(
+      //   {
+      //     key: public_key,
+      //     padding: constants.RSA_PKCS1_PADDING
+      //   },
+      //   Buffer.from(data.vultr_api_key)
+      // )
 
       const response = await fetch('/api/project/vultr-api-key', {
         method: 'POST',
@@ -33,7 +34,7 @@ export default function GetVultrAPIModal({public_key, projectId, onClose }: GetV
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          api_key: encrypted,
+          api_key: data.vultr_api_key,
           project_id: projectId
         })
       })
@@ -42,7 +43,8 @@ export default function GetVultrAPIModal({public_key, projectId, onClose }: GetV
         throw new Error('Invalid Vultr API key')
       }
 
-      onClose()
+      // onClose()
+      onSuccess()
     } catch (error) {
       console.error('Error API key:', error)
     }

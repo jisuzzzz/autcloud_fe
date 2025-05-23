@@ -1,14 +1,15 @@
 type ResourceConfig = {
   id: string,
   temp_id: string,
-  type: 'Compute' | 'ManagedDatabase' | 'BlockStorage' | 'ObjectStorage' | 'FirewallGroup',
+  type: 'Compute' | 'ManagedDatabase' | 'BlockStorage' | 'ObjectStorage' | 'FirewallGroup' | 'FirewallRule'
+
   position: {
     x: number,
     y: number
   },
   status: 'add' | 'remove' | 'edit' | 'comfirm',
   attribute: ComputeAttributeConfig | DatabaseAttributeConfig | ObjectStorageAttributConfig  
-  | BlockStorageAttributeConfig | FirewallAttributeType
+  | BlockStorageAttributeConfig | FirewallAttributeType | FirewallRuleType
 }
 
 type ResourceNodeType = {
@@ -20,6 +21,7 @@ type ResourceNodeType = {
   },
   status: 'add' | 'remove' | 'edit' | 'comfirm',
   data: {
+    uu_id: string
     type: 'Compute' | 'ManagedDatabase' | 'BlockStorage' | 'ObjectStorage' | 'FirewallGroup',
     status: 'add' | 'remove' | 'edit' | 'comfirm',
     attribute: ComputeAttributeConfig | DatabaseAttributeConfig | ObjectStorageAttributConfig  
@@ -129,8 +131,9 @@ type ObjectStorageAttributeType = {
 }
 
 type FirewallAttributeType = {
-  label: string
+  description: string
   rules: FirewallRuleType[]
+  label?: string
 }
 
 type FirewallRuleType = {
@@ -142,6 +145,7 @@ type FirewallRuleType = {
   subnet: string
   subnet_size: number
   notes: string
+  label?: string
 }
 
 type AttributeValueType = string | number | boolean | null
@@ -162,6 +166,7 @@ type ProjectChanges = {
 }
 
 type CreateInstanceType = {
+  id?: string,
   region: string,
   plan: string,
   label: string,
@@ -171,7 +176,7 @@ type CreateInstanceType = {
 }
 
 type UpdateInstanceType = {
-  id: string,
+  id?: string,
   backups: string,
   firewall_group_id: string,
   os_id: number,
@@ -181,10 +186,11 @@ type UpdateInstanceType = {
 }
 
 type DeleteInstanceType = {
-  id: string
+  id?: string,
 }
 
 type CreateManagedDatabaseType = {
+    id?: string,
     database_engine: DatabaseEngineType,
     database_engine_version: number
     region: string,
@@ -197,74 +203,77 @@ enum DatabaseEngineType {
 }
 
 type UpdateManagedDatabaseType = {
-  id: string,
+  id?: string,
   plan: string,
   label: string,
 }
 
 type DeleteManagedDatabaseType = {
-  id: string,
+  id?: string,
 }
 
 type CreateObjectStorageType = {
+  id?: string,
   cluster_id: number,
   tier_id: number,
   label: string,
 }
 
 type UpdateObjectStorageType = {
-  id: string,
+  id?: string,
   label: string,
 }
 
 type DeleteObjectStorageType = {
-  id: string,
+  id?: string,
 }
 
 type CreateBlockStorageType = {
+  id?: string,
   region: string,
   size_gb: number,
   label: string,
 }
 
 type UpdateBlockStorageType = {
-  id: string,
+  id?: string,
   region: string,
   size_gb: number,
   label: string,
 }
 
 type DeleteBlockStorageType = {
-  id: string,
+  id?: string,
 }
 
 type CreateFirewallGroupType = {
+  id?: string
   description: string
 }
 
 type UpdateFirewallGroupType = {
-  id: string,
+  id?: string,
   description: string
 }
 
 type DeleteFirewallGroupType = {
-  id: string,
+  id?: string,
 }
 
 
 type CreateFirewallRule = {
-  fire_wall_group_id: string,
+  firewall_group_id: string,
   ip_type: string,
   protocol: string,
   port: string,
-  subent: string,
+  subnet: string,
   subnet_size: number,
   notes: string
 }
 
 type DeleteFirewallRule = {
-  fire_wall_group_id: string,
-  fire_wall_rule_id: number
+  firewall_group_id: string,
+  firewall_rule_id: number
 }
 
 type CommandItem = {

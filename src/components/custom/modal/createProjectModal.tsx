@@ -16,7 +16,7 @@ type ProjectFormData = z.infer<typeof projectSchema>
 
 interface CreateProjectModalProps {
   onClose: () => void
-  onSuccess: () => void
+  onSuccess: (res:any) => void
 }
 
 export default function CreateProjectModal({ onClose, onSuccess }: CreateProjectModalProps) {
@@ -41,8 +41,9 @@ export default function CreateProjectModal({ onClose, onSuccess }: CreateProject
       if (!response.ok) {
         throw new Error('Failed to create project')
       }
-
-      onSuccess()
+      const res = await response.json()
+      console.log(res)
+      onSuccess(res.project_id)
     } catch (error) {
       console.error('Error creating project:', error)
     }

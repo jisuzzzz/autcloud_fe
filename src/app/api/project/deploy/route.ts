@@ -3,17 +3,17 @@ import { ProjectService } from '@/services/project'
 
 export async function POST(request: NextRequest) {
   try {
-    const { project_id, commandList } = await request.json()
+    const { project_id, command_list } = await request.json()
     const accessToken = request.cookies.get('access_token')?.value
     
-    if(!project_id || !commandList || !accessToken) {
+    if(!project_id || !command_list || !accessToken) {
       return NextResponse.json({
         success:false,
         error: 'Required fields are missing'
       }, { status: 400 })
     }
 
-    await ProjectService.deployCommand({ project_id, commandList, accessToken})
+    await ProjectService.deployCommand({ project_id, command_list, accessToken})
     return NextResponse.json({ success: true }, {status:200})
 
   } catch (error) {

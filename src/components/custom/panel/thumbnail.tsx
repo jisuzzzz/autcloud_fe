@@ -50,7 +50,9 @@ const ProjectThumbnail: React.FC<ProjectThumbnailProps> = ({
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   
   const nodes: Node[] = useMemo(() => {
-    return project.initial_resources.map((resource: ResourceConfig) => ({
+    return project.initial_resources
+      .filter((resource: ResourceConfig) => resource.type !== 'FirewallRule')
+      .map((resource: ResourceConfig) => ({
       id: resource.id ? resource.id : resource.temp_id,
       type: 'resource',
       position: {

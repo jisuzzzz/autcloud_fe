@@ -414,11 +414,11 @@ export const LiveFlowService = {
     const yNodes = yDoc.getArray<Y.Map<any>>('nodes')
     const projectHistory = yDoc.getMap<ProjectChanges>('projectHistory')
 
-    const commandList: CommandList = []
+    const command_list: CommandList = []
     const commandMap: Record<string, 
       Record<string, (node: Node, userId?: string) => CommandItem>> = {
 
-      Instance: {
+      Compute: {
         add: (node, userId) => CommandService.createComputeCommand(node, userId!),
         edit: (node) => CommandService.updateComputeCommand(node),
         remove: (node) => CommandService.deleteComputeCommand(node),
@@ -468,32 +468,32 @@ export const LiveFlowService = {
         if (status === 'edit' || status === 'remove') {
           const initCreateCommand = commandMap[type]?.['add']
           if (initCreateCommand) {
-            commandList.push(initCreateCommand(node, node.id))
+            command_list.push(initCreateCommand(node, node.id))
           }
         }
-        commandList.push(command(node, userId))
+        command_list.push(command(node, userId))
 
         if(node.data.type === 'BlockStorage') {
           const prevAttachTo = changes[node.id]?.attributeChanges?.attached_to_instance?.prevValue?.toString()
           if(prevAttachTo) {
             const firstAttach = CommandService.attachCommand(node,prevAttachTo)
-            commandList.push(firstAttach)
+            command_list.push(firstAttach)
             const detachCommand = CommandService.detachCommand(node)
-            commandList.push(detachCommand)
+            command_list.push(detachCommand)
           }
           const currAttachTo = node.data.attribute.attached_to_instance
           const attachCommand = CommandService.attachCommand(node, currAttachTo)
-          commandList.push(attachCommand)
+          command_list.push(attachCommand)
         }
 
         if (node.data.type === 'FirewallGroup' && node.data.attribute.rules) {
           const ruleCommands = CommandService.createRuleCommands(node)
-          commandList.push(...ruleCommands)
+          command_list.push(...ruleCommands)
         }
 
       })
     })
-    return commandList
+    return command_list
   },
 
 }

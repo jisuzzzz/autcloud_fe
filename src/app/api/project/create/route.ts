@@ -13,8 +13,8 @@ export async function POST(request: NextRequest) {
       }, { status: 400 })
     }
 
-    await ProjectService.createProject({name, description, accessToken})
-    return NextResponse.json({ success: true }, {status:200})
+    const res =  await ProjectService.createProject({name, description, accessToken})
+    return NextResponse.json({ success: true, project_id: res.project_id}, {status:200})
 
   } catch (error) {
     console.error('API error:', error)

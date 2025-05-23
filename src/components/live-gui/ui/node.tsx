@@ -59,7 +59,7 @@ export default function ResourceNode({ id, data }: NodeProps) {
           className="object-contain rounded-xs"
         />
         <div className="fixed top-[60px] font-mono w-[200px] text-xs font-medium text-gray-700 text-center mt-1">
-          {data.attribute.label}
+          {data.attribute.label || data.type}
         </div>
       </div>
       {users.map(({ connectionId, info, presence }) => {

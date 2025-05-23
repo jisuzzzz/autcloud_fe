@@ -25,7 +25,7 @@ export default function FirewallAttribute({ attribute: localAttribute }: FireWal
     <>
       <AttributeSection>
         <InfoItem label="Description">
-          {attribute.label}
+          {attribute.description}
         </InfoItem>
       </AttributeSection>
 

@@ -7,6 +7,7 @@ import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
 import SelectBox from '@/components/custom/ui/dropDown/selectBox'
+import { useParams } from 'next/navigation'
 
 const locations = [
   { value: "ewr", label: "New Jersey (ewr)" },
@@ -35,10 +36,12 @@ export default function Step1Page() {
   const [selectedService, setSelectedService] = useState('Web')
   const [selectedServiceModels, setSelectedServiceModels] = useState('')
   const [numberOfInstances, setNumberOfInstances] = useState(0)
+  const { projectId } = useParams()
+  // console.log(projectId)
 
   const { register, handleSubmit, setValue } = useForm({
     defaultValues: {
-      selectedService: '',
+      selectedService: 'Web',
       selectedRegion: '',
       computeModel: '',
       requirements: '',
@@ -54,7 +57,7 @@ export default function Step1Page() {
     console.log(data.numberOfInstances)
     sessionStorage.setItem('numberOfInstances', data.numberOfInstances)
     
-    router.push('/project/create/ai/step2')
+    router.push(`/project/create/${projectId}/ai/step2`)
   }
   const handlePrevious = () => router.back()
 

@@ -52,44 +52,44 @@ export default function FlowHeader({
   const me = useSelf()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isGetAPIModalOpen, setIsGetAPIModalOpen] = useState(false)
-  const [publicKey, setPublicKey] = useState('')
+  // const [publicKey, setPublicKey] = useState('')
 
   const handleOpenModal = () => setIsModalOpen(true)
   const handleCloseModal = () => setIsModalOpen(false)
 
   const handleOpenGetAPIModal = async () => {
-    await getPublicKey()
+    // await getPublicKey()
     setIsGetAPIModalOpen(true)
   }
   const handleCloseGetAPIModal = () => setIsGetAPIModalOpen(false)
 
 
   const handleSuccess = async () => {
-    // await handlePublish()
+    await handlePublish()
     setIsGetAPIModalOpen(false)
   }
 
-  const getPublicKey = async () => {
-    try {
-      const response = await fetch('/api/project/public-key', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      if (!response.ok) {
-        throw new Error('Failed to get public key')
-      }
-      const res = await response.json()
-      setPublicKey(res.public_key)
-    } catch (error) {
-      console.error('Error get public key:', error)
-    }
-  }
+  // const getPublicKey = async () => {
+  //   try {
+  //     const response = await fetch('/api/project/public-key', {
+  //       method: 'GET',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //     })
+  //     if (!response.ok) {
+  //       throw new Error('Failed to get public key')
+  //     }
+  //     const res = await response.json()
+  //     setPublicKey(res.public_key)
+  //   } catch (error) {
+  //     console.error('Error get public key:', error)
+  //   }
+  // }
 
   const handlePublish = async () => {
-    const commandList = LiveFlowService.CreateCommandList(yDoc, me?.id)
-
+    const command_list = LiveFlowService.CreateCommandList(yDoc, me?.id)
+    // console.log(command_list)
     try {
       const response = await fetch('/api/project/deploy', {
         method: 'POST',
@@ -98,7 +98,7 @@ export default function FlowHeader({
         },
         body: JSON.stringify({
           project_id: projectId,
-          commandList: commandList,
+          command_list: command_list,
         }),
       })
       if (!response.ok) {
@@ -142,7 +142,7 @@ export default function FlowHeader({
             <p className="text-black text-xs font-normal">Share</p>
           </Button>
           <Button
-            onClick={handleOpenGetAPIModal}
+            onClick={handlePublish}
             className={cn('px-3 rounded-sm h-8 text-xs bg-[#7868E6] border border-[#6035BE] hover:bg-[#8474FF] cursor-pointer')}
           >
             Publish
@@ -152,9 +152,9 @@ export default function FlowHeader({
             <ShareModal projectId={projectId} onClose={handleCloseModal} />
           )}
 
-          {isGetAPIModalOpen && (
-            <GetVultrAPIModal projectId={projectId} public_key={publicKey} onClose={handleCloseGetAPIModal} />
-          )}
+          {/* {isGetAPIModalOpen && (
+            <GetVultrAPIModal projectId={projectId} onClose={handleCloseGetAPIModal} onSuccess={handleSuccess} />
+          )} */}
         </div>
       </div>
     </header>

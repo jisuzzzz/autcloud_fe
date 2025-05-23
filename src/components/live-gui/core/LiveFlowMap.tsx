@@ -14,7 +14,7 @@ import { useMyPresence, useSelf } from '@liveblocks/react'
 import ToolBar from '../ui/toolBar'
 import AttributeBar from '../ui/attributeBar'
 import FlowHeader from '../ui/flowHeader'
-import { ResourceConfig, ProjectTemplate, BlockStorageAttributeType, ComputeAttributeType } from '@/types/type'
+import { ResourceConfig, ProjectTemplate, BlockStorageAttributeType, ComputeAttributeType, FirewallAttributeType } from '@/types/type'
 import { LiveFlowService } from '@/services/liveflow'
 import Loading from '../../custom/panel/loading'
 import { DndContext, DragEndEvent, useDroppable, DragOverlay } from '@dnd-kit/core'
@@ -43,15 +43,37 @@ const convertToNodesAndEdges = (resources: ResourceConfig[]): { nodes: Node[], e
   const nodes: Node[] = []
 
   resources.forEach(resource => {
-    const nodeId = resource.id ? resource.id : resource.temp_id
+    if (resource.type === 'FirewallRule') return
+
+    const nodeId = resource.temp_id ? resource.temp_id : resource.id
+    let attribute = resource.attribute
+
+    if (resource.type === 'FirewallGroup' && !(attribute as FirewallAttributeType).rules) {
+      attribute = {
+        ...attribute,
+        rules: [{
+          rule_id: `${Date.now()}`,
+          action: 'allow',
+          port: '22',
+          ip_type: 'ipv4',
+          protocol: 'tcp',
+          subnet: '0.0.0.0',
+          subnet_size: 0,
+          notes: '',
+          label: 'Default Rule'
+        }]
+      }
+    }
+
     const newNode: Node = {
       id: nodeId,
       type: 'resource',
       position: { x: resource.position.x, y: resource.position.y },
       data: {
+        uu_id: resource.id ? resource.id : '',
         type: resource.type,
         status: resource.status,
-        attribute: resource.attribute
+        attribute: attribute
       }
     }
     nodes.push(newNode)
@@ -97,8 +119,7 @@ const convertToNodesAndEdges = (resources: ResourceConfig[]): { nodes: Node[], e
 }
 
 export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
-
-  const { initial_resources, name, id } = project1
+  const [selectedArchitecture, setSelectedArchitecture] = useState(project1)
 
   const { yDoc, isConnected, yProvider }  = useYjsStore()
   const user = useSelf()
@@ -138,6 +159,17 @@ export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
     
     setTempNodeType(resource.type as string)
   }
+
+  useEffect(() => {
+    const storedArchitecture = sessionStorage.getItem('selectedArchitecture')
+    if (storedArchitecture) {
+      setSelectedArchitecture(JSON.parse(storedArchitecture))
+    }
+  }, [])
+  
+  const { initial_resources, name, id } = selectedArchitecture
+
+  
   
   useEffect(() => {
     const yNodes = yDoc.getArray<Y.Map<any>>('nodes')
@@ -301,7 +333,7 @@ export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
           case 'v':
             if(!clipboard || !clipboard.nodes[0]) return
             const toPaste = clipboard.nodes[0]
-            if(toPaste.data.type === 'FirewallGroup') return
+            // if(toPaste.data.type === 'FirewallGroup') return
 
             const nodeId = `${toPaste.id}-${Date.now()}`
             const baseAttribute = {
