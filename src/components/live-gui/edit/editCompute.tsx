@@ -67,7 +67,7 @@ export default function EditComputeAttribute({
 
   const firewallGroup = nodes
     .filter(node => 
-      node.data.type === 'FireWall' &&
+      node.data.type === 'FirewallGroup' &&
       node.data.attribute.status !== 'remove' 
     ).map(node => ({
       value: node.id,
