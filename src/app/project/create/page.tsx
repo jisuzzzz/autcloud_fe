@@ -26,8 +26,7 @@ export default function CreateProjectPage() {
 
   const handleModalSuccess = (res:any) => {
     setIsModalOpen(false)
-    console.log(res)
-    router.push(`/project/create/${res.project_id}/ai/step1`)
+    router.push(`/project/create/${res}/ai/step1`)
   }
 
   return (
