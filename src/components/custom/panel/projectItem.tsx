@@ -42,7 +42,7 @@ export default function ProjectItem({
   const menuRef = useRef<HTMLButtonElement>(null)
 
   return (
-    <div className="group relative bg-white rounded-lg border border-gray-300 hover:border-gray-400 transition-all hover:shadow-lg">
+    <div className="group relative bg-white rounded-lg border hover:border-gray-300 transition-all hover:shadow-lg">
       <Link href={`/project/${id}`} className="block">
 
         <div className="aspect-[16/9] relative bg-gray-50 rounded-lg">

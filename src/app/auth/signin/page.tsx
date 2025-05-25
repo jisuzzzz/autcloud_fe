@@ -33,12 +33,13 @@ export default function SigninPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-
-      if (res.ok) {
+      
+      const data = await res.json();
+      console.log(data);
+      if (data.success) {
         alert('로그인 성공!');
-        router.push('https://autcloud-fe.vercel.app/project');
+        router.push('/project');
       } else {
-        const data = await res.json();
         alert(`로그인 실패: ${data.error}`);
       }
     } catch (err) {

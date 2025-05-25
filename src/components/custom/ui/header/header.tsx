@@ -1,14 +1,14 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
+import { useState } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
 
 export default function Header() {
-  const [hovered, setHovered] = useState(false);
+  const [hovered, setHovered] = useState(false)
 
   return (
-    <header className="flex items-center w-screen justify-between border-b px-10 py-4 relative bg-white h-[55px]">
+    <header className="fixed top-0 z-50 flex items-center w-screen justify-between border-b px-10 py-4 bg-white h-[55px]">
       {/* 로고 + 검색창 */}
       <Link
         href={'/'}
@@ -18,8 +18,8 @@ export default function Header() {
             <Image
               alt='logo'
               src={'/aut-cloud-logo.svg'}
-              width={50}
-              height={50}
+              width={35}
+              height={35}
             >
             </Image>
             <div className="text-md font-medium text-black">AutCloud</div>
@@ -50,5 +50,5 @@ export default function Header() {
         )}
       </div>
     </header>
-  );
+  )
 }
