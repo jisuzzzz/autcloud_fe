@@ -8,6 +8,7 @@ import SelectBox from '@/components/custom/ui/dropDown/selectBox'
 import { useState } from 'react'
 import { useParams } from 'next/navigation'
 import ProjectCreateLoading from '../loading'
+import { useProjectForm } from '@/context/ProjectFormContext'
 // import { getProjects } from '@/lib/db/projectDB'
 // import { ProjectTemplate } from '@/types/type'
 
@@ -39,15 +40,10 @@ export default function Step2Page() {
   const [selectedProcessing, setSelectedProcessing] = useState('')
   const { projectId } = useParams()
 
-  // const DIAGRAMS = getProjects()
+  // const DIAGRAMS = getProjects() 
+  const { formData } = useProjectForm()
 
-  const [numberOfInstances] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const tmp = sessionStorage.getItem('numberOfInstances')
-      return parseInt(tmp || '1', 10)
-    }
-    return 1
-  })
+  const [numberOfInstances] = useState(formData.numberOfInstances || 1)
 
   const { handleSubmit, control, setValue } = useForm({
     defaultValues: {
@@ -67,10 +63,10 @@ export default function Step2Page() {
   const onSubmit = async (data: any) => {
     setLoading(true)
     const combinedData = {
-      location: sessionStorage.getItem('selectedRegion'),
-      service_type: sessionStorage.getItem('selectedService'),
-      computing_service_model: sessionStorage.getItem('computeModel'),
-      additional_requirements: sessionStorage.getItem('requirements'),
+      location: formData.selectedRegion,
+      service_type: formData.selectedService,
+      computing_service_model: formData.computeModel,
+      additional_requirements: formData.requirements,
       instance_requirements: data.instance_requirements.map((item: any) => ({
         target_stability: item.target_stability,
         anticipated_rps: Number(item.anticipated_rps),

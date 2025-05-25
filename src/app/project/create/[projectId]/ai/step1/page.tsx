@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form'
 import { useState } from 'react'
 import SelectBox from '@/components/custom/ui/dropDown/selectBox'
 import { useParams } from 'next/navigation'
+import { useProjectForm } from '@/context/ProjectFormContext'
 
 const locations = [
   { value: "ewr", label: "New Jersey (ewr)" },
@@ -38,6 +39,7 @@ export default function Step1Page() {
   const [numberOfInstances, setNumberOfInstances] = useState(0)
   const { projectId } = useParams()
   // console.log(projectId)
+  const { formData, updateFormData } = useProjectForm()
 
   const { register, handleSubmit, setValue } = useForm({
     defaultValues: {
@@ -50,12 +52,13 @@ export default function Step1Page() {
   })
 
   const onSubmit = (data: any) => {
-    sessionStorage.setItem('selectedService', data.selectedService)
-    sessionStorage.setItem('selectedRegion', data.selectedRegion)
-    sessionStorage.setItem('computeModel', data.computeModel)
-    sessionStorage.setItem('requirements', data.requirements)
-    console.log(data.numberOfInstances)
-    sessionStorage.setItem('numberOfInstances', data.numberOfInstances)
+    updateFormData({
+      selectedService: data.selectedService,
+      selectedRegion: data.selectedRegion,
+      computeModel: data.computeModel,
+      requirements: data.requirements,
+      numberOfInstances: data.numberOfInstances
+    })
     
     router.push(`/project/create/${projectId}/ai/step2`)
   }
@@ -154,7 +157,7 @@ export default function Step1Page() {
                     setNumberOfInstances(num) 
                     setValue('numberOfInstances', num)
                   }}
-                  className={`text-xs font-mediumpx-4 py-2 rounded-full border transition-all
+                  className={`text-xs font-medium px-4 py-2 rounded-full border transition-all
                     ${
                       numberOfInstances === num
                         ? 'bg-violet-100 border-violet-300 text-violet-800 font-semibold'
