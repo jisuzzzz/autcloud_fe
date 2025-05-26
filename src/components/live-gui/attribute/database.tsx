@@ -1,6 +1,4 @@
 import Image from 'next/image'
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
 import { InfoItem, AttributeSection } from '../ui/attributeBar'
 import { DatabaseAttributeType } from "@/types/type"
 import { useEffect, useState, useMemo } from "react"
@@ -8,6 +6,12 @@ import { getRegionFlag } from '@/lib/helpers/getRegionFlag'
 
 interface DatabaseAttributeProps {
   attribute: DatabaseAttributeType
+}
+
+const statusConfig = {
+  running: 'bg-green-400',
+  pending: 'bg-yellow-400',
+  stopped: 'bg-red-400',
 }
 
 export default function DatabaseAttribute({ attribute:localAttribute }: DatabaseAttributeProps) {
@@ -25,15 +29,11 @@ export default function DatabaseAttribute({ attribute:localAttribute }: Database
     <>
       <div className="flex justify-between items-center px-4 py-2.5 border-b">
         <h3 className="text-xs text-gray-500">Stauts</h3>
-        <Button
-          className={cn('px-2.5 h-7 rounded-sm pointer-events-none text-xs', {
-            'bg-green-500': attribute.status === 'running',
-            'bg-yellow-500': attribute.status === 'pending',
-            'bg-red-500': attribute.status === 'stopped',
-          })}
-        >
-          {attribute.status}
-        </Button>
+
+        <div className="flex items-center gap-2">
+          <div className={`rounded-full w-2 h-2 ${statusConfig[attribute.status as keyof typeof statusConfig]}`} />
+          <p className="text-xs">{attribute.status}</p>
+        </div>
       </div>
 
       <AttributeSection>

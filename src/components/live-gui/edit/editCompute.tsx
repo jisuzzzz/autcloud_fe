@@ -23,6 +23,12 @@ interface EditComputeAttributeProps {
   id: string
 }
 
+const statusConfig = {
+  running: 'bg-green-400',
+  pending: 'bg-yellow-400',
+  stopped: 'bg-red-400',
+}
+
 export default function EditComputeAttribute({
   attribute,
   onEdit,
@@ -233,15 +239,10 @@ export default function EditComputeAttribute({
 
       <div className="flex justify-between items-center px-4 py-2.5 border-b">
         <h3 className="text-xs text-gray-500">Status</h3>
-        <Button
-          className={cn('px-2.5 h-7 rounded-sm pointer-events-none text-xs', {
-            'bg-green-500': attribute.status === 'running',
-            'bg-yellow-500': attribute.status === 'pending',
-            'bg-red-500': attribute.status === 'stopped',
-          })}
-        >
-          {attribute.status}
-        </Button>
+        <div className="flex items-center gap-2">
+          <div className={`rounded-full w-2 h-2 ${statusConfig[attribute.status as keyof typeof statusConfig]}`} />
+          <p className="text-xs">{attribute.status}</p>
+        </div>
       </div>
 
       <AttributeSection>
