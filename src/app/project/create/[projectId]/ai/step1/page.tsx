@@ -35,8 +35,8 @@ const computingServiceModels = [
 export default function Step1Page() {
   const router = useRouter()
   const [selectedService, setSelectedService] = useState('Web')
-  const [selectedServiceModels, setSelectedServiceModels] = useState('')
-  const [numberOfInstances, setNumberOfInstances] = useState(0)
+  const [selectedServiceModels, setSelectedServiceModels] = useState('IaaS')
+  const [numberOfInstances, setNumberOfInstances] = useState(1)
   const { projectId } = useParams()
   // console.log(projectId)
   const { formData, updateFormData } = useProjectForm()
@@ -44,8 +44,8 @@ export default function Step1Page() {
   const { register, handleSubmit, setValue } = useForm({
     defaultValues: {
       selectedService: 'Web',
-      selectedRegion: '',
-      computeModel: '',
+      selectedRegion: 'sjc',
+      computeModel: 'IaaS',
       requirements: '',
       numberOfInstances: 1,
     }
@@ -73,15 +73,15 @@ export default function Step1Page() {
         className="w-full max-w-[600px] p-6 bg-white rounded-md border"
       >
 
-        <div className="flex justify-center items-center pb-2">
-          <h2 className="text-sm font-semibold text-gray-800 justify-self-center">Step 1: Service Basics</h2>
+        <div className="flex items-center pb-6 justify-center">
+          <h2 className="text-[15.5px] font-semibold text-gray-800">Service Configuration</h2>
         </div>
 
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 mt-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              1. Choose the region for deployment.
+            <label className="block text-sm font-medium text-black mb-3">
+              Choose the region for deployment.
             </label>
             <SelectBox
               placeholder="Select a region"
@@ -92,8 +92,8 @@ export default function Step1Page() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              2. Choose the type of service you are building.
+            <label className="block text-sm font-medium text-black mb-3">
+              Choose the type of service you are building.
             </label>
             <div className="grid grid-cols-4 gap-3">
               {serviceTypes.map((label) => (
@@ -118,8 +118,8 @@ export default function Step1Page() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              3. Choose your preferred cloud service model.
+            <label className="block text-sm font-medium text-black mb-3">
+              Choose your preferred cloud service model.
             </label>
             <div className='grid grid-cols-4 gap-3'>
               {computingServiceModels.map((value) => 
@@ -145,8 +145,8 @@ export default function Step1Page() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              4. Choose the number of instances you plan to deploy.
+            <label className="block text-sm font-medium text-black mb-3">
+              Choose the number of instances you plan to deploy.
             </label>
             <div className='grid grid-cols-3 gap-3'>
               {[1, 2, 3].map(num => (
@@ -171,13 +171,13 @@ export default function Step1Page() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              5. Enter any additional requirements or special considerations for your service. 
+            <label className="block text-sm font-medium text-black mb-3">
+              Enter any additional requirements or special considerations for your service. 
             </label>
             <Input
               {...register('requirements')}
               placeholder="e.g., Real-time game processing"
-              className='h-10'
+              className='h-10 shadow-none'
             />
           </div>
 

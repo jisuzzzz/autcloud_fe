@@ -36,8 +36,8 @@ const requirements_for_data_processing = [
 export default function Step2Page() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [selectedStability, setSelectedStability] = useState('')
-  const [selectedProcessing, setSelectedProcessing] = useState('')
+  const [selectedStability, setSelectedStability] = useState('Low')
+  const [selectedProcessing, setSelectedProcessing] = useState('Simple')
   const { projectId } = useParams()
 
   // const DIAGRAMS = getProjects() 
@@ -82,18 +82,16 @@ export default function Step2Page() {
       body: JSON.stringify(combinedData)
     })
 
-    const responseData = await response.json()
-    const diagram = responseData.response
-
-
-    setLoading(false)
+    const res = await response.json()
 
     if (response.ok) {
-      sessionStorage.setItem('diagram', JSON.stringify(diagram))
+      sessionStorage.setItem('diagram', JSON.stringify(res.response))
       router.push(`/project/create/${projectId}/ai/step3`)
     } else {
       console.error('Failed to send data to the server')
     }
+
+    setLoading(false)
   }
 
   const handlePrevious = () => router.back()
@@ -109,16 +107,16 @@ export default function Step2Page() {
           transition={{ duration: 0.4, ease: 'easeOut' }}
           className="w-full max-w-[600px] p-6 bg-white rounded-md border"
         >
-          <div className="flex justify-center items-center pb-2">
-            <h2 className="text-sm font-semibold text-gray-800 justify-self-center">Step 2: Instance Requirements</h2>
+          <div className="flex justify-center items-center pb-6">
+            <h2 className="text-[15.5px] font-semibold text-gray-800 justify-self-center">Instance Requirements</h2>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 mt-4">
             {fields.map((item, index) => (
-              <div key={item.id} className="space-y-6">
+              <div key={item.id} className="space-y-8">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
-                    1. Choose the required level of system stability.
+                  <label className="block text-sm font-medium text-black mb-3">
+                    Choose the required level of system stability.
                   </label>
                   <div className="grid grid-cols-3 gap-3">
                     {target_stability.map((velue) => (
@@ -143,8 +141,8 @@ export default function Step2Page() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
-                    2. Choose your data processing requirements.
+                  <label className="block text-sm font-medium text-black mb-3">
+                    Choose your data processing requirements.
                   </label>
                   <div className="grid grid-cols-4 gap-3">
                     {requirements_for_data_processing.map((velue) => (
@@ -169,8 +167,8 @@ export default function Step2Page() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
-                    3. Choose the expected number of requests per second (RPS).
+                  <label className="block text-sm font-medium text-black mb-3">
+                    Choose the expected number of requests per second (RPS).
                   </label>
                   <SelectBox
                     placeholder="Select expected RPS"
