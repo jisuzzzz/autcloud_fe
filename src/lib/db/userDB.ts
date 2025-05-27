@@ -1,42 +1,30 @@
-// liveblocks useSelf() hook result
-// {
-//   "connectionId": 3,
-//   "id": "mislav.abha@example.com",
-//   "info": {
-//       "name": "Mislav",
-//       "color": "#F08385",
-//       "avatar": "https://liveblocks.io/avatars/avatar-2.png"
-//   },
-//   "presence": {
-//       "__yjs_clientid": 2344943196,
-//       "selectedNodes": []
-//   },
-//   "canWrite": true,
-//   "canComment": true
-// }
-
 const USER_INFO: {
-  id: string, verified: boolean,
+  id: string, verified: boolean, role: string,
 }[] = [
   {
     id: "charlie.layne@example.com",
     verified: true,
+    role: "admin"
   },
   {
     id: "mislav.abha@example.com",
     verified: true,
+    role: "editor"
   },
   {
     id: "tatum.paolo@example.com",
     verified: true,
+    role: "editor"
   },
   {
     id: "anjali.wanda@example.com",
     verified: false,
+    role: "editor"
   },
   {
     id: "jody.hekla@example.com",
     verified: true,
+    role: "editor"
   },
 ]
 

@@ -4,6 +4,7 @@ import { getRandomUser } from "@/lib/db/userDB";
 
 type User = {
   id: string
+  role: string
 }
 
 const liveblocks = new Liveblocks({
@@ -25,16 +26,17 @@ export async function POST(request: NextRequest) {
       id: user.id,
       name: NAMES[userIdx%5],
       avatar: `https://liveblocks.io/avatars/avatar-${userIdx+1}.png`,
-      color: COLORS[userIdx]
+      color: COLORS[userIdx],
+      role: role
     },
   })
-  if(role === 'admin') {
-    session.allow(`${roomPrefix}:*`, session.FULL_ACCESS)
-  } else if(role === 'editor') {
-    session.allow(`${roomPrefix}:*`, session.FULL_ACCESS)
-  } else if (role === 'viewer') {
-    session.allow(`${roomPrefix}:*`, session.READ_ACCESS)
-  }
+  // if(role === 'admin') {
+  //   session.allow(`${roomPrefix}:*`, session.FULL_ACCESS)
+  // } else if(role === 'editor') {
+  //   session.allow(`${roomPrefix}:*`, session.FULL_ACCESS)
+  // } else if (role === 'viewer') {
+  //   session.allow(`${roomPrefix}:*`, session.READ_ACCESS)
+  // }
 
   session.allow(`*`, session.FULL_ACCESS)
 

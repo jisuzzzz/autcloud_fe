@@ -1,10 +1,14 @@
 'use client'
+import React from 'react'
 import Modal from "./modal"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Send, X as Xicon, ChevronDown } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
 import RoleModal from "./roleModal"
+import Avatar from "@/components/live-gui/ui/avator"
+import { useSelf, useOthersMapped } from "@liveblocks/react"
 
 interface ShareModalProps {
   onClose(): void
@@ -26,10 +30,12 @@ export default function ShareModal({ onClose, projectId }: ShareModalProps) {
   const [error, setError] = useState('')
   const [isMiniModalOpen, setIsMiniModalOpen] = useState(false)
   const [selectedUserIndex, setSelectedUserIndex] = useState<number | null>(null)
-  const [users, setUsers] = useState<InviteUser[]>([
-    { email:"wltn7722@gmail.com", name: "jisu", isOwner: true, role: "admin", accepted: true },
-    { email:"meked@naver.com", name: "tatum", isOwner: false, role: "editor", accepted: false },
-  ]);
+  // const [users, setUsers] = useState<InviteUser[]>([
+  //   { email:"wltn7722@gmail.com", name: "jisu", isOwner: true, role: "admin", accepted: true },
+  //   { email:"meked@naver.com", name: "tatum", isOwner: false, role: "editor", accepted: false },
+  // ])
+  const me = useSelf((me) => me.info)
+  const users = useOthersMapped((others) => others.info)
 
   const handleMiniModalOpen = (index: number) => {
     setSelectedUserIndex(index)
@@ -41,14 +47,14 @@ export default function ShareModal({ onClose, projectId }: ShareModalProps) {
     setIsMiniModalOpen(false)
   }
 
-  const handleRoleChange = (newRole: 'editor' | 'viewer') => {
-    if (selectedUserIndex !== null) {
-      setUsers(prev => prev.map((user, index) => 
-        index === selectedUserIndex ? { ...user, role: newRole } : user
-      ))
-    }
-    handleMiniModalClose()
-  }
+  // const handleRoleChange = (newRole: 'editor' | 'viewer') => {
+  //   if (selectedUserIndex !== null) {
+  //     setUsers(prev => prev.map((user, index) => 
+  //       index === selectedUserIndex ? { ...user, role: newRole } : user
+  //     ))
+  //   }
+  //   handleMiniModalClose()
+  // }
 
   const handleClose = () => {
 
@@ -111,10 +117,11 @@ export default function ShareModal({ onClose, projectId }: ShareModalProps) {
   return (
     <Modal
       onClose={handleClose}
-      className="z-40 fixed top-1/2 left-1/2 w-[550px] -translate-x-1/2 -translate-y-1/2 bg-white border rounded-sm p-6"
+      className="z-40 fixed top-1/2 left-1/2 w-[550px] -translate-x-1/2 -translate-y-1/2 bg-white border rounded-sm pt-3 pb-4"
     >
       <div className="space-y-4">
-        <div className="flex items-center justify-between border-b pb-4">
+        
+        <div className="flex items-center justify-between border-b pb-3 px-4">
           <h2 className="text-sm font-semibold">Invite</h2>
           <div className="flex items-center gap-4 text-gray-600">
             <button
@@ -126,10 +133,10 @@ export default function ShareModal({ onClose, projectId }: ShareModalProps) {
           </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 px-4">
           <div className="flex gap-2">
             <div className="flex-1">
-              <div className="flex flex-wrap items-center gap-2 p-2 border rounded-md focus-within:ring-1">
+              <div className="flex flex-wrap items-center gap-2 rounded-sm bg-gray-50">
                 {emailList.map((email, index) => (
                   <div 
                     key={index} 
@@ -144,7 +151,7 @@ export default function ShareModal({ onClose, projectId }: ShareModalProps) {
                     </button>
                   </div>
                 ))}
-                <input 
+                <Input
                   type="email" 
                   value={email}
                   onChange={(e) => {
@@ -153,63 +160,41 @@ export default function ShareModal({ onClose, projectId }: ShareModalProps) {
                   }}
                   onKeyDown={handleKeyDown}
                   placeholder={emailList.length === 0 ? "example@email.com" : ""}
-                  className="flex-1 outline-none min-w-[200px] text-sm h-5"
+                  className="shadow-none min-w-[200px] text-sm h-8.5"
                 />
               </div>
               {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
             </div>
-            <Button 
-              className='px-3 rounded-sm h-9 text-xs bg-[#7868E6] border border-[#6035BE] hover:bg-[#8474FF] cursor-pointer'
+            <Button
+              disabled={emailList.length === 0}
+              className='px-3 rounded-sm h-8 text-xs bg-[#7868E6] border border-[#6035BE] hover:bg-[#8474FF] cursor-pointer'
               onClick={handleInvite}
             >
-              <Send size={16}/>
               Invite
             </Button>
           </div>
         </div> 
 
-        <div className="space-y-4">
-          {users.map((user, index) => (
-            <div key={index} className="flex items-center gap-4">
-              <Image 
-                alt=""
-                src="/profile-color-jisu.png"
-                width={24}
-                height={24}
-                className={`rounded-full ${!user.accepted && 'filter grayscale'}`}
+        <div className="space-y-4 px-4">
+          {me && (
+            <div className="flex items-center gap-3">
+              <Avatar
+                src={me.avatar}
+                name="You"
+                color={me.color as string}
               />
-              <div className="flex justify-between flex-1">
-                <span className="text-sm">
-                  {user.name}
-                  {user.isOwner && <span className="text-sm text-gray-500 ml-1">(you)</span>}
-                </span>
-                <div className="relative">
-                  {user.isOwner ? (
-                    <p className="text-sm text-gray-700">{user.role}</p>
-                  ) : (
-                    <>
-                      <button 
-                        onClick={() => handleMiniModalOpen(index)}
-                        className="text-sm text-gray-700 hover:bg-gray-100 rounded-sm -mr-2.5"
-                      >
-                        <div className="px-2 py-1 flex items-center gap-1">
-                          {user.role}
-                          <ChevronDown size={16} />
-                        </div>
-                      </button>
-                      {isMiniModalOpen && selectedUserIndex === index && (
-                        <RoleModal
-                        email={users[selectedUserIndex].email}
-                        projectId={projectId}
-                        role={user.role}
-                        onMiniClose={handleMiniModalClose}
-                        onRoleChange={handleRoleChange}
-                        />
-                      )}
-                    </>
-                  )}
-                </div>
-              </div>
+              <span className="text-xs text-black">{me.name} (you)</span>
+            </div>
+          )}
+          {users.map(([connectionId, info]) => (
+            <div className="flex items-center gap-3" key={connectionId}>
+              <Avatar
+                key={connectionId}
+                src={info?.avatar}
+                name={info?.name}
+                color={info?.color as string}
+              />
+              <span className="text-xs text-black">{info?.name}</span>
             </div>
           ))}
         </div>

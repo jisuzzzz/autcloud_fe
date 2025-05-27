@@ -73,7 +73,15 @@ export default function ComputeAttribute({ attribute: initAttribute }: ComputeAt
         <InfoItem label="IP Adress">
           <div className="flex w-full justify-between items-center">
             <p className="text-xs">{attribute.main_ip}</p>
-            <Copy size={18} className="text-gray-500 hover:text-[#8171E8]" />
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                navigator.clipboard.writeText(attribute.main_ip);
+              }}
+              className="text-gray-500 hover:text-[#8171E8] cursor-pointer"
+            >
+              <Copy size={18} />
+             </button>
           </div>
         </InfoItem>
       </AttributeSection>

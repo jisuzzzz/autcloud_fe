@@ -20,7 +20,7 @@ export async function POST(request: Request) {
       name: 'access_token',
       value: data.access_token,
       httpOnly: true,
-      secure: false,
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/'
     })
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       name: 'refresh_token',
       value: data.refresh_token,
       httpOnly: true,
-      secure: false,
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/'
     })

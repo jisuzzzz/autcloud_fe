@@ -4,10 +4,8 @@ import { AuthService } from './services/auth';
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
+
   if ((path.startsWith('/auth'))) {
-    return NextResponse.next();
-  }
-  if (path.startsWith('/api/auth/signin') || path.startsWith('/api/auth/signup')) {
     return NextResponse.next();
   }
   

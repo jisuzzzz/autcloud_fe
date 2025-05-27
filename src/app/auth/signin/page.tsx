@@ -35,7 +35,6 @@ export default function SigninPage() {
       });
       
       const data = await res.json();
-      console.log(data);
       if (data.success) {
         // alert('로그인 성공!');
         router.push('/project');
