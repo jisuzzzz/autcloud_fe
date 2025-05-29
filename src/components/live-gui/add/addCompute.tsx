@@ -68,11 +68,11 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
 
   const firewallGroup = nodes
     .filter(node => 
-      node.data.type === 'FireWall' &&
+      node.data.type === 'FirewallGroup' &&
       node.data.attribute.status !== 'remove' 
     ).map(node => ({
       value: node.id.toString(),
-      label: node.data.attribute.label 
+      label: node.data.type 
     }))
 
   const handleFirewallChange = (firewallId: string) => {
