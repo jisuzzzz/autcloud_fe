@@ -40,9 +40,9 @@ function getMonthlyCost(resource: any): number {
 }
 
 const DIAGRAMS = [
-  getProjectById("2972a3e0-dff6-4c0e-bb35-5ad939e2793c"),
-  getProjectById("8929f3f2-3774-46c9-b08b-3fb1877acca7"),
-  getProjectById("d0a9bb89-4094-46bc-8a5c-f6390915b58b")
+  getProjectById("d0a9bb89-4094-46bc-8a5c-f6390915b58b"),
+  getProjectById("4ee5e04f-09d7-4d4c-9569-c912d2661f01"),
+  getProjectById("78e340ff-ae25-41ba-a206-4ab3ae13f43c")
 ].filter(Boolean)
 
 function getMainAttributeInfo(resource: any) {
