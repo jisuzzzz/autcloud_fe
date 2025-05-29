@@ -64,7 +64,7 @@ export default function AddNewResourceModal({onClose, type, onConnect}: EditModa
       case 'ObjectStorage':
         addedAttribute = {
           cluster_id: addedAttribute.cluster_id,
-          tier_id: addedAttribute.tire_id,
+          tier_id: addedAttribute.tier_id,
           label: addedAttribute.label,
         } satisfies ObjectStorageAttributConfig
         break

@@ -101,17 +101,14 @@ export default function AddNewObjectStorage({onClose, onAdd}: AddNewObjectStorag
 
   const handlePlanChange = (tier_id: string) => {
     setValue('tier_id', tier_id)
-    // Find the plan name from ObjectPlan
     const selectedPlan = ObjectPlan.find(plan => plan.tier_id === tier_id)
     if (selectedPlan) {
       setValue('plan', selectedPlan.plan)
     }
     
-    // Clear the currently selected region and related fields
     setValue('cluster_id', '')
     setValue('region', '')
     
-    // Filter available options for this tier
     filterObjectOtions(tier_id)
   }
   

@@ -67,10 +67,9 @@ export const AttributeService = {
 
   getObjectStorageAttribute: (resourceAttribute: any) => {
     const filteredByPlan = ObjectStorageOptions.filter(
-      option => Number(option.tier_id) === Number(resourceAttribute.tier_id)
+      option => String(option.tier_id) === String(resourceAttribute.tier_id)
     )
-
-    const attribute = filteredByPlan.find(option => Number(option.cluster_id) === Number(resourceAttribute.cluster_id))
+    const attribute = filteredByPlan.find(option => String(option.cluster_id) === String(resourceAttribute.cluster_id))
 
     return attribute ? {
       cluster_id: resourceAttribute.cluster_id,
