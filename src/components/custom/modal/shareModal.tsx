@@ -164,7 +164,7 @@ export default function ShareModal({ onClose, projectId }: ShareModalProps) {
                   className="shadow-none min-w-[200px] px-2 text-xs h-8.5 focus:outline-none"
                 />
               </div>
-              {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+              {/* {error && <p className="text-xs text-red-500 mt-1">{error}</p>} */}
             </div>
             <Button
               disabled={emailList.length === 0}

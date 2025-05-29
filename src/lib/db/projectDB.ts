@@ -4,7 +4,7 @@ import { ProjectTemplate } from "@/types/type";
 const PROJECT_TEMPLATES: ProjectTemplate[] = [
   {
     // id: "37bfb83b-dd64-410b-81c5-7374b0c453e0",
-    id:"2972a3e0-dff6-4c0e-bb35-5ad939e2793c",
+    id:"d0a9bb89-4094-46bc-8a5c-f6390915b58b",
     name: "Shopify+",
     description: "e-commerce platform infrastructure design",
     initial_resources: [

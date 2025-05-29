@@ -43,7 +43,7 @@ export default function CreateProjectModal({ onClose, onSuccess }: CreateProject
       // }
       // const res = await response.json()
       // onSuccess(res.project_id)
-      onSuccess("2972a3e0-dff6-4c0e-bb35-5ad939e2793c")
+      onSuccess("d0a9bb89-4094-46bc-8a5c-f6390915b58b")
       // onClose()
     } catch (error) {
       console.error('Error creating project:', error)

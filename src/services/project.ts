@@ -116,6 +116,7 @@ export class ProjectService {
       },
       body: JSON.stringify(assignData)
     })
+    console.log(response)
     if (!response.ok) {
       throw new Error('External API error')
     }
