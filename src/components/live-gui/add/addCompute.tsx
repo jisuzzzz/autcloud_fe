@@ -72,7 +72,7 @@ export default function AddNewCompute({onAdd, onClose}:AddNewResourceProps) {
       node.data.attribute.status !== 'remove' 
     ).map(node => ({
       value: node.id.toString(),
-      label: node.data.type 
+      label: node.data.attribute.description
     }))
 
   const handleFirewallChange = (firewallId: string) => {

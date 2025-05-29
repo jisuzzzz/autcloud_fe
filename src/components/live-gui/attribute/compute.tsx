@@ -37,7 +37,7 @@ export default function ComputeAttribute({ attribute: initAttribute }: ComputeAt
     if (!node) return null
 
     const nodeData = node.get('data')
-    return nodeData ? nodeData.attribute.label : null 
+    return nodeData ? nodeData.attribute.description : null 
   }, [attribute.firewall_group_id])
 
   const regionInfo = useMemo(() => {

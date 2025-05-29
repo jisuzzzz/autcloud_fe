@@ -109,7 +109,7 @@ export default function EditFirewallAttribute({attribute, onEdit, onClose}:FireW
         <InfoItem label="Description">
           <Input
             className={cn("h-9 text-xs bg-[#F1F5F9] border-none rounded-sm")}
-            {...register('label')}
+            {...register('description')}
             onChange={() => setHasChanges(true)}
           />
         </InfoItem>

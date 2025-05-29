@@ -231,9 +231,10 @@ export const LiveFlowService = {
         }
 
         // const oldValue =  prevData.attribute[property]
-        const oldValue= attribute[property]
+        // const oldValue= attribute[property]
+        const oldValue = attribute && attribute[property] !== undefined ? attribute[property] : undefined;
 
-        if(oldValue !== newValue) {
+        if(oldValue !== newValue && oldValue !== undefined) {
           changeFlag = true
 
           historyChanges[nodeId].attributeChanges[property] = {
