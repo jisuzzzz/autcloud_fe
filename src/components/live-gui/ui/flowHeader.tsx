@@ -89,24 +89,24 @@ export default function FlowHeader({
 
   const handlePublish = async () => {
     const command_list = LiveFlowService.CreateCommandList(yDoc, me?.id)
-    // console.log(command_list)
-    try {
-      const response = await fetch('/api/project/deploy', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          project_id: projectId,
-          command_list: command_list,
-        }),
-      })
-      if (!response.ok) {
-        throw new Error('Failed to deploy commands')
-      }
-    } catch (error) {
-      console.error('Error deploying commands:', error)
-    }
+    console.log(command_list)
+    // try {
+    //   const response = await fetch('/api/project/deploy', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({
+    //       project_id: projectId,
+    //       command_list: command_list,
+    //     }),
+    //   })
+    //   if (!response.ok) {
+    //     throw new Error('Failed to deploy commands')
+    //   }
+    // } catch (error) {
+    //   console.error('Error deploying commands:', error)
+    // }
   }
 
   return (

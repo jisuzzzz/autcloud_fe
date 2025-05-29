@@ -1,6 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, ReactNode } from 'react'
+import { ProjectTemplate } from '@/types/type'
 
 interface FormData {
   selectedService: string
@@ -8,6 +9,7 @@ interface FormData {
   computeModel: string
   requirements: string
   numberOfInstances: number
+  diagrams: any
 }
 
 interface ProjectFormContextType {
@@ -21,6 +23,7 @@ const defaultFormData: FormData = {
   computeModel: '',
   requirements: '',
   numberOfInstances: 1,
+  diagrams: []
 }
 
 const ProjectFormContext = createContext<ProjectFormContextType | undefined>(undefined)

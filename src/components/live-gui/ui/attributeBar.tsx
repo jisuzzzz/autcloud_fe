@@ -132,7 +132,7 @@ export default function AttributeBar({setEdges}: AttributeBarProps) {
             className="rounded-xs"
           ></Image>
           <h3 className="text-xs font-medium">
-            {selectedResource?.data?.attribute.label}
+            {selectedResource?.data?.attribute.label || selectedResource?.data?.type}
           </h3>
         </div>
         <StartEditButton

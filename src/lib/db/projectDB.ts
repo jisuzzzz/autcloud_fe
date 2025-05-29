@@ -84,7 +84,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
               ip_type: "v4",
               protocol: "tcp",
               subnet: "0.0.0.0",
-              subnet_size: 0,
+              subnet_size: 24,
               notes: "Public HTTP access"
             },
           ]
@@ -94,7 +94,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
   },
 
   {
-    id: "2972a3e0-dff6-4c0e-bb35-5ad939e2793c",
+    id: "8929f3f2-3774-46c9-b08b-3fb1877acca7",
     name: "Shopify+ HA",
     description: "e-commerce platform infrastructure design with high availability",
     initial_resources: [
@@ -124,7 +124,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         attribute: {
           plan: 'vc2-4c-8gb',
           status: "running",
-          region_id: "ord",
+          region_id: "ewr",
           main_ip: "192.168.1.102",
           label: "Shopify-Web-Server-Secondary",
           os_id: "2571",
@@ -139,7 +139,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 400, y: 300 },
         status: 'add',
         attribute: {
-          region_id: "ord",
+          region_id: "ewr",
           type: "NVMe",
           mount_id: "ord-b47cda1547af9c",
           attached_to_instance: "compute-1",
@@ -154,7 +154,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         position: { x: 600, y: 300 },
         status: 'add',
         attribute: {
-          region_id: "ord",
+          region_id: "ewr",
           type: "NVMe",
           mount_id: "ord-c58eda1896af3d",
           attached_to_instance: "compute-2",
@@ -170,11 +170,11 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         status: 'add',
         attribute: {
           status: "running",
-          plan: "vultur-dbaas-business-cc-4-16-4",
+          plan: "vultr-dbaas-hobbyist-cc-1-25-1",
           db_engine: "pg",
           db_version: "15",
           latest_backup: "3 hours ago",
-          region_id: "ord",
+          region_id: "ewr",
           label: "Shopify-PostgreSQL-Cluster",
         }
       },
@@ -204,7 +204,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
   },
   
   {
-    id: "5cd92f34-a17b-429d-8e35-9bf72c680d13",
+    id: "d0a9bb89-4094-46bc-8a5c-f6390915b58b",
     name: "Shopify+ Microservices",
     description: "e-commerce platform infrastructure design with microservices architecture",
     initial_resources: [
@@ -217,7 +217,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         attribute: {
           plan: 'vc2-2c-4gb',
           status: "running",
-          region_id: "sea",
+          region_id: "sjc",
           main_ip: "10.0.1.101",
           label: "Shopify-API-Gateway",
           os_id: "2571",
@@ -234,7 +234,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         attribute: {
           plan: 'vc2-2c-4gb',
           status: "running",
-          region_id: "sea",
+          region_id: "sjc",
           main_ip: "10.0.1.102",
           label: "Shopify-Auth-Service",
           os_id: "2571",
@@ -250,11 +250,11 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         status: 'add',
         attribute: {
           status: "running",
-          plan: "vultur-dbaas-business-cc-2-8-2",
+          plan: "vultr-dbaas-hobbyist-cc-1-25-1",
           db_engine: "pg",
           db_version: "15",
           latest_backup: "1 hour ago",
-          region_id: "sea",
+          region_id: "sjc",
           label: "Shopify-Product-DB",
         }
       },
@@ -266,11 +266,11 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         status: 'add',
         attribute: {
           status: "running",
-          plan: "vultur-dbaas-business-cc-2-8-2",
+          plan: "vultr-dbaas-startup-cc-1-55-2",
           db_engine: "pg",
           db_version: "15",
           latest_backup: "1 hour ago",
-          region_id: "sea",
+          region_id: "sjc",
           label: "Shopify-Order-DB",
         }
       },

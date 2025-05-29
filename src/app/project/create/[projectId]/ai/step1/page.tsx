@@ -65,7 +65,7 @@ export default function Step1Page() {
   const handlePrevious = () => router.back()
 
   return (
-    <div className="min-h-screen bg-[#F8F7FF] flex items-center justify-center">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}

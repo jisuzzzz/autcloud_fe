@@ -10,7 +10,7 @@ export default async function ProjectPage() {
   const projects = getProjects()
 
   return (
-    <div className="min-h-screen bg-[#F8F7FF] pt-[55px]">
+    <div className="min-h-screen bg-white pt-[55px]">
       <Header />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -26,7 +26,7 @@ export default async function ProjectPage() {
             href={'/project/create'}
             className="group relative bg-white rounded-lg border hover:border-gray-300 transition-all hover:shadow-lg overflow-hidden"
           >
-            <div className="aspect-[16/9] w-full h-full relative bg-white">
+            <div className="aspect-[16/9] w-full h-full relative bg-gray-50">
               <Image
                 src="/aut-logo-cloud.svg"
                 alt="New Project"

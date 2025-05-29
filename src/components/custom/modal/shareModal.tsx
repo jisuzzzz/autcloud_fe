@@ -89,7 +89,7 @@ export default function ShareModal({ onClose, projectId }: ShareModalProps) {
   const handleInvite = async () => {
     try {
       for (const inviteEmail of emailList) {
-        const response = await fetch('/api/projects/invite', {
+        const response = await fetch('/api/project/member/role', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -97,7 +97,7 @@ export default function ShareModal({ onClose, projectId }: ShareModalProps) {
           body: JSON.stringify({
             invitee_email: inviteEmail,
             project_id: projectId,
-            role: 'viwer' // 기본 role
+            role: 'editor' // 기본 role
           })
         });
 
@@ -135,8 +135,9 @@ export default function ShareModal({ onClose, projectId }: ShareModalProps) {
 
         <div className="space-y-2 px-4">
           <div className="flex gap-2">
+            
             <div className="flex-1">
-              <div className="flex flex-wrap items-center gap-2 rounded-sm bg-gray-50">
+              <div className="flex flex-wrap items-center gap-2 px-2 py-0.5 rounded-sm bg-gray-50">
                 {emailList.map((email, index) => (
                   <div 
                     key={index} 
@@ -151,7 +152,7 @@ export default function ShareModal({ onClose, projectId }: ShareModalProps) {
                     </button>
                   </div>
                 ))}
-                <Input
+                <input
                   type="email" 
                   value={email}
                   onChange={(e) => {
@@ -160,7 +161,7 @@ export default function ShareModal({ onClose, projectId }: ShareModalProps) {
                   }}
                   onKeyDown={handleKeyDown}
                   placeholder={emailList.length === 0 ? "example@email.com" : ""}
-                  className="shadow-none min-w-[200px] text-sm h-8.5"
+                  className="shadow-none min-w-[200px] px-2 text-xs h-8.5 focus:outline-none"
                 />
               </div>
               {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
@@ -186,7 +187,7 @@ export default function ShareModal({ onClose, projectId }: ShareModalProps) {
               <span className="text-xs text-black">{me.name} (you)</span>
             </div>
           )}
-          {users.map(([connectionId, info]) => (
+          {/* {users.map(([connectionId, info]) => (
             <div className="flex items-center gap-3" key={connectionId}>
               <Avatar
                 key={connectionId}
@@ -196,7 +197,7 @@ export default function ShareModal({ onClose, projectId }: ShareModalProps) {
               />
               <span className="text-xs text-black">{info?.name}</span>
             </div>
-          ))}
+          ))} */}
         </div>
       </div>
     </Modal>

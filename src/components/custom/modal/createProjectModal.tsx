@@ -30,19 +30,21 @@ export default function CreateProjectModal({ onClose, onSuccess }: CreateProject
 
   const onSubmit = async (data: ProjectFormData) => {
     try {
-      const response = await fetch('/api/project/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      })
+      // const response = await fetch('/api/project/create', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(data),
+      // })
 
-      if (!response.ok) {
-        throw new Error('Failed to create project')
-      }
-      const res = await response.json()
-      onSuccess(res.project_id)
+      // if (!response.ok) {
+      //   throw new Error('Failed to create project')
+      // }
+      // const res = await response.json()
+      // onSuccess(res.project_id)
+      onSuccess("2972a3e0-dff6-4c0e-bb35-5ad939e2793c")
+      // onClose()
     } catch (error) {
       console.error('Error creating project:', error)
     }

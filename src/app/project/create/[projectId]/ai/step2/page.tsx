@@ -9,8 +9,7 @@ import { useState } from 'react'
 import { useParams } from 'next/navigation'
 import ProjectCreateLoading from '../loading'
 import { useProjectForm } from '@/context/ProjectFormContext'
-// import { getProjects } from '@/lib/db/projectDB'
-// import { ProjectTemplate } from '@/types/type'
+import { ai_db } from '@/lib/db/ai'
 
 const target_stability = [
   { value: "Low", label: "Low (~99%)"},
@@ -39,9 +38,8 @@ export default function Step2Page() {
   const [selectedStability, setSelectedStability] = useState('Low')
   const [selectedProcessing, setSelectedProcessing] = useState('Simple')
   const { projectId } = useParams()
-
-  // const DIAGRAMS = getProjects() 
-  const { formData } = useProjectForm()
+ 
+  const { formData, updateFormData } = useProjectForm()
 
   const [numberOfInstances] = useState(formData.numberOfInstances || 1)
 
@@ -74,22 +72,27 @@ export default function Step2Page() {
       }))
     }
 
-    const response = await fetch(`/api/project/${projectId}/architecture/suggestion`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(combinedData)
-    })
+    // const response = await fetch(`/api/project/${projectId}/architecture/suggestion`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify(combinedData)
+    // })
 
-    const res = await response.json()
-
-    if (response.ok) {
-      sessionStorage.setItem('diagram', JSON.stringify(res.response))
-      router.push(`/project/create/${projectId}/ai/step3`)
-    } else {
-      console.error('Failed to send data to the server')
-    }
+    // if (response.ok) {
+    //   const res = await response.json()
+    //   const diagrams = res.response
+    //   updateFormData({ diagrams: diagrams })
+      
+    //   router.push(`/project/create/${projectId}/ai/step3`)
+    // } else {
+    //   console.error('Failed to send data to the server')
+    // }
+    const diagrams = ai_db.rec
+    
+    updateFormData({ diagrams: diagrams })
+    router.push(`/project/create/${projectId}/ai/step3`)
 
     setLoading(false)
   }
@@ -97,7 +100,7 @@ export default function Step2Page() {
   const handlePrevious = () => router.back()
 
   return (
-    <div className="min-h-screen bg-[#F8F7FF] flex items-center justify-center">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       {loading ? (
         <ProjectCreateLoading />
       ) : (

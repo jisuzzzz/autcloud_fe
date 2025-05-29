@@ -120,7 +120,8 @@ const convertToNodesAndEdges = (resources: ResourceConfig[]): { nodes: Node[], e
 }
 
 export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
-  const [selectedArchitecture, setSelectedArchitecture] = useState<ProjectTemplate>(project1)
+
+  const { initial_resources, name, id } = project1
 
   const { yDoc, isConnected, yProvider }  = useYjsStore()
   const user = useSelf()
@@ -159,18 +160,7 @@ export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
     const resource = active.data.current as DragResource
     
     setTempNodeType(resource.type as string)
-  }
-
-  useEffect(() => {
-    const storedArchitecture = sessionStorage.getItem('selectedArchitecture')
-    if (storedArchitecture) {
-      setSelectedArchitecture(JSON.parse(storedArchitecture))
-    }
-  }, [])
-  
-  const { initial_resources, name, id } = selectedArchitecture as ProjectTemplate
-
-  
+  }  
   
   useEffect(() => {
     const yNodes = yDoc.getArray<Y.Map<any>>('nodes')

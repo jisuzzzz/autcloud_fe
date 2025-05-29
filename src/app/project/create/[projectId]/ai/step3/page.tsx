@@ -1,14 +1,15 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import ProjectThumbnail from '@/components/custom/panel/thumbnail'
 import { getFilteredOptions } from '@/lib/helpers/getFilteredOptions'
-import { useEffect } from 'react'
 import { ProjectTemplate } from '@/types/type'
 import ProjectCreateLoading from '../loading'
 import { useParams } from 'next/navigation'
+import { useProjectForm } from '@/context/ProjectFormContext'
+import { getProjectById } from '@/lib/db/projectDB'
 
 function getTotalMonthlyCost(resources: any[]): number {
   return resources.reduce((sum, resource) => {
@@ -38,18 +39,44 @@ function getMonthlyCost(resource: any): number {
   return Number(cost || 0);
 }
 
+const DIAGRAMS = [
+  getProjectById("2972a3e0-dff6-4c0e-bb35-5ad939e2793c"),
+  getProjectById("8929f3f2-3774-46c9-b08b-3fb1877acca7"),
+  getProjectById("d0a9bb89-4094-46bc-8a5c-f6390915b58b")
+].filter(Boolean)
+
 function getMainAttributeInfo(resource: any) {
   const { type, attribute } = resource
-  
+
   switch(type) {
     case 'Compute': 
-      return <p className='w-full items-center flex'><p className="w-[300px] inline-block truncate">Plan: {attribute.plan}</p> (${getMonthlyCost(resource)}/month)</p>
+      return (
+        <p className='w-full items-center flex'>
+          <span className="w-[300px] inline-block truncate">Plan: {attribute.plan}</span>
+          <span> (${getMonthlyCost(resource)}/month)</span>
+        </p>
+      )
     case 'ManagedDatabase': 
-      return <p className='w-full items-center flex'><p className="w-[300px] inline-block truncate">Plan: {attribute.plan}</p> (${getMonthlyCost(resource)}/month)</p>
+      return (
+        <p className='w-full items-center flex'>
+          <span className="w-[300px] inline-block truncate">Plan: {attribute.plan}</span>
+          <span> (${getMonthlyCost(resource)}/month)</span>
+        </p>
+      )
     case 'BlockStorage': 
-      return <p className='w-full items-center flex'><p>{attribute.size_gb}GB</p> • Block Storage</p>
+      return (
+        <p className='w-full items-center flex'>
+          <span>{attribute.size_gb}GB</span>
+          <span className="ml-1">• Block Storage</span>
+        </p>
+      )
     case 'ObjectStorage': 
-      return <p className='w-full items-center flex'><p className="w-[300px] inline-block truncate">Tier: {attribute.tier_id}</p> (${getMonthlyCost(resource)}/month)</p>
+      return (
+        <p className='w-full items-center flex'>
+          <span className="w-[300px] inline-block truncate">Tier: {attribute.tier_id}</span>
+          <span> (${getMonthlyCost(resource)}/month)</span>
+        </p>
+      )
     case 'FirewallGroup': 
       return <p className='w-full items-center flex'>Security</p>
     default: 
@@ -60,89 +87,63 @@ function getMainAttributeInfo(resource: any) {
 export default function Step3Page() {
   const router = useRouter()
   const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [diagrams, setDiagrams] = useState<ProjectTemplate[]>([])
+  // const [diagrams, setDiagrams] = useState<ProjectTemplate[]>([])
   const [loading, setLoading] = useState(true)
   const { projectId } = useParams()
+  const { formData } = useProjectForm()
 
-  useEffect(() => {
-    const fetchDiagrams = async () => {
-      try {
-        const diagramData = sessionStorage.getItem('diagram')
-        if (!diagramData) {
-          setLoading(false)
-          return
-        }
 
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Timeout')), 10000)
-        })
+  setTimeout(() => {
+      setLoading(false)
+    }, 10000)
+  
 
-        await Promise.race([
-          (async () => {
-            const parsedData = JSON.parse(diagramData)
-            
-            let dataArray;
-            
-            if (Array.isArray(parsedData)) {
-              dataArray = parsedData;
-            } else {
-              dataArray = Object.entries(parsedData).map(([key, value]: [string, any]) => ({
-                id: key,
-                description: value.description,
-                architecture: value.architecture
-              }));
-            }
-            
-            const transformedDiagrams: ProjectTemplate[] = dataArray.map((item: any) => ({
-              id: item.id,
-              name: `Architecture ${item.id.toUpperCase()}`,
-              description: item.description,
-              initial_resources: item.architecture
-                .map((resource: any) => ({
-                  id: resource.attributes.id || "",
-                  temp_id: resource.temp_id,
-                  type: resource.resource_type,
-                  position: resource.position,
-                  status: 'add',
-                  attribute: resource.attributes
-                }))
-            }))
-            
-            setDiagrams(transformedDiagrams)
-          })(),
-          timeoutPromise
-        ])
-      } catch (error) {
-        console.error('Error fetching diagrams:', error)
-        if (error instanceof Error && error.message === 'Timeout') {
-          console.error('Diagram processing timed out')
-        }
-      } finally {
-        setLoading(false)
-      }
-    }
+    
+  // useEffect(() => {
+  //   const fetchDiagrams = async () => {
+  //     try {
+  //       if (!formData || !formData.diagrams) {
+  //         setLoading(false)
+  //         return
+  //       }
 
-    fetchDiagrams()
-  }, [])
+  //       const transformedDiagrams: ProjectTemplate[] = formData.diagrams.map((item: any, index: number) => ({
+  //         id: `rec${index + 1}`,
+  //         name: `Architecture ${index + 1}`,
+  //         description: item.description,
+  //         initial_resources: item.architecture.filter((resource: any) => resource.resource_type !== 'FirewallRule').map((resource: any) => ({
+  //           id: resource.attributes.id || "",
+  //           temp_id: resource.temp_id,
+  //           type: resource.resource_type,
+  //           position: resource.position,  
+  //           status: 'add',
+  //           attribute: resource.attributes
+  //         }))
+  //       }))
+        
+  //       setDiagrams(transformedDiagrams)
+  //     } catch (error) {
+  //       console.error('Error processing diagrams:', error)
+  //     } finally {
+  //       setLoading(false)
+  //     }
+  //   }
+
+  //   fetchDiagrams()
+  // }, [formData])
 
   const handlePrevious = () => router.back()
   const handleConfirm = () => {
     if (selectedId) {
-      const selectedDiagram = diagrams.find(d => d.id === selectedId)
+      const selectedDiagram = DIAGRAMS.find((d: any) => d.id === selectedId)
       if (selectedDiagram) {
-        sessionStorage.setItem('selectedArchitecture', JSON.stringify({
-          id: selectedDiagram.id,
-          name: selectedDiagram.name,
-          description: selectedDiagram.description,
-          initial_resources: selectedDiagram.initial_resources
-        }))
-        router.push(`/project/${projectId}`)
+        router.push(`/project/${selectedId}`)
       }
     }
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F7FF] flex items-center justify-center">
+    <div className="min-h-screen bg-white flex items-center justify-center">
       {loading ? (
         <ProjectCreateLoading />
       ) : (
@@ -164,18 +165,18 @@ export default function Step3Page() {
 
           <div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
-            {diagrams.map((diagram, index) => (
+            {DIAGRAMS.map((diagram, index) => (
               <div
-                key={diagram.id}
-                onClick={() => setSelectedId(diagram.id)}
+                key={diagram?.id}
+                onClick={() => setSelectedId(diagram?.id || '')}
                 className={`w-full h-[480px] sm:h-[560px] rounded-xl border p-0 cursor-pointer
                   transition-all overflow-hidden flex flex-col hover:shadow-lg
-                  ${diagram.id === selectedId ? 'border-gray-400 shadow-lg' : 'border-gray-200 hover:border-gray-300'}
+                  ${diagram?.id === selectedId ? 'border-gray-400 shadow-lg' : 'border-gray-200 hover:border-gray-300'}
                 `}
               >
                 <div className="w-full h-[180px] sm:h-[240px] bg-gray-50">
                   <ProjectThumbnail
-                    project={diagram}
+                    project={diagram as ProjectTemplate}
                     width={380}
                     height={240}
                   />
@@ -184,15 +185,15 @@ export default function Step3Page() {
                 <div className="p-3 sm:p-4 flex-1 overflow-y-auto bg-white">
                   <div className="mb-2 sm:mb-3">
                     <p className="text-xs text-gray-600 line-clamp-2">
-                      {diagram.description}
+                      {diagram?.description}
                     </p>
                     <p className="text-xs font-medium text-left text-gray-700 mt-2">
-                      Total: ${getTotalMonthlyCost(diagram.initial_resources)} /month
+                      Total: ${getTotalMonthlyCost(diagram?.initial_resources as any[])}/month
                     </p>
                   </div>
 
                   <div className="space-y-1.5 sm:space-y-2 scrollbar-thin">
-                    {diagram.initial_resources && diagram.initial_resources.map((resource: any) => (
+                    {diagram?.initial_resources && diagram?.initial_resources.map((resource: any) => (
                       <div key={resource.temp_id} className="text-xs p-2 sm:p-3 border rounded-md bg-gray-50">
                         <div className="font-medium mb-1">{resource.type}</div>
                         <div className="text-gray-500 truncate">
@@ -210,8 +211,8 @@ export default function Step3Page() {
             <Button 
               onClick={handleConfirm}
               disabled={!selectedId}
-              className="w-full sm:w-[380px] md:w-[480px] bg-gray-50 hover:bg-gray-100 hover:border-gray-300 
-                text-black border text-sm h-10 flex items-center cursor-pointer"
+              className="w-full sm:w-[380px] md:w-[480px] bg-gray-100 hover:bg-gray-200 hover:border-gray-400
+                text-black border text-sm h-10 flex items-center cursor-pointer border-gray-300"
             >
               Confirm
             </Button>

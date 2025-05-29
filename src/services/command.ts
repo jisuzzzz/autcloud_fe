@@ -34,7 +34,7 @@ export const CommandService = {
   updateComputeCommand: (node: Node) => {
 
     const updateInstance: UpdateInstanceType = {
-      id: node.data.uu_id,
+      id: node.data.uu_id ? node.data.uu_id : node.data.id,
       backups: node.data.attribute.auto_backups,
       firewall_group_id: node.data.attribute.firewall_group_id,
       os_id: node.data.attribute.os_id,
@@ -43,7 +43,7 @@ export const CommandService = {
       label: node.data.attribute.label
     }
     return {
-      temp_id: node.id,
+      temp_id: "",
       command_name: "UpdateCompute",
       position: { x: node.position.x, y: node.position.y },
       data: updateInstance
@@ -52,10 +52,10 @@ export const CommandService = {
 
   deleteComputeCommand: (node: Node) => {
     const deleteInstance: DeleteInstanceType = {
-      id: node.data.uu_id,
+      id: node.data.uu_id ? node.data.uu_id : node.id,
     }
     return {
-      temp_id: node.id,
+      temp_id: "",
       command_name: "DeleteCompute",
       position: { x: node.position.x, y: node.position.y },
       data: deleteInstance
@@ -82,12 +82,12 @@ export const CommandService = {
 
   updateDBCommand: (node: Node) => {
     const updateManagedDatabase: UpdateManagedDatabaseType = {
-      id: node.data.uu_id,
+      id: node.data.uu_id ? node.data.uu_id : node.id,
       plan: node.data.attribute.plan,
       label: node.data.attribute.label
     }
     return {
-      temp_id: node.id,
+      temp_id: "",
       command_name: "UpdateManagedDatabase",
       position: { x: node.position.x, y: node.position.y },
       data: updateManagedDatabase
@@ -96,10 +96,10 @@ export const CommandService = {
 
   deleteDBCommand: (node: Node) => {
     const deleteManagedDatabase: DeleteManagedDatabaseType = {
-      id: node.data.uu_id,
+      id: node.data.uu_id ? node.data.uu_id : node.id,
     }
     return {
-      temp_id: node.id,
+      temp_id: "",
       command_name: "DeleteManagedDatabase",
       position: { x: node.position.x, y: node.position.y },
       data: deleteManagedDatabase
@@ -108,14 +108,14 @@ export const CommandService = {
 
   createObjectCommand: (node: Node) => {
     const createObjectStorage: CreateObjectStorageType = {
-      id: node.data.uu_id,
+      id: node.data.uu_id ? node.data.uu_id : node.id,
       cluster_id: node.data.attribute.cluster_id,
       tier_id: node.data.attribute.tier_id,
       label: node.data.attribute.label,
     }
     
     return {
-      temp_id: node.id,
+      temp_id: "",
       command_name: "CreateObjectStorage",
       position: { x: node.position.x, y: node.position.y },
       data: createObjectStorage
@@ -124,11 +124,11 @@ export const CommandService = {
 
   updateObjectCommand: (node: Node) => {
     const updateObjectStorage: UpdateObjectStorageType = {
-      id: node.data.uu_id,
+      id: node.data.uu_id ? node.data.uu_id : node.id,
       label: node.data.attribute.label
     }
     return {
-      temp_id: node.id,
+      temp_id: "",
       command_name: "UpdateObjectStorage",
       position: { x: node.position.x, y: node.position.y },
       data: updateObjectStorage
@@ -137,10 +137,10 @@ export const CommandService = {
 
   deleteObjectCommand: (node: Node) => {
     const deleteObjectStorage: DeleteObjectStorageType = {
-      id: node.data.uu_id,
+      id: node.data.uu_id ? node.data.uu_id : node.id,
     }
     return {
-      temp_id: node.id,
+      temp_id: "",
       command_name: "DeleteObjectStorage",
       position: { x: node.position.x, y: node.position.y },
       data: deleteObjectStorage
@@ -149,14 +149,14 @@ export const CommandService = {
 
   createBlockCommand: (node: Node) => {
     const createBlockStorage: CreateBlockStorageType = {
-      id: node.data.uu_id,
+      id: node.data.uu_id ? node.data.uu_id : node.id,
       region: node.data.attribute.region_id,
       size_gb: node.data.attribute.size_gb,
       label: node.data.attribute.label,
     }
     
     return {
-      temp_id: node.id,
+      temp_id: "",
       command_name: "CreateBlockStorage",
       position: { x: node.position.x, y: node.position.y },
       data: createBlockStorage
@@ -165,13 +165,13 @@ export const CommandService = {
 
   updateBlockCommand: (node: Node) => {
     const updateBlockStorage: UpdateBlockStorageType = {
-      id: node.data.uu_id,
+      id: node.data.uu_id ? node.data.uu_id : node.id,
       region: node.data.attribute.region_id,
       size_gb: node.data.attribute.size_gb,
       label: node.data.attribute.label,
     }
     return {
-      temp_id: node.id,
+      temp_id: "",
       command_name: "UpdateBlockStorage",
       position: { x: node.position.x, y: node.position.y },
       data: updateBlockStorage
@@ -180,10 +180,10 @@ export const CommandService = {
 
   deleteBlockCommand: (node: Node) => {
     const deleteBlockStorage: DeleteBlockStorageType = {
-      id: node.data.uu_id,
+      id: node.data.uu_id ? node.data.uu_id : node.id,
     }
     return {
-      temp_id: node.id,
+      temp_id: "",
       command_name: "DeleteBlockStorage",
       position: { x: node.position.x, y: node.position.y },
       data: deleteBlockStorage
@@ -232,11 +232,11 @@ export const CommandService = {
 
   updateFirewallCommand: (node: Node) => {
     const updateFirewall: UpdateFirewallGroupType = {
-      id: node.data.uu_id,
+      id: node.data.uu_id ? node.data.uu_id : node.id,
       description: node.data.attribute.label
     }
     return {
-      temp_id: node.id,
+      temp_id: "",
       command_name: "UpdateFirewallGroup",
       position: { x: node.position.x, y: node.position.y },
       data: updateFirewall
@@ -245,7 +245,7 @@ export const CommandService = {
 
   deleteFirewallCommand: (node: Node) => {
     const deleteFirewall: DeleteFirewallGroupType = {
-      id: node.data.uu_id,
+      id: node.data.uu_id ? node.data.uu_id : node.id,
     }
     return {
       temp_id: node.id,

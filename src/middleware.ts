@@ -60,6 +60,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/project/:path*',
+    // '/project/:path*',
   ],
 };
