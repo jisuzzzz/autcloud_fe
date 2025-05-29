@@ -94,7 +94,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
   },
 
   {
-    id: "8929f3f2-3774-46c9-b08b-3fb1877acca7",
+    id: "4ee5e04f-09d7-4d4c-9569-c912d2661f01",
     name: "Shopify+ HA",
     description: "e-commerce platform infrastructure design with high availability",
     initial_resources: [
@@ -204,7 +204,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
   },
   
   {
-    id: "d0a9bb89-4094-46bc-8a5c-f6390915b58b",
+    id: "78e340ff-ae25-41ba-a206-4ab3ae13f43c",
     name: "Shopify+ Microservices",
     description: "e-commerce platform infrastructure design with microservices architecture",
     initial_resources: [
