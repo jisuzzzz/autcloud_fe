@@ -77,7 +77,7 @@ export default function EditComputeAttribute({
       node.data.attribute.status !== 'remove' 
     ).map(node => ({
       value: node.id,
-      label: node.data.attribute.label 
+      label: node.data.type
   }))
 
   const handleFirewallChange = (firewallId: string) => {
