@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 
 const projectSchema = z.object({
-  name: z.string().min(10, 'Please enter a project name'),
+  name: z.string().min(3, 'Please enter a project name'),
   description: z.string().min(1, 'Please enter a project description'),
 })
 
