@@ -13,6 +13,8 @@ function getTotalMonthlyCost(resources: any[]): number {
     const attribute = resource?.attribute
 
     if (!type || !attribute) return sum
+    console.log(type, attribute)
+    // tesetst
 
     const region_id = attribute.region_id || attribute.cluster_id
     const plan = attribute.plan || attribute.tier_id
