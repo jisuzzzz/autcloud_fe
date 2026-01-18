@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { useOthers, useSelf } from '@liveblocks/react'
 import { ComputeAttributeType, DatabaseAttributeType, BlockStorageAttributeType, ObjectStorageAttributeType, FirewallAttributeType } from "@/types/type"
 import { Handle, Position } from 'reactflow'
+import { Lock } from 'lucide-react'
 
 const resourceIcons = {
   Compute: '/aut-compute.svg',
@@ -34,6 +35,9 @@ export default function ResourceNode({ id, data }: NodeProps) {
     Array.isArray(user.presence.selectedNodes) && 
     user.presence.selectedNodes.includes(id)
   )
+
+  const editingUser = users.find(user => user.presence.editingNodeId === id)
+  const isLocked = !!editingUser && editingUser.id !== me?.id
   
   return (
     <>
@@ -41,6 +45,7 @@ export default function ResourceNode({ id, data }: NodeProps) {
         className={`
           w-13 h-13 relative
           ${isMySelected ? 'ring-2' : ''}
+          ${isLocked ? 'opacity-60' : ''}
           ${data.status === 'add' ? 'shadow-[0_0_15px_rgba(34,197,94,0.7)]' : ''}
           ${data.status === 'remove' ? 'shadow-[0_0_15px_rgba(239,68,68,0.7)]' : ''}
           ${data.status === 'edit' ? 'shadow-[0_0_15px_rgba(59,130,246,0.7)]' : ''}
@@ -48,7 +53,7 @@ export default function ResourceNode({ id, data }: NodeProps) {
         }
         style={{
           ...(isMySelected && {'--tw-ring-color': myColor}),
-          pointerEvents: isOccupiedByOthers ? 'none' : 'auto'
+          pointerEvents: (isOccupiedByOthers || isLocked) ? 'none' : 'auto'
         }}
       >
         <Image
@@ -61,8 +66,9 @@ export default function ResourceNode({ id, data }: NodeProps) {
         <div className="fixed top-[60px] font-mono w-[200px] text-xs font-medium text-gray-700 text-center mt-1">
           {data.attribute.label || data.type}
         </div>
+
       </div>
-      {users.map(({ connectionId, info, presence }) => {
+      {users.map(({ connectionId, info, presence, id: userId }) => {
        if(Array.isArray(presence.selectedNodes) && presence.selectedNodes.includes(id)) {
           return (
             <div 
@@ -76,10 +82,18 @@ export default function ResourceNode({ id, data }: NodeProps) {
                 }}
               />
               <div 
-                className="absolute -top-[29px] right-0 py-0 px-1.5 rounded text-xs leading-5 h-5 text-white"
+                className="absolute -top-[29px] py-0 px-1.5 rounded text-xs leading-5 h-5 max-w-[100px] flex items-center justify-center text-white"
                 style={{ background: info?.color as string }}
               >
-                {info?.name}
+                {editingUser?.id === userId
+                ? 
+                  <div className='flex items-center gap-1'>
+                    <Lock className='w-3 h-3' /> 
+                    <span className='text-xs truncate'>{editingUser.info?.name}</span>
+                  </div>
+                : 
+                  <span className='text-xs truncate'>{info?.name}</span>
+                }
               </div>
             </div>
           )

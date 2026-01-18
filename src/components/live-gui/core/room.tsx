@@ -11,7 +11,10 @@ export function Room({ children, projectId }: { children: ReactNode, projectId:s
   return (
     <RoomProvider
       id={roomId}
-      initialPresence={{ presence: undefined }}
+      initialPresence={{ 
+        presence: undefined,
+        editingNodeId: null 
+      }}
       initialStorage={{ attributeStore: new LiveMap() }}
     >
       <ClientSideSuspense fallback={<Loading />}>{children}</ClientSideSuspense>
