@@ -116,7 +116,6 @@ export class ProjectService {
       },
       body: JSON.stringify(assignData)
     })
-    console.log(response)
     if (!response.ok) {
       throw new Error('External API error')
     }
@@ -158,7 +157,6 @@ export class ProjectService {
 
   static async sendVultrApiKey(data: SendVultrApiKeyData) {
     const { accessToken, api_key, project_id } = data
-    console.log(api_key)
 
     const response = await fetch(`${this.API_URL}/vultr-api-key`, {
       method: 'PUT',

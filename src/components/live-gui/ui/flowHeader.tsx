@@ -89,7 +89,6 @@ export default function FlowHeader({
 
   const handlePublish = async () => {
     const command_list = LiveFlowService.CreateCommandList(yDoc, me?.id)
-    console.log(command_list)
     // try {
     //   const response = await fetch('/api/project/deploy', {
     //     method: 'POST',

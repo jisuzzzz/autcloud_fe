@@ -149,21 +149,26 @@ type FirewallRuleType = {
 }
 
 type AttributeValueType = string | number | boolean | null
-type NodeChangeStatus = 'added' | 'removed' | 'modified' | 'unchanged'
-type ProjectChanges = {
-  [noedId: string]: {
-    userId: string,
-    userName: string,
-    status: NodeChangeStatus,
-    label: string,
-    attributeChanges: {
-      [key: string] : {
-        prevValue: AttributeValueType,
-        currValue: AttributeValueType,
-      } 
-    }
-  }
+type NodeChangeAction = 'added' | 'removed' | 'modified'
+
+type ProjectHistoryChange = {
+  property: string
+  prev: AttributeValueType
+  curr: AttributeValueType
 }
+
+type ProjectHistoryItem = {
+  nodeId: string
+  userId: string
+  userName: string
+  action: 'added' | 'modified' | 'removed'
+  resourceType: 'Compute' | 'ManagedDatabase' | 'BlockStorage' | 'ObjectStorage' | 'FirewallGroup'
+  label: string
+  timestamp: number
+  changes: ProjectHistoryChange[]
+}
+
+type ProjectHistory = ProjectHistoryItem[]
 
 type CreateInstanceType = {
   id?: string,
@@ -290,14 +295,14 @@ type CommandItem = {
 type CommandList = CommandItem[]
 
 
-export { 
-  type ProjectTemplate, 
-  type ResourceConfig, 
+export {
+  type ProjectTemplate,
+  type ResourceConfig,
   type ResourceNodeType,
   type ComputeAttributeConfig,
   type DatabaseAttributeConfig,
-  type ObjectStorageAttributConfig, 
-  type BlockStorageAttributeConfig, 
+  type ObjectStorageAttributConfig,
+  type BlockStorageAttributeConfig,
   type ComputeAttributeType,
   type DatabaseAttributeType,
   type BlockStorageAttributeType,
@@ -305,8 +310,10 @@ export {
   type FirewallAttributeType,
   type FirewallRuleType,
   type AttributeValueType,
-  type NodeChangeStatus, 
-  type ProjectChanges,
+  type NodeChangeAction,
+  type ProjectHistoryChange,
+  type ProjectHistoryItem,
+  type ProjectHistory,
   type CreateInstanceType,
   type UpdateInstanceType,
   type DeleteInstanceType,

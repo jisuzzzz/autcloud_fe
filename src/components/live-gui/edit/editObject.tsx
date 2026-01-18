@@ -24,6 +24,10 @@ export default function EditObjectStorageAttribute({attribute, onClose, onEdit}:
   const [hasChanges, setHasChanges] = useState(false)
   const [filteredOptions, setFilteredOptions] = useState<any[]>([])
   const [selectedAttribute, setSelectedAttribute] = useState({
+    plan: attribute.plan,
+    tier_id: attribute.tier_id,
+    cluster_id: attribute.cluster_id,
+    region: attribute.region,
     price: attribute.price,
     ratelimit_ops_secs: attribute.ratelimit_ops_secs,
     ratelimit_ops_bytes: attribute.ratelimit_ops_bytes,
@@ -89,6 +93,10 @@ export default function EditObjectStorageAttribute({attribute, onClose, onEdit}:
       setValue('bw_gb_price', selected.bw_gb_price)
       
       setSelectedAttribute({
+        plan: selected.plan,
+        tier_id: selected.tier_id,
+        cluster_id: selected.cluster_id,
+        region: selected.region,
         price: selected.price,
         ratelimit_ops_secs: selected.ratelimit_ops_secs,
         ratelimit_ops_bytes: selected.ratelimit_ops_bytes,
@@ -104,8 +112,6 @@ export default function EditObjectStorageAttribute({attribute, onClose, onEdit}:
     if (selectedPlan) {
       setValue('plan', selectedPlan.plan)
     }
-    setValue('cluster_id', '')
-    setValue('region', '')
     
     filterObjectOtions(tier_id)
   }

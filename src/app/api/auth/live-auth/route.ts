@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
   const session = liveblocks.prepareSession(`${user.id}`, {
     userInfo: {
       id: user.id,
-      name: NAMES[userIdx%5],
+      name: NAMES[userIdx%1],
       avatar: `https://liveblocks.io/avatars/avatar-${userIdx+1}.png`,
       color: COLORS[userIdx],
       role: role
@@ -44,5 +44,7 @@ export async function POST(request: NextRequest) {
   return new Response(body, { status })
 }
 
-const COLORS = ["#D583F0", "#F08385", "#F0D885", "#85EED6", "#85BBF0", "#8594F0", "#85DBF0"]
-const NAMES = ["Charlie", "Mislav", "Tatum", "Anjali", "Jody"]
+// const COLORS = ["#D583F0", "#F08385", "#F0D885", "#85EED6", "#85BBF0", "#8594F0", "#85DBF0"]
+// const NAMES = ["Charlie", "Mislav", "Tatum", "Anjali", "Jody"]
+const COLORS = ["#D583F0"]
+const NAMES = ["Charlie"]

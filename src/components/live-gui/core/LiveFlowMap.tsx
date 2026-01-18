@@ -140,10 +140,7 @@ export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
 
   const clearStorageMutation = useClearStorage()
 
-  const resourceAttribute = useStorage((root) => {
-    const store = root.attributeStore as unknown as LiveMap<string, any>
-    return clipboard ? store.get(clipboard.nodes[0].id) : null
-  })
+  useStorage((root) => root.attributeStore)
 
   const { setNodeRef } = useDroppable({ id: 'flowMap-drop' })
   const [draggingNode, setDraggingNode] = useState<DragResource | null>(null) 
@@ -215,7 +212,7 @@ export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
     }
     
     LiveFlowService.initUserActionHistory(user.id, yDoc)
-    LiveFlowService.initProjectHistory(yDoc)
+    LiveFlowService.initProjectHistory(yDoc, user.id, user.info?.name || '')
 
     const observer = (events: Y.YEvent<any>[], transaction: Y.Transaction) => {
       const updatedNodes = yNodes.toArray().map(nodeMap => ({
@@ -351,7 +348,7 @@ export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
               },
               selected: false
             }
-            LiveFlowService.addNode(newNode, resourceAttribute, user.id, user.info.name, yDoc)
+            LiveFlowService.addNode(newNode, user.id, user.info.name, yDoc)
             LiveFlowService.pushToUndoStack(user.id, {
               type: 'add',
               nodeId: nodeId,

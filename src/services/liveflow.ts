@@ -1,12 +1,11 @@
 import { Node, Edge } from "reactflow"
 import * as Y from 'yjs'
-import { CommandList, CommandItem, ProjectChanges } from "@/types/type"
+import { CommandList, CommandItem,  ProjectHistoryItem, ProjectHistoryChange, } from "@/types/type"
 import { CommandService } from "./command"
 
 interface UserAction {
   type: 'add' | 'remove' | 'edit'
   nodeId: string,
-  changes?: Record<string, string>
   timestamp: number
 }
 
@@ -76,13 +75,51 @@ export const LiveFlowService = {
     })
   },
   
-  initProjectHistory: (yDoc: Y.Doc) => {
+  initProjectHistory: (yDoc: Y.Doc, userId: string, userName: string) => {
     if(!yDoc) return
-    const projectHistory = yDoc.getMap<ProjectChanges>('projectHistory')
-    // projectHistory.delete('nodes')
-    if (!projectHistory.has('nodes')) {
-      projectHistory.set('nodes', {})
-    }
+    const yNodes = yDoc.getArray<Y.Map<any>>('nodes')
+    const projectHistory = yDoc.getArray<ProjectHistoryItem>('projectHistory')
+
+    if (projectHistory.length > 0) return
+
+    yDoc.transact(() => {
+      const initialHistory: ProjectHistoryItem[] = []
+
+      yNodes.toArray().forEach((ynode) => {
+        const nodeId = ynode.get('id')
+        const nodeData = ynode.get('data')
+        const attribute = nodeData?.attribute
+        const resourceType = nodeData?.type
+
+        const changes: ProjectHistoryChange[] = []
+        if (attribute) {
+          Object.keys(attribute).forEach(property => {
+            changes.push({
+              property: property,
+              prev: null,
+              curr: attribute[property]
+            })
+          })
+        }
+
+        const historyItem: ProjectHistoryItem = {
+          nodeId: nodeId,
+          userId: userId,
+          userName: userName,
+          action: 'added',
+          resourceType: resourceType,
+          label: attribute?.label || '',
+          timestamp: Date.now(),
+          changes: changes
+        }
+
+        initialHistory.push(historyItem)
+      })
+
+      if (initialHistory.length > 0) {
+        projectHistory.push(initialHistory)
+      }
+    })
   },
 
   updateNodePosition: (nodeId: string, point: {x: number, y: number}, yDoc: Y.Doc) => {
@@ -100,10 +137,11 @@ export const LiveFlowService = {
     })
   },
 
-  addNode : (node: Node, addedAttribute: any, userId:string, userName:string, yDoc: Y.Doc) => {
+  addNode : (node: Node, userId:string, userName:string, yDoc: Y.Doc) => {
     if (!yDoc) return
     const yNodes = yDoc.getArray<Y.Map<any>>('nodes')
-    const projectHistory = yDoc.getMap<ProjectChanges>('projectHistory')
+    const projectHistory = yDoc.getArray<ProjectHistoryItem>('projectHistory')
+    
     yDoc.transact(() => {
       const yNode = new Y.Map()
       yNode.set('id', node.id)
@@ -115,35 +153,40 @@ export const LiveFlowService = {
       })
       yNodes.push([yNode])
 
-      const changes = projectHistory.get('nodes') || {}
-      changes[node.id] = {
-        userId: userId,
-        userName: userName,
-        status: 'added',
-        label: node.data.attribute.label,
-        attributeChanges: {}
+      const changes: ProjectHistoryChange[] = []
+      const addedAttribute = node.data.attribute
+      if (addedAttribute) {
+        const attributeProperties = Object.keys(addedAttribute)
+        attributeProperties.forEach(property => {
+          changes.push({
+            property: property,
+            prev: null,
+            curr: addedAttribute[property],
+          })
+        })
       }
 
-      const attributeProperties = Object.keys(addedAttribute)
-      attributeProperties.forEach(property => {
-        changes[node.id].attributeChanges[property] = {
-          prevValue: null,
-          currValue: addedAttribute[property]
-        }
-      })
+      const historyItem: ProjectHistoryItem = {
+        nodeId: node.id,
+        userId: userId,
+        userName: userName,
+        action: 'added',
+        resourceType: node.data.type,
+        label: node.data.attribute?.label || '',
+        timestamp: Date.now(),
+        changes: changes
+      }
       
-      projectHistory.set('nodes', changes)
+      projectHistory.push([historyItem])
     })
   },
 
   removeNodeV2 : (nodeId: string, userId:string, userName: string, yDoc: Y.Doc) => {
     if (!yDoc) return
     const yNodes = yDoc.getArray<Y.Map<any>>('nodes')
-    const projectHistory = yDoc.getMap<ProjectChanges>('projectHistory')
+    const projectHistory = yDoc.getArray<ProjectHistoryItem>('projectHistory')
     
     yDoc.transact(() => {
-      const changes = projectHistory.get('nodes') || {}
-
       const ynode = findYNode(yNodes, nodeId)
       if (!ynode) return
       
@@ -154,26 +197,28 @@ export const LiveFlowService = {
         status: 'remove'
       })
 
-      const existingChange = changes[nodeId]
-      if(existingChange && existingChange.status === 'added') {
-        delete changes[nodeId]
-      } else {
-        changes[nodeId] = {
-          userId: userId,
-          userName:userName,
-          status: 'removed',
-          label: currData.attribute.label,
-          attributeChanges: {}
-        }
-        const attributeProperties = Object.keys(currData.attribute)
-        attributeProperties.forEach(property => {
-          changes[nodeId].attributeChanges[property] = {
-            prevValue: currData.attribute[property],
-            currValue: null
-          }
+      const changes: ProjectHistoryChange[] = []
+      const attributeProperties = Object.keys(currData.attribute)
+      attributeProperties.forEach(property => {
+        changes.push({
+          property: property,
+          prev: currData.attribute[property],
+          curr: null,
         })
+      })
+
+      const historyItem: ProjectHistoryItem = {
+        nodeId: nodeId,
+        userId: userId,
+        userName: userName,
+        action: 'removed',
+        resourceType: currData.type,
+        label: currData.attribute.label,
+        timestamp: Date.now(),
+        changes: changes
       }
-      projectHistory.set('nodes', changes)
+
+      projectHistory.push([historyItem])
     })
   },
 
@@ -191,66 +236,44 @@ export const LiveFlowService = {
     if (!yDoc) return
     const yNodes = yDoc.getArray<Y.Map<any>>('nodes')
     const yEdges = yDoc.getArray<Edge>('edges')
-    const projectHistory = yDoc.getMap<ProjectChanges>('projectHistory')
+    const projectHistory = yDoc.getArray<ProjectHistoryItem>('projectHistory')
     
     yDoc.transact(() => {
       const ynode = findYNode(yNodes, nodeId)
       if(!ynode) return
 
       const prevData = ynode.node.get('data')
-      // console.log(prevData)
-
       const edges = yEdges.toArray() as Edge[]
-      const historyChanges = projectHistory.get('nodes') || {}
 
-      if(!historyChanges[nodeId]) {
-        historyChanges[nodeId] = {
-          userId: userId,
-          userName: userName,
-          status: 'unchanged',
-          label: 'label',
-          attributeChanges: {}
-        }
-      }
-      
+      const historyChanges: ProjectHistoryChange[] = []
       let changeFlag = false
       
       Object.entries(changes).forEach(([property, newValue]) => {
-
-        if (typeof newValue === 'object') {
-          const updatedAttribute = {...prevData.attribute}
-          Object.entries(changes).forEach(([field, newValue]) => {
-            updatedAttribute[field] = newValue
-          })
-          ynode.node.set('data', {
-            ...prevData,
-            status: 'edit',
-            attribute: updatedAttribute
-          })
-          return 
-        }
-
-        // const oldValue =  prevData.attribute[property]
-        // const oldValue= attribute[property]
-        const oldValue = attribute && attribute[property] !== undefined ? attribute[property] : undefined;
+        const oldValue = attribute && attribute[property] !== undefined ? attribute[property] : undefined
 
         if(oldValue !== newValue && oldValue !== undefined) {
           changeFlag = true
-
-          historyChanges[nodeId].attributeChanges[property] = {
-            prevValue: oldValue,
-            currValue: newValue
-          }
-          historyChanges[nodeId].attributeChanges[property].currValue = newValue
-        } else if (oldValue === newValue) {
-          delete historyChanges[nodeId].attributeChanges[property]
+          historyChanges.push({
+            property: property,
+            prev: oldValue,
+            curr: newValue,
+          })
         }
       })
 
       if(changeFlag) {
-        historyChanges[nodeId].status = 'modified'
-        historyChanges[nodeId].userName = userName
-        historyChanges[nodeId].label = prevData.attribute.label
+        const historyItem: ProjectHistoryItem = {
+          nodeId: nodeId,
+          userId: userId,
+          userName: userName,
+          action: 'modified',
+          resourceType: prevData.type,
+          label: prevData.attribute.label,
+          timestamp: Date.now(),
+          changes: historyChanges
+        }
+
+        projectHistory.push([historyItem])
 
         const updatedAttribute = {...prevData.attribute}
         Object.entries(changes).forEach(([field, newValue]) => {
@@ -278,7 +301,6 @@ export const LiveFlowService = {
             yEdges.insert(edgeIndex, [updatedEdge])
           }
         }
-        projectHistory.set('nodes', historyChanges)
       }
     })
   },
@@ -291,7 +313,7 @@ export const LiveFlowService = {
       const userStack = userActionHistory.get(userId) || { undoStack: [] }
 
       userStack.undoStack.push(action)
-      userActionHistory.set(userId, userStack) // 변경된 스택을 다시 저장
+      userActionHistory.set(userId, userStack)
     })
   },
 
@@ -299,7 +321,7 @@ export const LiveFlowService = {
     if (!yDoc) return null
 
     const userActionHistory = yDoc.getMap<UserStack>('userActionHistory')
-    const projectHistory = yDoc.getMap<ProjectChanges>('projectHistory')
+    const projectHistory = yDoc.getArray<ProjectHistoryItem>('projectHistory')
     const yNodes = yDoc.getArray<Y.Map<any>>('nodes')
     
     const userStack = userActionHistory?.get(userId)
@@ -308,84 +330,81 @@ export const LiveFlowService = {
     const action = userStack.undoStack.pop()!
   
     yDoc.transact(() => {
-      const changes = projectHistory.get('nodes') || {}
       const actionNodeId = action.nodeId
       if(!actionNodeId) return
+
+      const history = projectHistory.toArray()
+      const nodeHistory = history.filter(item => item.nodeId === actionNodeId)
+      if(nodeHistory.length === 0) return
+
+      const lastHistoryItem = nodeHistory[nodeHistory.length - 1]
+      const lastHistoryIndex = history.findIndex(item => 
+        item.nodeId === actionNodeId && 
+        item.timestamp === lastHistoryItem.timestamp
+      )
+
+      if(lastHistoryIndex === -1) return
+
+      const actionNode = findYNode(yNodes, actionNodeId)
+      if(!actionNode) return
+
+      const actionNodeData = actionNode.node.get('data')
+
       switch (action.type) {
         case 'add':
-          if (actionNodeId) {
-            const actionNode = findYNode(yNodes, actionNodeId)
-            if(!actionNode) return
-
-            const actionNodeData = actionNode.node.get('data')
+          if(lastHistoryItem.action === 'added') {
             actionNode.node.set('data', {
               ...actionNodeData,
               status: 'remove'
             })
-
-            if(changes[actionNodeId] && changes[actionNodeId].status === 'added') {
-              delete changes[actionNodeId]
-            } else {
-              changes[actionNodeId] = {
-                userId: userId,
-                userName: userName,
-                status: 'removed',
-                label: actionNodeData.attribute.label,
-                attributeChanges: {...actionNodeData.attribute}
-              }
-            }
+            projectHistory.delete(lastHistoryIndex, 1)
           }
           break
           
         case 'remove':
-          if (actionNodeId) {
-            const actionNode = findYNode(yNodes, actionNodeId)
-            if(!actionNode) return
+          if(lastHistoryItem.action === 'removed') {
+            projectHistory.delete(lastHistoryIndex, 1)
+            
+            const updatedHistory = projectHistory.toArray()
+            const updatedNodeHistory = updatedHistory.filter(item => item.nodeId === actionNodeId)
+            const prevItem = updatedNodeHistory[updatedNodeHistory.length - 1]
+            const nodeStatus = prevItem?.action === 'modified' ? 'edit' : 'add'
 
-            const actionNodeData = actionNode.node.get('data')
             actionNode.node.set('data', {
               ...actionNodeData,
-              status: 'add'
+              status: nodeStatus
             })
-
-            if(changes[actionNodeId] && changes[actionNodeId].status === 'removed') {
-              delete changes[actionNodeId]
-            } else {
-              changes[actionNodeId] = {
-                userId: userId,
-                userName: userName,
-                status: 'added',
-                label: actionNodeData.attribute.label,
-                attributeChanges: {...actionNodeData.attribute}
-              }
-            }
           }
           break
         
         case 'edit':
-          if (actionNodeId) {
-            const actionNode = findYNode(yNodes, actionNodeId)
-            if(!actionNode) return
+          if(lastHistoryItem.action === 'modified') {
+            const revertedAttribute = {...actionNodeData.attribute}
         
-            const currData = actionNode.node.get('data')
-            const attributeChanges = changes[actionNodeId].attributeChanges
-            const revertedAttribute = {...currData.attribute}
-        
-            Object.entries(attributeChanges).forEach(([key, value]) => {
-              revertedAttribute[key] = value.prevValue
+            lastHistoryItem.changes.forEach(change => {
+              revertedAttribute[change.property] = change.prev
             })
-        
+
+            projectHistory.delete(lastHistoryIndex, 1)
+
+            const updatedHistory = projectHistory.toArray()
+            const updatedNodeHistory = updatedHistory.filter(item => item.nodeId === actionNodeId)
+            const prevItem = updatedNodeHistory[updatedNodeHistory.length - 1]
+            const nodeStatus = prevItem?.action === 'modified' 
+              ? 'edit'
+              : prevItem?.action === 'removed' 
+              ? 'remove'
+              : 'add'
+
             actionNode.node.set('data', {
-              ...currData,
-              status: 'add',
+              ...actionNodeData,
+              status: nodeStatus,
               attribute: revertedAttribute
             })
-            delete changes[actionNodeId]
           }
           break
       }
       userActionHistory.set(userId, userStack)
-      projectHistory.set('nodes', changes)
     })
   },
 
@@ -397,12 +416,12 @@ export const LiveFlowService = {
       const yNodes = yDoc.getArray<Y.Map<any>>('nodes')
       const yEdges = yDoc.getArray<Edge>('edges')
       const userActionHistory = yDoc.getMap<UserStack>('userActionHistory')
-      const projectHistory = yDoc.getMap<ProjectChanges>('projectHistory')
+      const projectHistory = yDoc.getArray<ProjectHistoryItem>('projectHistory')
   
       yNodes.delete(0, yNodes.length)
       yEdges.delete(0, yEdges.length)
       userActionHistory.clear()
-      projectHistory.clear()
+      projectHistory.delete(0, projectHistory.length)
     })
     clearStorageMutation()
 
@@ -413,7 +432,7 @@ export const LiveFlowService = {
   CreateCommandList: (yDoc: Y.Doc, userId?: string) => {
     if(!yDoc) return
     const yNodes = yDoc.getArray<Y.Map<any>>('nodes')
-    const projectHistory = yDoc.getMap<ProjectChanges>('projectHistory')
+    const projectHistory = yDoc.getArray<ProjectHistoryItem>('projectHistory')
 
     const command_list: CommandList = []
     const commandMap: Record<string, 
@@ -451,7 +470,7 @@ export const LiveFlowService = {
     }
 
     yDoc.transact(() => {
-      const changes = projectHistory.get('nodes') || {}
+      const history = projectHistory.toArray()
 
       yNodes.forEach((ynode) => {
         const nodeData = ynode.get('data')
@@ -475,9 +494,16 @@ export const LiveFlowService = {
         command_list.push(command(node, userId))
 
         if(node.data.type === 'BlockStorage') {
-          const prevAttachTo = changes[node.id]?.attributeChanges?.attached_to_instance?.prevValue?.toString()
+          const nodeHistory = history.filter(item => item.nodeId === node.id)
+          const attachedChanges = nodeHistory.flatMap(item => 
+            item.changes.filter(c => c.property === 'attached_to_instance')
+          )
+          const prevAttachTo = attachedChanges.length > 0 
+            ? attachedChanges[attachedChanges.length - 1]?.prev?.toString()
+            : null
+          
           if(prevAttachTo) {
-            const firstAttach = CommandService.attachCommand(node,prevAttachTo)
+            const firstAttach = CommandService.attachCommand(node, prevAttachTo)
             command_list.push(firstAttach)
             const detachCommand = CommandService.detachCommand(node)
             command_list.push(detachCommand)

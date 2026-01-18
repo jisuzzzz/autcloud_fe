@@ -96,7 +96,7 @@ export default function AddNewResourceModal({onClose, type, onConnect}: EditModa
       },
     }
     
-    LiveFlowService.addNode(newNode, AllAddedAttribute, me.id, me.info.name, yDoc)
+    LiveFlowService.addNode(newNode, me.id, me.info.name, yDoc)
     
     if(type === 'BlockStorage' && (addedAttribute as BlockStorageAttributeType).attached_to_instance) {
       const computeId = (addedAttribute as BlockStorageAttributeType).attached_to_instance

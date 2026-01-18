@@ -10,7 +10,6 @@ interface MenuModalProps {
 export default function MenuModal({ onClose, projectId }: MenuModalProps) {
   const handleDeleteProject = async () => {
     try {
-      console.log(projectId)
       const response = await fetch(`/api/project/delete`, {
         method: 'POST',
         headers: {
