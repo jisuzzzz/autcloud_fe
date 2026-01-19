@@ -140,9 +140,9 @@ function HistoryItemCard({ item, isLatest }: HistoryItemCardProps) {
   const prevAttribute = getDetailedAttribute(item.resourceType, item.changes, 'prev')
   const currAttribute = getDetailedAttribute(item.resourceType, item.changes, 'curr')
 
-  const displayKeys = currAttribute
-    ? Object.keys(currAttribute).filter(key => !key.toLowerCase().includes('id') && key !== 'rules' && key !== 'status')
-    : item.changes.map(c => c.property).filter(key => !key.toLowerCase().includes('id') && key !== 'rules')
+  const displayKeys = item.changes
+    .map(c => c.property)
+    .filter(key => !key.toLowerCase().includes('id') && key !== 'rules' && key !== 'status')
 
   return (
     <div className={`border rounded-md p-4 ${isLatest ? 'bg-blue-50 border-blue-300' : 'bg-white'}`}>
@@ -186,7 +186,6 @@ function HistoryItemCard({ item, isLatest }: HistoryItemCardProps) {
 export default function EditLogModal({ resourceHistory, onClose }: EditLogModalProps) {
   if (!resourceHistory || resourceHistory.length === 0) return null
 
-  // 최신순으로 정렬 (timestamp 기준)
   const sortedHistory = [...resourceHistory].sort((a, b) => b.timestamp - a.timestamp)
 
   return (

@@ -15,7 +15,7 @@ export default function DocsHeader() {
         <Link href="#">Pricing</Link>
       </nav>
 
-      <Link href="/auth/signup">
+      <Link href="/project">
         <Button className="rounded-full bg-[#7868E6] text-white px-6 py-2 text-sm font-medium hover:bg-[#6b5fde]">
           Get started
         </Button>

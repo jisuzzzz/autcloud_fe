@@ -28,6 +28,8 @@ export default function RoleModal({ onMiniClose, role, onRoleChange, projectId, 
   }, [onMiniClose])
 
   const handleOnSubmit = async (newRole: 'editor' | 'viewer') => {
+    alert('지금은 이용이 불가합니다.')
+    return
     try {
       const response = await fetch('/api/project/member/role', {
         method: 'POST',

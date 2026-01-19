@@ -87,6 +87,8 @@ export default function ShareModal({ onClose, projectId }: ShareModalProps) {
   }
 
   const handleInvite = async () => {
+    alert('지금은 이용이 불가합니다.')
+    return
     try {
       for (const inviteEmail of emailList) {
         const response = await fetch('/api/project/member/role', {

@@ -250,7 +250,7 @@ const PROJECT_TEMPLATES: ProjectTemplate[] = [
         status: 'add',
         attribute: {
           status: "running",
-          plan: "vultr-dbaas-hobbyist-cc-1-25-1",
+          plan: "vultr-dbaas-startup-cc-1-55-2",
           db_engine: "pg",
           db_version: "15",
           latest_backup: "1 hour ago",

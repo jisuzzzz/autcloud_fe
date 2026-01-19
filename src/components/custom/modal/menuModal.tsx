@@ -9,6 +9,8 @@ interface MenuModalProps {
 
 export default function MenuModal({ onClose, projectId }: MenuModalProps) {
   const handleDeleteProject = async () => {
+    alert('지금은 이용이 불가합니다.')
+    return
     try {
       const response = await fetch(`/api/project/delete`, {
         method: 'POST',

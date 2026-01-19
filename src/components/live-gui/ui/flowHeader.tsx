@@ -88,6 +88,7 @@ export default function FlowHeader({
   // }
 
   const handlePublish = async () => {
+    alert('지금은 이용이 불가합니다.')
     const command_list = LiveFlowService.CreateCommandList(yDoc, me?.id)
     // try {
     //   const response = await fetch('/api/project/deploy', {
