@@ -334,7 +334,10 @@ export const LiveFlowService = {
       if(!actionNodeId) return
 
       const history = projectHistory.toArray()
-      const nodeHistory = history.filter(item => item.nodeId === actionNodeId)
+      const nodeHistory = history
+        .filter(item => item.nodeId === actionNodeId)
+        .sort((a, b) => a.timestamp - b.timestamp)
+      
       if(nodeHistory.length === 0) return
 
       const lastHistoryItem = nodeHistory[nodeHistory.length - 1]
@@ -366,7 +369,10 @@ export const LiveFlowService = {
             projectHistory.delete(lastHistoryIndex, 1)
             
             const updatedHistory = projectHistory.toArray()
-            const updatedNodeHistory = updatedHistory.filter(item => item.nodeId === actionNodeId)
+            const updatedNodeHistory = updatedHistory
+              .filter(item => item.nodeId === actionNodeId)
+              .sort((a, b) => a.timestamp - b.timestamp)
+            
             const prevItem = updatedNodeHistory[updatedNodeHistory.length - 1]
             const nodeStatus = prevItem?.action === 'modified' ? 'edit' : 'add'
 
@@ -388,7 +394,10 @@ export const LiveFlowService = {
             projectHistory.delete(lastHistoryIndex, 1)
 
             const updatedHistory = projectHistory.toArray()
-            const updatedNodeHistory = updatedHistory.filter(item => item.nodeId === actionNodeId)
+            const updatedNodeHistory = updatedHistory
+              .filter(item => item.nodeId === actionNodeId)
+              .sort((a, b) => a.timestamp - b.timestamp)
+            
             const prevItem = updatedNodeHistory[updatedNodeHistory.length - 1]
             const nodeStatus = prevItem?.action === 'modified' 
               ? 'edit'

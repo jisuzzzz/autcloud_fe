@@ -10,7 +10,7 @@ import ResourceNode from '../ui/node'
 import ArrowEdge from '../ui/edge'
 import { useYjsStore } from '@/lib/hooks/useYjsStore'
 import * as Y from 'yjs'
-import { useMyPresence, useSelf } from '@liveblocks/react'
+import { useMyPresence, useSelf, useOthers } from '@liveblocks/react'
 import ToolBar from '../ui/toolBar'
 import AttributeBar from '../ui/attributeBar'
 import FlowHeader from '../ui/flowHeader'
@@ -125,6 +125,7 @@ export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
 
   const { yDoc, isConnected, yProvider }  = useYjsStore()
   const user = useSelf()
+  const others = useOthers()
   const [myPresence, setMyPresence] = useMyPresence()
 
   const [nodes, setNodes, onNodesChange] = useNodesState([])
@@ -360,10 +361,20 @@ export function LiveFlowMap({ project1 }: LiveFlowMapProps) {
           case 'x':
             if(!occupiedNode || !occupiedNode[0] || occupiedNode[0].data.status === 'remove') return
             
-            LiveFlowService.removeNodeV2(occupiedNode[0].id, user.id, user.info.name, yDoc)
+            const deleteNodeId = occupiedNode[0].id
+            const isLockedByOthers = others.some(
+              other => other.presence.editingNodeId === deleteNodeId
+            )
+            
+            if (isLockedByOthers) {
+              alert('다른 사용자가 편집 중인 노드는 삭제할 수 없습니다.')
+              return
+            }
+            
+            LiveFlowService.removeNodeV2(deleteNodeId, user.id, user.info.name, yDoc)
             LiveFlowService.pushToUndoStack(user.id, {
               type: 'remove',
-              nodeId: occupiedNode[0].id,
+              nodeId: deleteNodeId,
               timestamp: Date.now()
             }, yDoc)
             break
