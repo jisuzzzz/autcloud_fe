@@ -7,7 +7,7 @@ import {
   ObjectStorageAttributeType, ResourceNodeType 
 } from "@/types/type"
 import { useYjsStore } from '@/lib/hooks/useYjsStore'
-import { useMyPresence, useSelf, useOthers } from "@liveblocks/react"
+import { useSelf, useOthers, useMyPresence } from "@liveblocks/react"
 import { LiveFlowService } from "@/services/liveflow"
 import EditDatabaseAttribute from "./editDatabase"
 import EditBlockStorageAttribute from "./editBlock"
@@ -16,7 +16,7 @@ import EditFirewallAttribute from "./editFirewall"
 import { Edge } from "reactflow"
 import { useStorage } from "@liveblocks/react"
 import { LiveMap } from "@liveblocks/node"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 
 export type AttributeType = ComputeAttributeType | DatabaseAttributeType | BlockStorageAttributeType | ObjectStorageAttributeType | FirewallAttributeType
 
@@ -26,58 +26,22 @@ interface EditModalProps{
   setEdges: (updater: (prev: Edge[]) => Edge[]) => void
 }
 
+// Soft lock: show who is editing; do not block. editingNodeId set while modal open so others see "편집 중".
 export default function EditModal({onClose, resource, setEdges }: EditModalProps) {
-  const {yDoc} = useYjsStore() 
+  const { yDoc } = useYjsStore()
   const me = useSelf()
   const others = useOthers()
   const [myPresence, setMyPresence] = useMyPresence()
-  const [canEdit, setCanEdit] = useState<boolean | null>(null)
-  const [countdown, setCountdown] = useState(3)
 
   const selectedNodeId = (me?.presence.selectedNodes as string[])?.[0]
-  if(!selectedNodeId) return
+  if (!selectedNodeId) return null
 
   useEffect(() => {
-    if (!me?.id || !selectedNodeId) return
+    setMyPresence({ editingNodeId: selectedNodeId })
+    return () => setMyPresence({ editingNodeId: null })
+  }, [selectedNodeId, setMyPresence])
 
-    const isEditingByOthers = others.some(
-      user => user.presence.editingNodeId === selectedNodeId
-    )
-
-    if (isEditingByOthers) {
-      setCanEdit(false)
-    } else {
-      setMyPresence({ editingNodeId: selectedNodeId })
-      setCanEdit(true)
-    }
-
-    return () => {
-      setMyPresence({ editingNodeId: null })
-    }
-  }, [])
-
-  useEffect(() => {
-    if (canEdit === false) {
-      const countdownInterval = setInterval(() => {
-        setCountdown(prev => {
-          if (prev <= 1) {
-            clearInterval(countdownInterval)
-            return 0
-          }
-          return prev - 1
-        })
-      }, 1000)
-
-      const closeTimer = setTimeout(() => {
-        onClose()
-      }, 3000)
-
-      return () => {
-        clearInterval(countdownInterval)
-        clearTimeout(closeTimer)
-      }
-    }
-  }, [canEdit, onClose])
+  const otherEditing = others.filter(u => u.presence.editingNodeId === selectedNodeId)
 
   const resourceAttribute = useStorage((root) => {
     const store = root.attributeStore as unknown as LiveMap<string, any>
@@ -85,23 +49,18 @@ export default function EditModal({onClose, resource, setEdges }: EditModalProps
   })
 
   const handleEdit = (updateAttribute: AttributeType) => {
-
     if(!yDoc || !me?.id || !me.info?.name) return
     
     const changes: Record<string, string> = {}
-
-
     Object.keys(updateAttribute).forEach(key => {
       const field = key as keyof AttributeType
       const newValue = typeof updateAttribute[field] === 'boolean' 
         ? String(updateAttribute[field]) 
         : updateAttribute[field] as string
-
       changes[field] = newValue
     })
       
-    if(Object.keys(changes).length > 0) {
-
+    if (Object.keys(changes).length > 0) {
       LiveFlowService.editNodeV2(
         selectedNodeId,
         changes,
@@ -120,10 +79,7 @@ export default function EditModal({onClose, resource, setEdges }: EditModalProps
     }
     
     setMyPresence({ editingNodeId: null })
-    
-    setTimeout(() => {
-      onClose()
-    }, 200)
+    setTimeout(() => onClose(), 200)
   }
 
   const handleClose = () => {
@@ -132,20 +88,10 @@ export default function EditModal({onClose, resource, setEdges }: EditModalProps
   }
 
   const renderEditComponent = () => {
-    if (canEdit === null) {
+    if (!resourceAttribute) {
       return (
         <div className="p-6 text-center font-mono">
           <p className="text-gray-600 font-mono">로딩 중...</p>
-        </div>
-      )
-    }
-
-    if (canEdit === false) {
-      return (
-        <div className="p-6 text-center font-mono">
-          <h3 className="text-lg font-semibold mb-2 font-mono">편집 불가</h3>
-          <p className="text-gray-600 font-mono">이 노드는 다른 사용자가 편집 중입니다.</p>
-          <p className="text-xs text-gray-400 font-mono mt-2">{countdown}초 후 자동으로 닫힙니다...</p>
         </div>
       )
     }
@@ -164,11 +110,15 @@ export default function EditModal({onClose, resource, setEdges }: EditModalProps
     }
   }
   
-  return(
-    <Modal
-      className="fixed top-[70px] right-[268px]"
-    >
+  return (
+    <Modal className="fixed top-[70px] right-[268px]">
       <div className="w-[400px] max-h-[calc(100vh-90px)] bg-white rounded-xs border overflow-y-auto scrollbar-thin">
+        {otherEditing.length > 0 && (
+          <div className="p-2 border-b border-amber-200 bg-amber-50 font-mono text-xs text-amber-800">
+            다른 사용자({otherEditing.map(u => u.info?.name).filter(Boolean).join(', ')})가 이 노드를 편집 중입니다.
+            동시에 수정하면 나중에 저장한 내용이 적용됩니다.
+          </div>
+        )}
         {renderEditComponent()}
       </div>
     </Modal>

@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { useOthers, useSelf } from '@liveblocks/react'
 import { ComputeAttributeType, DatabaseAttributeType, BlockStorageAttributeType, ObjectStorageAttributeType, FirewallAttributeType } from "@/types/type"
 import { Handle, Position } from 'reactflow'
-import { Lock } from 'lucide-react'
+import { Pencil } from 'lucide-react'
 
 const resourceIcons = {
   Compute: '/aut-compute.svg',
@@ -37,15 +37,13 @@ export default function ResourceNode({ id, data }: NodeProps) {
   )
 
   const editingUser = users.find(user => user.presence.editingNodeId === id)
-  const isLocked = !!editingUser && editingUser.id !== me?.id
-  
+
   return (
     <>
       <div 
         className={`
           w-13 h-13 relative
           ${isMySelected ? 'ring-2' : ''}
-          ${isLocked ? 'opacity-60' : ''}
           ${data.status === 'add' ? 'shadow-[0_0_15px_rgba(34,197,94,0.7)]' : ''}
           ${data.status === 'remove' ? 'shadow-[0_0_15px_rgba(239,68,68,0.7)]' : ''}
           ${data.status === 'edit' ? 'shadow-[0_0_15px_rgba(59,130,246,0.7)]' : ''}
@@ -53,7 +51,7 @@ export default function ResourceNode({ id, data }: NodeProps) {
         }
         style={{
           ...(isMySelected && {'--tw-ring-color': myColor}),
-          pointerEvents: (isOccupiedByOthers || isLocked) ? 'none' : 'auto'
+          pointerEvents: isOccupiedByOthers ? 'none' : 'auto'
         }}
       >
         <Image
@@ -86,13 +84,15 @@ export default function ResourceNode({ id, data }: NodeProps) {
                 style={{ background: info?.color as string }}
               >
                 {editingUser?.id === userId
-                ? 
-                  <div className='flex items-center gap-1'>
-                    <Lock className='w-3 h-3' /> 
-                    <span className='text-xs truncate'>{editingUser.info?.name}</span>
-                  </div>
-                : 
-                  <span className='text-xs truncate'>{info?.name}</span>
+                  ? (
+                      <div className='flex items-center gap-1'>
+                        <Pencil className='w-3 h-3' />
+                        <span className='text-xs truncate'>{editingUser.info?.name} 편집 중</span>
+                      </div>
+                    )
+                  : (
+                      <span className='text-xs truncate'>{info?.name}</span>
+                    )
                 }
               </div>
             </div>
