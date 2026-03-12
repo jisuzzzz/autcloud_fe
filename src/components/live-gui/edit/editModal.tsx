@@ -16,7 +16,7 @@ import EditFirewallAttribute from "./editFirewall"
 import { Edge } from "reactflow"
 import { useStorage } from "@liveblocks/react"
 import { LiveMap } from "@liveblocks/node"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 export type AttributeType = ComputeAttributeType | DatabaseAttributeType | BlockStorageAttributeType | ObjectStorageAttributeType | FirewallAttributeType
 
@@ -42,6 +42,7 @@ export default function EditModal({onClose, resource, setEdges }: EditModalProps
   }, [selectedNodeId, setMyPresence])
 
   const otherEditing = others.filter(u => u.presence.editingNodeId === selectedNodeId)
+  const [pendingSave, setPendingSave] = useState<AttributeType | null>(null)
 
   const resourceAttribute = useStorage((root) => {
     const store = root.attributeStore as unknown as LiveMap<string, any>
@@ -82,6 +83,14 @@ export default function EditModal({onClose, resource, setEdges }: EditModalProps
     setTimeout(() => onClose(), 200)
   }
 
+  const onEdit = (updateAttribute: AttributeType) => {
+    if (otherEditing.length > 0) {
+      setPendingSave(updateAttribute)
+      return
+    }
+    handleEdit(updateAttribute)
+  }
+
   const handleClose = () => {
     setMyPresence({ editingNodeId: null })
     onClose()
@@ -98,18 +107,18 @@ export default function EditModal({onClose, resource, setEdges }: EditModalProps
 
     switch(resource.data.type) {
       case 'Compute':
-        return <EditComputeAttribute attribute={resourceAttribute as ComputeAttributeType} onEdit={handleEdit} onClose={handleClose} setEdges={setEdges} id={resource.id} />
+        return <EditComputeAttribute attribute={resourceAttribute as ComputeAttributeType} onEdit={onEdit} onClose={handleClose} setEdges={setEdges} id={resource.id} />
       case 'ManagedDatabase':
-        return <EditDatabaseAttribute attribute={resourceAttribute as DatabaseAttributeType} onEdit={handleEdit} onClose={handleClose} />
+        return <EditDatabaseAttribute attribute={resourceAttribute as DatabaseAttributeType} onEdit={onEdit} onClose={handleClose} />
       case 'BlockStorage':
-        return <EditBlockStorageAttribute attribute={resourceAttribute as BlockStorageAttributeType} onEdit={handleEdit} onClose={handleClose} setEdges={setEdges} id={resource.id} />
+        return <EditBlockStorageAttribute attribute={resourceAttribute as BlockStorageAttributeType} onEdit={onEdit} onClose={handleClose} setEdges={setEdges} id={resource.id} />
       case 'ObjectStorage':
-        return <EditObjectStorageAttribute attribute={resourceAttribute as ObjectStorageAttributeType} onEdit={handleEdit}  onClose={handleClose} />
+        return <EditObjectStorageAttribute attribute={resourceAttribute as ObjectStorageAttributeType} onEdit={onEdit} onClose={handleClose} />
       case 'FirewallGroup':
-        return <EditFirewallAttribute attribute={resource.data.attribute as FirewallAttributeType} onEdit={handleEdit} onClose={handleClose}/>
+        return <EditFirewallAttribute attribute={resource.data.attribute as FirewallAttributeType} onEdit={onEdit} onClose={handleClose}/>
     }
   }
-  
+
   return (
     <Modal className="fixed top-[70px] right-[268px]">
       <div className="w-[400px] max-h-[calc(100vh-90px)] bg-white rounded-xs border overflow-y-auto scrollbar-thin">
@@ -121,6 +130,34 @@ export default function EditModal({onClose, resource, setEdges }: EditModalProps
         )}
         {renderEditComponent()}
       </div>
+      {pendingSave && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-[100]" role="dialog" aria-modal="true">
+          <div className="bg-white rounded-lg shadow-lg p-5 min-w-[280px] font-mono">
+            <p className="text-sm text-gray-800 mb-4">
+              가장 최신의 내용으로 덮어써질 수 있습니다. 진행하시겠습니까?
+            </p>
+            <div className="flex gap-2 justify-end">
+              <button
+                type="button"
+                onClick={() => setPendingSave(null)}
+                className="px-3 py-1.5 text-sm rounded border border-gray-300 hover:bg-gray-50"
+              >
+                아니오
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  handleEdit(pendingSave)
+                  setPendingSave(null)
+                }}
+                className="px-3 py-1.5 text-sm rounded bg-amber-500 text-white hover:bg-amber-600"
+              >
+                예
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </Modal>
   )
 }
